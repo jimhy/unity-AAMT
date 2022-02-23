@@ -1,60 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
 using System.IO;
-using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
+using UnityEditor;
+using UnityEngine;
 
-namespace JAssetsManager
+namespace JAssetsManager.Editor
 {
     public class AssetsBundleBuilder
     {
-        public static bool buildHalfPackage = true;
-        public static bool debugBuild = true;
-        public static bool development = true;
-        public static bool allowDebugging = true;
-        public static bool strictMode = true;
-        public static bool connectWithProfiler = false;
-        public static bool isFullApk = false;
-        public static bool EnableDeepProfilingSupport = false;
-        public static bool WaitForPlayerConnection = false;
-
-        // [MenuItem("Build/Build All Resource", false, 2)]
-        // public static void buildAllResource(BuildPanel.EBuildType buildType)
-        // {
-        //     copyXmlFiles();
-        //
-        //     if (buildType == BuildPanel.EBuildType.AutoBuild)
-        //     {
-        //         if (Packager.IsResState)
-        //         {
-        //             buildAssetsBundles();
-        //             Packager.SaveResMd5();
-        //         }
-        //     }else
-        //     {
-        //         buildAssetsBundles();
-        //     }
-        //
-        //     if (buildType == BuildPanel.EBuildType.AutoBuild)
-        //     {
-        //         if (Packager.IsLuaState)
-        //         {
-        //             Packager.startToBuildLua();
-        //             Packager.SaveLuaMd5();
-        //         }
-        //     }else
-        //     {
-        //         Packager.startToBuildLua();
-        //     }
-        //     ABNameMapCreater.creatUIABMap();
-        //     createAssetsListFile();
-        //     AssetDatabase.Refresh();
-        // }
-
-
         [MenuItem("Build/Build Asset Bundles", false, 51)]
-        public static void buildAssetsBundles()
+        public static void BuildAssetsBundles()
         {
             var path = BuildSetting.AssetSetting.GetBuildPath;
             Debug.LogFormat("Start build assets bundles to path:{0}", path);
@@ -63,135 +19,86 @@ namespace JAssetsManager
                 EditorUserBuildSettings.activeBuildTarget);
             AssetDatabase.Refresh();
 
-            excuseOther();
+            ExcuseOther();
         }
 
-        private static void excuseOther()
+        private static void ExcuseOther()
         {
-            var abBundle = AssetBundle.LoadFromFile($"{BuildSetting.AssetSetting.GetBuildPath}/{BuildSetting.AssetSetting.GetBuildTag}");
+            EditorCommon.UpdateProgress("正在计算文件", 0, 0, "");
+            var abBundle =
+                AssetBundle.LoadFromFile(
+                    $"{BuildSetting.AssetSetting.GetBuildPath}/{BuildSetting.AssetSetting.GetBuildTag}");
 
             AssetDatabase.Refresh();
 
             abBundle.Unload(true);
-            createAssetsListFile();
+            CreateAssetsListFile();
             Debug.Log("Assets bundle build complete!!");
         }
 
-        [MenuItem("Build/Build Asset Bundles To StreamingAssets", false, 102)]
-        public static void copyAllResourceFiles()
+        public static void CreateAssetsListFile()
         {
-            //var targetPath = ReadConfig.readConfig("editorTestPath") + "Assets/StreamingAssets/";
-            var targetPath = Application.streamingAssetsPath;
-            if (targetPath == null)
-            {
-                Debug.LogError("config.txt文件找不到editorTestPath路径");
-                return;
-            }
+            var assetsInfoName = "assetsInfo.txt";
+            var txtPath = $"{BuildSetting.AssetSetting.GetBuildPath}/{assetsInfoName}";
+            if (File.Exists(txtPath)) File.Delete(txtPath);
 
-            var sourcePath = BuildSetting.AssetSetting.GetBuildPath;
-            if (!Directory.Exists(sourcePath)) Directory.CreateDirectory(sourcePath);
-            if (Directory.Exists(targetPath))
-            {
-                Directory.Delete(targetPath, true);
-            }
+            FileStream fs = new FileStream(txtPath, FileMode.CreateNew, FileAccess.Write);
+            StreamWriter sw = new StreamWriter(fs);
 
-            var files = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
-            var index = 1;
-            var totalNum = files.Length;
+            var files = Directory.GetFiles(BuildSetting.AssetSetting.GetBuildPath, "*", SearchOption.AllDirectories);
+            EditorCommon.UpdateProgress("正在计算文件", 0, files.Length, "正在计算文件MD5");
+            int i = 1;
             foreach (var file in files)
             {
-                FileInfo info = new FileInfo(file);
-                index++;
-                if (file.EndsWith(".meta")) continue;
-                if (file.EndsWith(".manifest") && info.Name != "ab.manifest") continue;
-                var dest = file.Replace(sourcePath, targetPath);
-                var dir = Path.GetDirectoryName(dest);
-                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-                EditorCommon.UpdateProgress("正在复制文件", index, totalNum, dir);
-                File.Copy(file, dest, true);
+                if (!CheckFile(file) || file.IndexOf(assetsInfoName, StringComparison.Ordinal) != -1) continue;
+                EditorCommon.UpdateProgress("正在计算文件", i++, files.Length, file);
+                FileInfo fileInfo = new FileInfo(file);
+                var newPath = file.Replace(BuildSetting.AssetSetting.GetBuildPath, "")
+                    .Replace("\\", "/");
+                newPath = newPath.Substring(1, newPath.Length - 1);
+                newPath = $"{newPath}?{Md5ByFile(file)}";
+                sw.WriteLine(newPath);
             }
 
+            sw.Close();
+            fs.Close();
             EditorUtility.ClearProgressBar();
-            Debug.Log("Copy AssetsBundle Files Finished!!");
-            AssetDatabase.Refresh();
-        }
-
-        public static void createAssetsListFile()
-        {
-            var txtPath = BuildSetting.AssetSetting.GetBuildPath + "/assetsInfo.txt";
-            if (File.Exists(txtPath)) File.Delete(txtPath);
-
-            FileStream fs = new FileStream(txtPath, FileMode.CreateNew, FileAccess.Write);
-            StreamWriter sw = new StreamWriter(fs);
-
-            var files = Directory.GetFiles(BuildSetting.AssetSetting.GetBuildPath, "*", SearchOption.AllDirectories);
-            foreach (var file in files)
-            {
-                if (file.EndsWith(".meta") || file.IndexOf("assetsInfo") != -1 || file.IndexOf("apk") != -1 ||
-                    file.IndexOf(".idea") != -1) continue;
-                FileInfo fileInfo = new FileInfo(file);
-                if (fileInfo.Extension == ".manifest" && fileInfo.Name.Trim() != "ab.manifest") continue;
-                var newPath = file.Replace(BuildSetting.AssetSetting.GetBuildPath, "").Replace("\\", "/");
-                sw.WriteLine(newPath);
-            }
-
-            sw.Close();
-            fs.Close();
-
             Debug.Log("创建文件列表完成!!");
             AssetDatabase.Refresh();
         }
 
-        public static void createAssetsListFileToStreamingAsset()
+        private static bool CheckFile(string file)
         {
-            var txtPath = Application.streamingAssetsPath + "/assetsInfo.txt";
-            if (File.Exists(txtPath)) File.Delete(txtPath);
-
-            FileStream fs = new FileStream(txtPath, FileMode.CreateNew, FileAccess.Write);
-            StreamWriter sw = new StreamWriter(fs);
-
-            var files = Directory.GetFiles(Application.streamingAssetsPath, "*", SearchOption.AllDirectories);
-            foreach (var file in files)
-            {
-                if (file.EndsWith(".meta") || file.IndexOf("assetsInfo") != -1 || file.IndexOf("apk") != -1 ||
-                    file.IndexOf(".idea") != -1) continue;
-                FileInfo fileInfo = new FileInfo(file);
-                if (fileInfo.Extension == ".manifest" && fileInfo.Name.Trim() != "ab.manifest") continue;
-                var newPath = file.Replace(Application.streamingAssetsPath, "").Replace("\\", "/");
-                sw.WriteLine(newPath);
-            }
-
-            sw.Close();
-            fs.Close();
-
-            Debug.Log("创建文件列表完成!!");
-            AssetDatabase.Refresh();
+            return !(file.EndsWith(".meta") ||
+                     file.EndsWith(".apk") ||
+                     file.EndsWith(".manifest") ||
+                     file.EndsWith(".idea"));
         }
 
-        public static void createStreamingAssetsListFile()
+        /// <summary>
+        /// 计算文件的MD5值
+        /// </summary>
+        public static string Md5ByFile(string file)
         {
-            var txtPath = BuildSetting.AssetSetting.GetBuildPath + "/assetsInfo.txt";
-            if (File.Exists(txtPath)) File.Delete(txtPath);
-
-            FileStream fs = new FileStream(txtPath, FileMode.CreateNew, FileAccess.Write);
-            StreamWriter sw = new StreamWriter(fs);
-
-            var files = Directory.GetFiles(BuildSetting.AssetSetting.GetBuildPath, "*", SearchOption.AllDirectories);
-            foreach (var file in files)
+            try
             {
-                if (file.EndsWith(".meta") || file.IndexOf("assetsInfo") != -1 || file.IndexOf("apk") != -1 ||
-                    file.IndexOf(".idea") != -1) continue;
-                FileInfo fileInfo = new FileInfo(file);
-                if (fileInfo.Extension == ".manifest" && fileInfo.Name.Trim() != "ab.manifest") continue;
-                var newPath = file.Replace(BuildSetting.AssetSetting.GetBuildPath, "").Replace("\\", "/");
-                sw.WriteLine(newPath);
+                FileStream fs = new FileStream(file, FileMode.Open);
+                System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+                byte[] retVal = md5.ComputeHash(fs);
+                fs.Close();
+
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < retVal.Length; i++)
+                {
+                    sb.Append(retVal[i].ToString("x2"));
+                }
+
+                return sb.ToString();
             }
-
-            sw.Close();
-            fs.Close();
-
-            Debug.Log("创建文件列表完成!!");
-            AssetDatabase.Refresh();
+            catch (Exception ex)
+            {
+                throw new Exception("md5file() fail, error:" + ex.Message);
+            }
         }
     }
 }
