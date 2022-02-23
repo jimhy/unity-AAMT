@@ -1,0 +1,35 @@
+ManifestFileVersion: 0
+CRC: 1045183896
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: buildsetting.asset.ab
+      Dependencies: {}
+    Info_1:
+      Name: res-config.ab
+      Dependencies: {}
+    Info_2:
+      Name: res-shaders.ab
+      Dependencies: {}
+    Info_3:
+      Name: res-ui-canvas.prefab.ab
+      Dependencies: {}
+    Info_4:
+      Name: res-test-p1.ab
+      Dependencies:
+        Dependency_0: res-test-p2.ab
+        Dependency_1: res-test-p3.ab
+    Info_5:
+      Name: res-test-p2.ab
+      Dependencies:
+        Dependency_0: res-test-p3.ab
+    Info_6:
+      Name: res-test-p3.ab
+      Dependencies: {}
+    Info_7:
+      Name: res-ui-userinfo.ab
+      Dependencies: {}
+    Info_8:
+      Name: scenes-samplescene.unity.ab
+      Dependencies:
+        Dependency_0: res-ui-canvas.prefab.ab

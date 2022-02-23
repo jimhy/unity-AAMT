@@ -2,6 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ namespace JAssetsManager.Editor
         [MenuItem("Build/Build Asset Bundles", false, 51)]
         public static void BuildAssetsBundles()
         {
+            EditorCommon.ClearConsole();
             var path = BuildSetting.AssetSetting.GetBuildPath;
             Debug.LogFormat("Start build assets bundles to path:{0}", path);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -33,9 +35,13 @@ namespace JAssetsManager.Editor
 
             abBundle.Unload(true);
             CreateAssetsListFile();
+            CreateManifestMapFile();
             Debug.Log("Assets bundle build complete!!");
         }
 
+        /// <summary>
+        /// 创建资源列表文件,用于拷贝资源文件到Application.persistentDataPath文件夹里面
+        /// </summary>
         public static void CreateAssetsListFile()
         {
             var assetsInfoName = "assetsInfo.txt";
@@ -67,6 +73,39 @@ namespace JAssetsManager.Editor
             AssetDatabase.Refresh();
         }
 
+        /// <summary>
+        /// 创建资源文件对应的Bundle文件，用于资源加载是，查找资源对于的Bundle文件名
+        /// </summary>
+        [MenuItem("Build/Create Manifest Map File", false, 51)]
+        public static void CreateManifestMapFile()
+        {
+            var files = Directory.GetFiles(BuildSetting.AssetSetting.GetBuildPath, "*.manifest",
+                SearchOption.AllDirectories);
+            var mapFileName = "AssetWidthBundle.txt";
+            var path = $"{BuildSetting.AssetSetting.GetBuildPath}/{mapFileName}";
+
+            if (File.Exists(path)) File.Delete(path);
+
+            FileStream fs = new FileStream(path, FileMode.CreateNew, FileAccess.Write);
+            StreamWriter sw = new StreamWriter(fs);
+            var regex = new Regex(@"- Assets/Res/([\w\/\.]+)");
+            var buildPath = BuildSetting.AssetSetting.GetBuildPath + "/";
+            foreach (var file in files)
+            {
+                var f = file.Replace("\\", "/");
+                var source = File.ReadAllText(f);
+                var ary = regex.Matches(source);
+                var abName = f.Replace(buildPath, "").Replace(".manifest", "");
+                foreach (Match o in ary)
+                {
+                    sw.WriteLine($"{o.Groups[1].Value},{abName}");
+                }
+            }
+
+            sw.Close();
+            fs.Close();
+        }
+
         private static bool CheckFile(string file)
         {
             return !(file.EndsWith(".meta") ||
@@ -83,7 +122,7 @@ namespace JAssetsManager.Editor
             try
             {
                 FileStream fs = new FileStream(file, FileMode.Open);
-                System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+                var md5 = new MD5CryptoServiceProvider();
                 byte[] retVal = md5.ComputeHash(fs);
                 fs.Close();
 

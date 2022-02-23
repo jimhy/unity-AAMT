@@ -14,6 +14,12 @@ namespace JAssetsManager
             float value = (float) progress / (float) progressMax;
             EditorUtility.DisplayProgressBar(title, desc, value);
         }
-
+        public static void ClearConsole()
+        {
+            var assembly = System.Reflection.Assembly.GetAssembly(typeof(SceneView));
+            var type = assembly.GetType("UnityEditor.LogEntries");
+            var method = type.GetMethod("Clear");
+            method.Invoke(new object(), null);
+        }
     }
 }

@@ -215,6 +215,7 @@
      <None Include="Assets\Resources\Shaders\xuanwo001.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (TextureClip).shader" />
      <None Include="Assets\Resources\Shaders\Blur.shader" />
+     <None Include="Assets\StreamingAssets\windows\AssetWidthBundle.txt" />
      <None Include="Assets\Resources\Shaders\Alpha_Dissolve.shader" />
      <None Include="Assets\Resources\Shaders\zafaguang_liudongzhezhao.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked.shader" />
@@ -291,6 +292,7 @@
      <None Include="Assets\Resources\Shaders\TMShaders\GoldText.shader" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Masked Colored.shader" />
      <None Include="Assets\Resources\Shaders\UV Blended.shader" />
+     <None Include="Assets\StreamingAssets\windows\assetsInfo.txt" />
      <None Include="Assets\Resources\Shaders\raodongzhezhao.shader" />
      <None Include="Assets\Resources\Shaders\CubeReflecFlow.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\SciFi\SciFi Font - Normal.txt" />

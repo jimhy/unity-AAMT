@@ -19,6 +19,9 @@ namespace JAssetsManager
             runtimeGameObject.name = "JAssetsManagerRuntime";
             runtimeGameObject.AddComponent<JAssetsManagerRuntime>();
         }
+        //TODO:加载AssetWidthBundle文件，并解析
+        //TODO:加载assetsInfo文件，并解析和对比热更文件
+        //TODO:加载热更文件
 
         internal bool HasAssets(string path)
         {

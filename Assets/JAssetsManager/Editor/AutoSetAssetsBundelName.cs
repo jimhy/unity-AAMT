@@ -166,6 +166,7 @@ namespace JAssetsManager
             var p = GetBundleName(tempPath, rootPath);
             if (p != null) tempPath = p;
             AssetImporter item = AssetImporter.GetAtPath(path);
+            tempPath = tempPath.Replace("/", "-");
             if (path.EndsWith(".unity") || !isSetName) item.assetBundleName = null;
             else item.assetBundleName = tempPath + ".ab";
         }
