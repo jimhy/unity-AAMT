@@ -1,0 +1,51 @@
+ManifestFileVersion: 0
+CRC: 883946748
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: b15870acd96b3b9284d5e523e75d0d16
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 24d1cde06a07899a5e9281235db5a5ed
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 89
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 137
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Res/Roles/Prefabs/LZ_03_lv3_low.prefab
+- Assets/Res/Roles/Prefabs/LZ_02_lv3_hd.prefab
+- Assets/Res/Roles/Prefabs/LZ_03_lv1_hd.prefab
+- Assets/Res/Roles/Prefabs/LZ_02_lv2_low.prefab
+- Assets/Res/Roles/Prefabs/LZ_02_lv1_hd.prefab
+- Assets/Res/Roles/Prefabs/LZ_02_lv3_low.prefab
+- Assets/Res/Roles/Prefabs/LZ_04_lv3_low.prefab
+- Assets/Res/Roles/Prefabs/LZ_03_lv2_hd.prefab
+- Assets/Res/Roles/Prefabs/LZ_03_lv2_low.prefab
+- Assets/Res/Roles/Prefabs/LZ_04_lv2_low.prefab
+- Assets/Res/Roles/Prefabs/LZ_03_lv1_low.prefab
+- Assets/Res/Roles/Prefabs/LZ_02_lv1_low.prefab
+- Assets/Res/Roles/Prefabs/LZ_04_lv3_hd.prefab
+- Assets/Res/Roles/Prefabs/LZ_04_lv2_hd.prefab
+- Assets/Res/Roles/Prefabs/LZ_04_lv1_hd.prefab
+- Assets/Res/Roles/Prefabs/LZ_04_lv1_low.prefab
+- Assets/Res/Roles/Prefabs/LZ_03_lv3_hd.prefab
+- Assets/Res/Roles/Prefabs/LZ_02_lv2_hd.prefab
+Dependencies:
+- D:/workspace/JAssetsManager/Assets/StreamingAssets/windows/roles/commontexture.ab

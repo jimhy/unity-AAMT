@@ -1,0 +1,6 @@
+/buildsetting.asset.ab
+/config.ab
+/windows
+/roles/cameraanimations.ab
+/roles/commontexture.ab
+/roles/prefabs.ab
