@@ -41,13 +41,15 @@ namespace AAMT
             runtimeGameObject.name = "JAssetsManagerRuntime";
             runtimeGameObject.AddComponent<AssetsManagerRuntime>();
         }
-        //TODO:加载AssetWidthBundle文件，并解析
-        //TODO:加载assetsInfo文件，并解析和对比热更文件
-        //TODO:加载热更文件
 
         public void LoadAssets(string[] assetsPath, Action callBack)
         {
             _loaderManager.Load(assetsPath, callBack);
+        }
+
+        public void LoadAssetsBatch(string[] assetsPath, Action callBack)
+        {
+            _loaderManager.LoadBatch(assetsPath, callBack);
         }
 
         public T GetAssets<T>(string path) where T : Object

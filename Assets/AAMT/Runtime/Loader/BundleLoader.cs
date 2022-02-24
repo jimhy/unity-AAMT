@@ -11,37 +11,43 @@ namespace AAMT
     /// </summary>
     public class BundleLoader : ILoader
     {
-        private struct LoadData
-        {
-            public string[] Path;
-            public Action CallBack;
-        }
         private readonly BundleManager _bundleManager;
-        private bool _hasLoading;
-        private readonly Queue<LoadData> _loadDataList;
+        private string[] _resPathList;
+        private Action _callBack;
+        private int _loadIndex;
 
         public BundleLoader()
         {
             _bundleManager = AssetsManager.Instance.bundleManager;
-            _loadDataList = new Queue<LoadData>();
         }
 
         public void Load(string[] path, Action callBack)
         {
-            _loadDataList.Enqueue(new LoadData(){Path = path,CallBack = callBack});
-            if(!_hasLoading) Load();
+            _resPathList = path;
+            _callBack = callBack;
+            StartLoad();
         }
 
-        private void Load()
+        private void StartLoad()
         {
-            if(_loadDataList.Count <= 0) return;
-            var data = _loadDataList.Dequeue();
-            
+            if (_loadIndex >= _resPathList.Length)
+            {
+                OnLoadComplete();
+                return;
+            }
+
+            var path = _resPathList[_loadIndex++];
+            if (string.IsNullOrEmpty(path))
+            {
+                StartLoad();
+                return;
+            }
+
+            Load(path);
         }
 
-        private void StartLoad(string path, Action callBack)
+        private void Load(string path)
         {
-            
             path = path.ToLower();
             if (!_bundleManager.pathToBundle.ContainsKey(path))
             {
@@ -49,18 +55,14 @@ namespace AAMT
                 return;
             }
 
-            if (_bundleManager.HasAssets(path))
-            {
-                callBack?.Invoke();
-            }
+            if (_bundleManager.HasBundleByAssetsPath(path))
+                StartLoad();
             else
-            {
-                // AssetsManagerRuntime.Instance.Coroutine(LoadAssetBundle(path, callBack));
-            }
+                AssetsManagerRuntime.Instance.Coroutine(LoadAssetBundle(path));
         }
 
 
-        private IEnumerator LoadAssetBundle(string resPath, Action callBack)
+        private IEnumerator LoadAssetBundle(string resPath)
         {
             var abName = _bundleManager.pathToBundle[resPath];
             //加载依赖项
@@ -76,7 +78,7 @@ namespace AAMT
             else
             {
                 _bundleManager.AddBundle(abLoader.assetBundle);
-                callBack?.Invoke();
+                StartLoad();
             }
         }
 
@@ -91,7 +93,7 @@ namespace AAMT
             for (int i = 0; i < abPaths.Length; i++)
             {
                 var abp = abPaths[i].ToLower();
-                if (_bundleManager.HasAssets(abp))
+                if (_bundleManager.HasBundleByBundleName(abp))
                 {
                     continue;
                 }
@@ -100,6 +102,11 @@ namespace AAMT
                 var bundle = AssetBundle.LoadFromFile(realPath);
                 _bundleManager.AddBundle(bundle);
             }
+        }
+
+        private void OnLoadComplete()
+        {
+            _callBack?.Invoke();
         }
     }
 }

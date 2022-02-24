@@ -6,21 +6,57 @@ namespace GameLogic
     public class Main : MonoBehaviour
     {
         public GameObject loadButton;
-        private string path = "Roles/Prefabs/LZ_03_lv3_low.prefab";
+        public GameObject loadButtonBatch;
+        public UILabel label;
+
+        private string[] pathList = new string[]
+        {
+            "Roles/Prefabs/lz_02_lv1_hd.prefab",
+            "Roles/Prefabs/lz_02_lv1_low.prefab",
+            "Roles/Prefabs/lz_02_lv2_hd.prefab",
+            "Roles/Prefabs/lz_02_lv2_low.prefab",
+            "Roles/Prefabs/lz_02_lv3_hd.prefab",
+            "Roles/Prefabs/lz_02_lv3_low.prefab",
+            "Roles/Prefabs/lz_03_lv1_hd.prefab",
+            "Roles/Prefabs/lz_03_lv1_low.prefab",
+            "Roles/Prefabs/lz_03_lv2_hd.prefab",
+            "Roles/Prefabs/lz_03_lv2_low.prefab",
+            "Roles/Prefabs/lz_03_lv3_hd.prefab",
+            "Roles/Prefabs/lz_03_lv3_low.prefab",
+            "Roles/Prefabs/lz_04_lv1_hd.prefab",
+            "Roles/Prefabs/lz_04_lv1_low.prefab",
+            "Roles/Prefabs/lz_04_lv2_hd.prefab",
+            "Roles/Prefabs/lz_04_lv2_low.prefab",
+            "Roles/Prefabs/lz_04_lv3_hd.prefab",
+            "Roles/Prefabs/lz_04_lv3_low.prefab"
+        };
 
         void Start()
         {
-            if (loadButton != null) UIEventListener.Get(loadButton).onClick = onLoad;
+            if (loadButton != null) UIEventListener.Get(loadButton).onClick = OnLoad;
+            if (loadButtonBatch != null) UIEventListener.Get(loadButtonBatch).onClick = OnLoadBatch;
         }
 
-        private void onLoad(GameObject go)
+        private float _lastTime;
+
+        private void OnLoad(GameObject go)
         {
-            AssetsManager.Instance.LoadAssets(new[] {path}, OnLoadComplete);
+            _lastTime = Time.time;
+            AssetsManager.Instance.LoadAssets(pathList, OnLoadComplete);
+        }
+
+        private void OnLoadBatch(GameObject go)
+        {
+            _lastTime = Time.time;
+            AssetsManager.Instance.LoadAssetsBatch(pathList, OnLoadComplete);
         }
 
         private void OnLoadComplete()
         {
-            var go = AssetsManager.Instance.GetAssets<GameObject>(path);
+            var time = Time.time - _lastTime;
+            var str = $"used time:{time} s";
+            label.text = str;
+            var go = AssetsManager.Instance.GetAssets<GameObject>(pathList[0]);
             Instantiate(go);
         }
 

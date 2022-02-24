@@ -72,10 +72,20 @@ namespace AAMT
             else Debug.LogErrorFormat("重复添加ab包，应该是出现了重复加载，会出现双份内存的情况，请检查。path:{0}", ab.name);
         }
 
-        internal bool HasAssets(string path)
+        internal bool HasBundleByBundleName(string abName)
         {
-            if (!pathToBundle.ContainsKey(path)) return false;
-            var abName = pathToBundle[path];
+            return bundles.ContainsKey(abName);
+        }
+
+        internal bool HasBundleByAssetsPath(string assetPath)
+        {
+            if (!pathToBundle.ContainsKey(assetPath))
+            {
+                Debug.LogFormat("找不到对应的ab包。assetPath:{0}", assetPath);
+                return false;
+            }
+
+            var abName = pathToBundle[assetPath];
             return bundles.ContainsKey(abName);
         }
 
