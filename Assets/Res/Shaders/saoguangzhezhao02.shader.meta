@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: e72f472f837e9884ea39fc785907b57b
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _saoguang: {fileID: 2800000, guid: 4c3ba60e85a8dcb46b1617d5102fa2bc, type: 3}
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: shaders.ab
+  assetBundleVariant: 

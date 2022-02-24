@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 6ae2c563607001845abc6e408758b0df
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _tex01: {fileID: 2800000, guid: 7d53f23a0da113547ab9aebb2f042602, type: 3}
+  - _noise_tex: {fileID: 2800000, guid: c731e6eda2c42074ba007036dffcf653, type: 3}
+  - _zhezhao: {fileID: 2800000, guid: 95c540b3a15c29b45860e62b201479e1, type: 3}
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: shaders.ab
+  assetBundleVariant: 

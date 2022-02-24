@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: ebad1a050ee754e4d9425ed001b039cd
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _shuchu_tex: {fileID: 2800000, guid: f5adae8c01dcb404cac0203d6f77ca57, type: 3}
+  - _noise01: {fileID: 2800000, guid: 385330324ee1d8146910db0844b31677, type: 3}
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: shaders.ab
+  assetBundleVariant: 
