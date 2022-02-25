@@ -17,9 +17,9 @@ namespace AAMT
         [Serializable]
         public enum BuildTarget
         {
-            Windows,
-            Android,
-            IOS,
+            windows,
+            android_1,
+            ios,
         }
 
         [SerializeField] private BuildTarget buildTarget;
@@ -85,12 +85,12 @@ namespace AAMT
             switch (Application.platform)
             {
                 case RuntimePlatform.Android:
-                    return BuildTarget.Android.ToString();
+                    return BuildTarget.android_1.ToString();
                 case RuntimePlatform.IPhonePlayer:
-                    return BuildTarget.IOS.ToString();
+                    return BuildTarget.ios.ToString();
                 case RuntimePlatform.WindowsEditor:
                 case RuntimePlatform.WindowsPlayer:
-                    return BuildTarget.Windows.ToString();
+                    return BuildTarget.windows.ToString();
             }
 
             return string.Empty;

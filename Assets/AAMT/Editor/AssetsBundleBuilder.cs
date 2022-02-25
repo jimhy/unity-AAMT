@@ -10,7 +10,7 @@ namespace AAMT.Editor
 {
     public static class AssetsBundleBuilder
     {
-        private static readonly string assetsWidthBundleName = "assetsWidthBundle";
+        private static readonly string assetsWidthBundleName = "assets-width-bundle";
 
 
         [MenuItem("AAMT/Build Asset Bundles", false, 51)]
@@ -34,11 +34,11 @@ namespace AAMT.Editor
         {
             switch (BuildSetting.AssetSetting.GetBuildTarget)
             {
-                case BuildSetting.BuildTarget.Windows:
+                case BuildSetting.BuildTarget.windows:
                     return BuildTarget.StandaloneWindows;
-                case BuildSetting.BuildTarget.Android:
+                case BuildSetting.BuildTarget.android_1:
                     return BuildTarget.Android;
-                case BuildSetting.BuildTarget.IOS:
+                case BuildSetting.BuildTarget.ios:
                     return BuildTarget.iOS;
                 default:
                     return EditorUserBuildSettings.activeBuildTarget;
@@ -50,7 +50,7 @@ namespace AAMT.Editor
         /// </summary>
         public static void CreateAssetsListFile()
         {
-            var assetsInfoName = "assetsInfo.txt";
+            var assetsInfoName = "assets-info.txt";
             var txtPath = $"{BuildSetting.AssetSetting.GetBuildPath}/{assetsInfoName}";
             if (File.Exists(txtPath)) File.Delete(txtPath);
 

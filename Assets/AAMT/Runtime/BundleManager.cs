@@ -37,12 +37,12 @@ namespace AAMT
         private void InitBundleMap()
         {
             pathToBundle = new Dictionary<string, string>();
-            var fileName = "assetswidthbundle";
+            var fileName = "assets-width-bundle";
             var path = $"{BuildSetting.AssetSetting.GetLoadPath}/{fileName}.txt";
             var content = ReadTextFileData(path);
             if (string.IsNullOrEmpty(content))
             {
-                Debug.LogError("assetswidthbundle 资源加载错误");
+                Debug.LogError("assets-width-bundle 资源加载错误");
                 return;
             }
 
