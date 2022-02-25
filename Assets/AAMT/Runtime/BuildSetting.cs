@@ -2,49 +2,51 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Object = System.Object;
 
 namespace AAMT
 {
     [CreateAssetMenu(fileName = "BuildSetting", menuName = "AAMT/BuildSetting", order = 0)]
     public class BuildSetting : ScriptableObject
-    {
+    { 
         [Serializable]
         public enum LoadType
         {
             LocalAssets,
             Bundle,
         }
-
-        public enum BuildTag
+        [Serializable]
+        public enum BuildTarget
         {
-            windows,
-            android,
-            iOS,
+            Windows,
+            Android,
+            IOS,
         }
 
-        [SerializeField] private BuildTag _buildTag;
+        [SerializeField] private BuildTarget buildTarget;
 
-        [SerializeField] private string _buildPath;
+        [SerializeField] private string buildPath = "{UnityEngine.Application.streamingAssetsPath}";
 
-        [SerializeField] private string _loadPath;
+        [SerializeField] private string loadPath = "{UnityEngine.Application.streamingAssetsPath}";
+        private string _realBuildPath;
+        private string _realLoadPath;
 
         private static BuildSetting _buildSetting;
-        [SerializeField] private LoadType _loadType;
+        [SerializeField] private LoadType loadType;
 
-        public void Init()
+        private void Init()
         {
-            _loadPath = JAssetManagerRuntimeProperties.EvaluateString(_loadPath);
-            _buildPath = JAssetManagerRuntimeProperties.EvaluateString(_buildPath);
+            _realLoadPath = JAssetManagerRuntimeProperties.EvaluateString(loadPath);
+            _realBuildPath = JAssetManagerRuntimeProperties.EvaluateString(buildPath);
 #if !UNITY_EDITOR
-            _loadType = LoadType.Bundle;
+            loadType = LoadType.Bundle;
 #endif
         }
 
-        public string GetBuildPath => $"{_buildPath}/{_buildTag}";
-        public string GetBuildTag => _buildTag.ToString();
-        public string GetLoadPath => $"{_loadPath}/{_buildTag}";
-        public LoadType GetLoadType => _loadType;
+        public string GetBuildPath => $"{_realBuildPath}/{buildTarget}";
+        public string GetBuildTargetToString => buildTarget.ToString();
+        public BuildTarget GetBuildTarget => buildTarget;
+        public string GetLoadPath => $"{_realLoadPath}/{buildTarget}";
+        public LoadType GetLoadType => loadType;
 
         public static BuildSetting AssetSetting
         {
@@ -61,9 +63,9 @@ namespace AAMT
             var sprite =
                 AssetDatabase.LoadAssetAtPath<UnityEngine.Object>("Assets/AAMT/Data/BuildSetting.asset");
             _buildSetting = ScriptableObject.Instantiate(sprite) as BuildSetting;
-            _buildSetting.Init();
+            if (_buildSetting != null) _buildSetting.Init();
 #else
-            var buildTag = getBuildTagByCurrentPlatform();
+            var buildTag = GetBuildTagByCurrentPlatform();
             if (buildTag == string.Empty)
             {
                 Debug.LogErrorFormat("当前平台不支持:{0}", Application.platform.ToString());
@@ -78,17 +80,17 @@ namespace AAMT
 #endif
         }
 
-        private static string getBuildTagByCurrentPlatform()
+        private static string GetBuildTagByCurrentPlatform()
         {
             switch (Application.platform)
             {
                 case RuntimePlatform.Android:
-                    return BuildTag.android.ToString();
+                    return BuildTarget.Android.ToString();
                 case RuntimePlatform.IPhonePlayer:
-                    return BuildTag.iOS.ToString();
+                    return BuildTarget.IOS.ToString();
                 case RuntimePlatform.WindowsEditor:
                 case RuntimePlatform.WindowsPlayer:
-                    return BuildTag.windows.ToString();
+                    return BuildTarget.Windows.ToString();
             }
 
             return string.Empty;

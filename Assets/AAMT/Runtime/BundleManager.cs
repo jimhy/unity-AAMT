@@ -23,7 +23,7 @@ namespace AAMT
         {
             var mainBundle =
                 AssetBundle.LoadFromFile(
-                    $"{BuildSetting.AssetSetting.GetLoadPath}/{BuildSetting.AssetSetting.GetBuildTag}");
+                    $"{BuildSetting.AssetSetting.GetLoadPath}/{BuildSetting.AssetSetting.GetBuildTargetToString}");
             if (mainBundle != null)
             {
                 assetBundleManifest = mainBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
@@ -67,7 +67,7 @@ namespace AAMT
 
         internal void AddBundle(AssetBundle ab)
         {
-            Debug.LogFormat("AddBundle:{0}", ab.name);
+            // Debug.LogFormat("AddBundle:{0}", ab.name);
             if (!bundles.ContainsKey(ab.name)) bundles.Add(ab.name, ab);
             else Debug.LogErrorFormat("重复添加ab包，应该是出现了重复加载，会出现双份内存的情况，请检查。path:{0}", ab.name);
         }

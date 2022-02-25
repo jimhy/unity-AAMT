@@ -13,13 +13,13 @@ namespace AAMT
         public static readonly string ResourcePath = Application.dataPath + "/Resources/autoNameAB";
         public static string RoleFbxPath = Application.dataPath + "/Res/Role/fbx";
 
-        [MenuItem("Assets/AutoNamingAB/自动命名autoNameAB", false, 51)]
+        [MenuItem("Assets/AAMT/AutoNamingAB/自动命名autoNameAB", false, 51)]
         public static void AutoAddAbName()
         {
             StartAutoName(true);
         }
 
-        [MenuItem("Assets/AutoNamingAB/删除ab名字", false, 51)]
+        [MenuItem("Assets/AAMT/AutoNamingAB/删除ab名字", false, 51)]
         public static void RemoveAbName()
         {
             StartAutoName(false);
@@ -48,7 +48,7 @@ namespace AAMT
             EditorUtility.ClearProgressBar();
         }
 
-        [MenuItem("Assets/AutoNamingAB/复制命名autoNameAB规则文件(所有子目录)", false, 10)]
+        [MenuItem("Assets/AAMT/AutoNamingAB/复制命名autoNameAB规则文件(所有子目录)", false, 10)]
         private static void CopyFileAll()
         {
             var selects = Selection.objects;
@@ -68,25 +68,25 @@ namespace AAMT
             }
         }
 
-        [MenuItem("Assets/AutoNamingAB/复制命名autoNameAB规则文件(1级子目录)", false, 11)]
+        [MenuItem("Assets/AAMT/AutoNamingAB/复制命名autoNameAB规则文件(1级子目录)", false, 11)]
         private static void CopyFile1()
         {
             CopyFile(1);
         }
 
-        [MenuItem("Assets/AutoNamingAB/复制命名autoNameAB规则文件(2级子目录)", false, 12)]
+        [MenuItem("Assets/AAMT/AutoNamingAB/复制命名autoNameAB规则文件(2级子目录)", false, 12)]
         private static void CopyFile2()
         {
             CopyFile(2);
         }
 
-        [MenuItem("Assets/AutoNamingAB/复制命名autoNameAB规则文件(3级子目录)", false, 13)]
+        [MenuItem("Assets/AAMT/AutoNamingAB/复制命名autoNameAB规则文件(3级子目录)", false, 13)]
         private static void CopyFile3()
         {
             CopyFile(3);
         }
 
-        [MenuItem("Assets/AutoNamingAB/复制命名autoNameAB规则文件(4级子目录)", false, 14)]
+        [MenuItem("Assets/AAMT/AutoNamingAB/复制命名autoNameAB规则文件(4级子目录)", false, 14)]
         private static void CopyFile4()
         {
             CopyFile(4);
@@ -116,35 +116,6 @@ namespace AAMT
                     StartCopyFile(target, num);
                 }
             }
-        }
-
-        public static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets,
-            string[] movedFromAssetPaths)
-        {
-            return; //TODO:这里暂时注释掉，项目有大量资源的时候，这里会导致一直重新刷新资源
-#if !UNITY_IOS
-            foreach (var str in importedAssets)
-            {
-                if (str.IndexOf("Assets/Res") != -1 && str.LastIndexOf(".", StringComparison.Ordinal) == -1)
-                {
-                    //这里设计成，只要是目录就给目录添加autoNameAB文件
-                    if (Directory.Exists(str))
-                    {
-                        var f = str + "/" + "autoNameAB";
-                        System.IO.File.Copy(ResourcePath, f, true);
-                    }
-
-                    continue;
-                }
-
-                AutoName(str,true, Path.GetDirectoryName(str));
-            }
-
-            foreach (var path in movedAssets)
-            {
-                AutoName(path);
-            }
-#endif
         }
 
         private static void AutoName(string path, bool isSetName = true, string rootPath = "")
@@ -225,19 +196,6 @@ namespace AAMT
             return -1;
         }
 
-        private static string GetNewType(string path)
-        {
-            if (path.Contains("_mat") || path.Contains("_an") || path.Contains("_fbx") || path.Contains("_png") ||
-                path.Contains("_tga")) return "";
-            if (path.EndsWith(".perfab")) return ""; //预制体不同命名
-            else if (path.EndsWith(".mat")) return "_mat";
-            else if (path.EndsWith(".anim")) return "_an";
-            else if (path.EndsWith(".FBX") || path.EndsWith(".fbx")) return "_fbx";
-            else if (path.EndsWith(".png")) return "_png";
-            else if (path.EndsWith(".tga")) return "_tga";
-            else return "";
-        }
-
         private static bool CheckPath(string path)
         {
             if (!path.StartsWith("assets/res/") ||
@@ -245,11 +203,7 @@ namespace AAMT
                 path.EndsWith(".meta") ||
                 path.EndsWith(".cs") ||
                 path.EndsWith(".xml") ||
-                // path.EndsWith(".shader") ||
-                //path.EndsWith(".tpsheet") ||
                 path.EndsWith(".txt")
-                //path.EndsWith(".TTF") ||
-                //path.EndsWith(".otf")
                )
                 return false;
             return true;

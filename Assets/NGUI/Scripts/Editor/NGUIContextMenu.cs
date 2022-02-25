@@ -11,7 +11,7 @@ static public class NGUIContextMenu
 {
 	[MenuItem("Help/NGUI Documentation (v.2020.1.4)")]
 	static void ShowHelp0 (MenuCommand command) { NGUIHelp.Show(); }
-
+ 
 	[MenuItem("Help/NGUI Support Archive (read-only)")]
 	static void ShowHelp01 (MenuCommand command) { Application.OpenURL("http://www.tasharen.com/forum/index.php?board=1.0"); }
 
@@ -97,15 +97,12 @@ static public class NGUIContextMenu
 	static void ShowHelp23 (MenuCommand command) { NGUIHelp.Show(typeof(UICenterOnClick)); }
 
 	[MenuItem("CONTEXT/UITweener/Help")]
-	[MenuItem("CONTEXT/UIPlayTween/Help")]
 	static void ShowHelp24 (MenuCommand command) { NGUIHelp.Show(typeof(UITweener)); }
 
 	[MenuItem("CONTEXT/ActiveAnimation/Help")]
-	[MenuItem("CONTEXT/UIPlayAnimation/Help")]
 	static void ShowHelp25 (MenuCommand command) { NGUIHelp.Show(typeof(UIPlayAnimation)); }
 
-	[MenuItem("CONTEXT/UIScrollView/Help")]
-	[MenuItem("CONTEXT/UIDragScrollView/Help")]
+	[MenuItem("CONTEXT/UIScrollView/Help1")]
 	static void ShowHelp26 (MenuCommand command) { NGUIHelp.Show(typeof(UIScrollView)); }
 
 	[MenuItem("CONTEXT/UIPanel/Help")]

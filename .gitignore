@@ -7,3 +7,5 @@ ProjectSettings/
 UserSettings/
 StreamingAssets/
 StreamingAssets.meta
+Build/
+Bin/

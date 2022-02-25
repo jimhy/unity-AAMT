@@ -13,20 +13,36 @@ namespace AAMT.Editor
         private static readonly string assetsWidthBundleName = "assetsWidthBundle";
 
 
-        [MenuItem("UAAM/Build Asset Bundles", false, 51)]
+        [MenuItem("AAMT/Build Asset Bundles", false, 51)]
         public static void BuildAssetsBundles()
         {
             EditorCommon.ClearConsole();
-            var path = BuildSetting.AssetSetting.GetBuildPath;
+            var path = BuildSetting.AssetSetting.GetBuildPath.ToLower();
             Debug.LogFormat("Start build assets bundles to path:{0}", path);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-            BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.ChunkBasedCompression,
-                EditorUserBuildSettings.activeBuildTarget);
-            AssetDatabase.Refresh();
 
+            BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.ChunkBasedCompression,
+                GetBuildTarget());
+            AssetDatabase.Refresh();
+            
             CreateManifestMapFile();
             CreateAssetsListFile();
             Debug.Log("Assets bundle build complete!!");
+        }
+
+        private static BuildTarget GetBuildTarget()
+        {
+            switch (BuildSetting.AssetSetting.GetBuildTarget)
+            {
+                case BuildSetting.BuildTarget.Windows:
+                    return BuildTarget.StandaloneWindows;
+                case BuildSetting.BuildTarget.Android:
+                    return BuildTarget.Android;
+                case BuildSetting.BuildTarget.IOS:
+                    return BuildTarget.iOS;
+                default:
+                    return EditorUserBuildSettings.activeBuildTarget;
+            }
         }
 
         /// <summary>
@@ -65,7 +81,6 @@ namespace AAMT.Editor
         /// <summary>
         /// 创建资源文件对应的Bundle文件，用于资源加载是，查找资源对于的Bundle文件名
         /// </summary>
-        [MenuItem("UAAM/createTem", false, 52)]
         private static void CreateManifestMapFile()
         {
             var files = Directory.GetFiles(BuildSetting.AssetSetting.GetBuildPath, "*.manifest",
@@ -129,6 +144,20 @@ namespace AAMT.Editor
             {
                 throw new Exception("md5file() fail, error:" + ex.Message);
             }
+        }
+
+        [MenuItem("AAMT/Remove Bundle Cache", false, 52)]
+        private static void RemoveBundleCache()
+        {
+            var path = BuildSetting.AssetSetting.GetBuildPath;
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path, true);
+                File.Delete($"{path}.meta");
+                Debug.LogFormat("Remove bundle cache at path:{0}", path);
+            }
+
+            AssetDatabase.Refresh();
         }
     }
 }
