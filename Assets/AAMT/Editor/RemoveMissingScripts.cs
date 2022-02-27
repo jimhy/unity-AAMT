@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using AAMT;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -26,14 +27,20 @@ public class RemoveMissingScripts
             files.AddRange(fs);
         }
 
+        var i = 0;
         foreach (var file in files)
         {
+            EditorCommon.UpdateProgress("Delete Miss Scripts",++i,files.Count,file);
+
             var go = AssetDatabase.LoadAssetAtPath<GameObject>(file);
             if (go != null)
             {
                 RemoveMissingScript(go);
             }
         }
+        
+        EditorCommon.ClearProgressBar();
+        
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }

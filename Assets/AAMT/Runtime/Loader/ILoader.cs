@@ -4,6 +4,7 @@ namespace AAMT
 {
     public interface ILoader
     {
-        void Load(string[] path, Action callBack);
+        void Load(string[] path, Action<object> callBack);
+        void Load(string[] path, Action<object> callBack,object data);
     }
 }

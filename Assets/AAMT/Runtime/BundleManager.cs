@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 using Object = UnityEngine.Object;
 
 namespace AAMT
@@ -25,9 +27,7 @@ namespace AAMT
                 AssetBundle.LoadFromFile(
                     $"{BuildSetting.AssetSetting.GetLoadPath}/{BuildSetting.AssetSetting.GetBuildTargetToString}");
             if (mainBundle != null)
-            {
                 assetBundleManifest = mainBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-            }
             else
                 Debug.LogError("mian ab资源加载错误");
 
@@ -39,6 +39,7 @@ namespace AAMT
             pathToBundle = new Dictionary<string, string>();
             var fileName = "assets-width-bundle";
             var path = $"{BuildSetting.AssetSetting.GetLoadPath}/{fileName}.txt";
+            Debug.LogFormat("Load assets-width-bundle file.path={0}", path);
             var content = ReadTextFileData(path);
             if (string.IsNullOrEmpty(content))
             {
@@ -57,16 +58,24 @@ namespace AAMT
 
         internal string ReadTextFileData(string path)
         {
-            FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None);
-            StreamReader sr = new StreamReader(fs, System.Text.Encoding.Default);
-            if (null == sr) return string.Empty;
-            var str = sr.ReadToEnd();
-            sr.Close();
-            return str;
+            var request = UnityWebRequest.Get(path);
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+            }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogErrorFormat("ReadTextFileData error,errorCode:{0},path:{1}", request.result, path);
+                return string.Empty;
+            }
+
+            return request.downloadHandler.text;
         }
 
         internal void AddBundle(AssetBundle ab)
         {
+            if (ab == null) return;
             // Debug.LogFormat("AddBundle:{0}", ab.name);
             if (!bundles.ContainsKey(ab.name)) bundles.Add(ab.name, ab);
             else Debug.LogErrorFormat("重复添加ab包，应该是出现了重复加载，会出现双份内存的情况，请检查。path:{0}", ab.name);
@@ -89,17 +98,28 @@ namespace AAMT
             return bundles.ContainsKey(abName);
         }
 
-        public T GetAssets<T>(string path) where T : Object
+        public void GetAssets<T>(string path, Action<T> callBack) where T : Object
+        {
+            AssetsManagerRuntime.Instance.StartCoroutine(StartGetAssets(path, callBack));
+        }
+
+        IEnumerator<AssetBundleRequest> StartGetAssets<T>(string path, Action<T> callBack) where T : Object
         {
             path = path.ToLower();
             if (!pathToBundle.ContainsKey(path))
             {
-                Debug.LogFormat("获取资源时，找不到对应的ab包。path:{0}", path);
-                return default;
+                Debug.LogErrorFormat("获取资源时，找不到对应的ab包。path:{0}", path);
+                callBack?.Invoke(default);
+                yield break;
             }
 
             var abName = pathToBundle[path];
-            if (!bundles.ContainsKey(abName)) return default;
+            if (!bundles.ContainsKey(abName))
+            {
+                callBack?.Invoke(default);
+                yield break;
+            }
+
             var itemName = path;
             var n = path.LastIndexOf("/", StringComparison.Ordinal);
             if (n != -1)
@@ -107,16 +127,16 @@ namespace AAMT
                 itemName = path.Substring(n + 1);
             }
 
-            return bundles[abName].LoadAsset<T>(itemName);
-        }
+            var request = bundles[abName].LoadAssetAsync<T>(itemName);
+            yield return request;
+            if (request.asset == null)
+            {
+                Debug.LogErrorFormat("加载资源失败,abName:{0},itemName:{1}", abName, itemName);
+                callBack?.Invoke(default);
+                yield break;
+            }
 
-        public T GetAssets<T>(string abName, string itemName) where T : Object
-        {
-            abName = abName.ToLower();
-            itemName = itemName.ToLower();
-            if (!bundles.ContainsKey(abName)) return default;
-
-            return bundles[abName].LoadAsset<T>(itemName);
+            callBack?.Invoke(request.asset as T);
         }
     }
 }

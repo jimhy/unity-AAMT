@@ -42,24 +42,40 @@ namespace AAMT
             runtimeGameObject.AddComponent<AssetsManagerRuntime>();
         }
 
-        public void LoadAssets(string[] assetsPath, Action callBack)
+        public void LoadAssets(string[] assetsPath, Action<object> callBack)
         {
             _loaderManager.Load(assetsPath, callBack);
         }
 
-        public void LoadAssetsBatch(string[] assetsPath, Action callBack)
+        public void LoadAssets(string[] assetsPath, Action<object> callBack, object data)
         {
-            _loaderManager.LoadBatch(assetsPath, callBack);
+            _loaderManager.Load(assetsPath, callBack, data);
         }
 
-        public T GetAssets<T>(string path) where T : Object
+        public void LoadAssetsBatch(string[] assetsPath, Action<object> callBack)
         {
-            return bundleManager.GetAssets<T>(path);
+            _loaderManager.LoadBatch(assetsPath, callBack, null);
         }
 
-        public T GetAssets<T>(string abName, string itemName) where T : Object
+        public void LoadAssetsBatch(string[] assetsPath, Action<object> callBack, object data)
         {
-            return bundleManager.GetAssets<T>(abName, itemName);
+            _loaderManager.LoadBatch(assetsPath, callBack, data);
+        }
+
+        public void GetAssets<T>(string path, Action<T> callBack) where T : Object
+        {
+            if (bundleManager.HasBundleByAssetsPath(path))
+            {
+                bundleManager.GetAssets(path, callBack);
+            }
+            else
+            {
+                _loaderManager.Load(new[] {path}, (cb) =>
+                {
+                    var mcb = cb as Action<T>;
+                    bundleManager.GetAssets(path, mcb);
+                }, callBack);
+            }
         }
     }
 }

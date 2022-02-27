@@ -22,10 +22,5 @@ namespace AAMT
         {
             if (OnUpdate != null) OnUpdate();
         }
-
-        public void Coroutine(IEnumerator routine)
-        {
-            StartCoroutine(routine);
-        }
     }
 }

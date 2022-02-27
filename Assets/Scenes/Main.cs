@@ -1,7 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Management.Instrumentation;
+using System.Threading;
+using System.Threading.Tasks;
 using AAMT;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace GameLogic
 {
@@ -9,8 +14,12 @@ namespace GameLogic
     {
         public GameObject loadButton;
         public GameObject loadButtonBatch;
-        public UILabel label;
+        public UILabel _loadTimeLabel;
+        public UILabel _instanceTimeLabel;
         public Transform roleLayer;
+        public GameObject loadingImg;
+
+        #region 配置
 
         private string[] pathList = new string[]
         {
@@ -376,6 +385,8 @@ namespace GameLogic
             "roles/prefabs/yz_08_lv3_low.prefab"
         };
 
+        #endregion
+
         private void Awake()
         {
             QualitySettings.vSyncCount = 1;
@@ -383,12 +394,14 @@ namespace GameLogic
             QualitySettings.vSyncCount = 0;
         }
 
-        private System.Diagnostics.Stopwatch stopwatch;
+        private System.Diagnostics.Stopwatch _loadStopwatch;
+        private System.Diagnostics.Stopwatch _instanceStopwatch;
 
         void Start()
         {
-            stopwatch = new System.Diagnostics.Stopwatch();
-
+            loadingImg.SetActive(false);
+            _loadStopwatch = new System.Diagnostics.Stopwatch();
+            _instanceStopwatch = new System.Diagnostics.Stopwatch();
             if (loadButton != null) UIEventListener.Get(loadButton).onClick = OnLoad;
             if (loadButtonBatch != null) UIEventListener.Get(loadButtonBatch).onClick = OnLoadBatch;
         }
@@ -396,44 +409,65 @@ namespace GameLogic
 
         private void OnLoad(GameObject go)
         {
-            stopwatch.Start();
+            loadingImg.SetActive(true);
+            _loadTimeLabel.text = "开始加载...";
+            _loadStopwatch.Start();
             AssetsManager.Instance.LoadAssets(pathList, OnLoadComplete1);
         }
 
         private void OnLoadBatch(GameObject go)
         {
-            stopwatch.Start();
-            PlayerPrefs.SetString("SetTime", DateTime.Now.ToShortTimeString());
+            loadingImg.SetActive(true);
+            _loadTimeLabel.text = "开始加载...";
+            _loadStopwatch.Start();
             AssetsManager.Instance.LoadAssetsBatch(pathList, OnLoadComplete2);
         }
 
-        private void OnLoadComplete1()
+        private void OnLoadComplete1(object data)
         {
+            SetUseTimeView();
+            _instanceStopwatch.Start();
             foreach (var path in pathList)
             {
-                var obj = AssetsManager.Instance.GetAssets<GameObject>(path);
-                var go = GameObject.Instantiate(obj);
-                go.transform.position = RandomPosition();
-                go.transform.parent = roleLayer;
+                AssetsManager.Instance.GetAssets<GameObject>(path, obj =>
+                {
+                    if (obj == null) return;
+                    var go = Instantiate(obj);
+                    go.transform.position = RandomPosition();
+                    go.transform.parent = roleLayer;
+                });
             }
-            SetUseTimeView();
+
+            loadingImg.SetActive(false);
+
+            _instanceStopwatch.Stop();
+            _instanceTimeLabel.text = $"instance used time:{_instanceStopwatch.Elapsed.TotalSeconds} s";
         }
 
-        private void OnLoadComplete2()
+        private void OnLoadComplete2(object data)
         {
+            SetUseTimeView();
+            _instanceStopwatch.Start();
             foreach (var path in pathList)
             {
-                var go = AssetsManager.Instance.GetAssets<GameObject>(path);
-                Instantiate(go, RandomPosition(), Quaternion.identity, roleLayer);
+                AssetsManager.Instance.GetAssets<GameObject>(path, go =>
+                {
+                    Debug.LogFormat("GetAssets:{0}", go.name);
+                    if (go != null) Instantiate(go, RandomPosition(), Quaternion.identity, roleLayer);
+                });
             }
-            SetUseTimeView();
+
+            loadingImg.SetActive(false);
+
+            _instanceStopwatch.Stop();
+            _instanceTimeLabel.text = $"instance used time:{_instanceStopwatch.Elapsed.TotalSeconds} s";
         }
 
         private void SetUseTimeView()
         {
-            stopwatch.Stop();
-            var str = $"used time:{stopwatch.Elapsed.TotalSeconds} s";
-            label.text = str;
+            _loadStopwatch.Stop();
+            var str = $"load used time:{_loadStopwatch.Elapsed.TotalSeconds} s";
+            _loadTimeLabel.text = str;
         }
 
         private Vector3 RandomPosition()
@@ -443,9 +477,12 @@ namespace GameLogic
             return new Vector3(x, 0, z);
         }
 
-        // Update is called once per frame
         void Update()
         {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Application.Quit();
+            }
         }
 
         private void OnGUI()

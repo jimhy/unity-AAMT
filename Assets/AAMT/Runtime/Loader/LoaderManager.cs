@@ -16,14 +16,24 @@ namespace AAMT
             }
         }
 
-        internal void Load(string[] path, Action callBack)
+        internal void Load(string[] path, Action<object> callBack)
         {
-            if (_loader != null) _loader.Load(path, callBack);
+            _loader.Load(path, callBack, null);
         }
 
-        internal void LoadBatch(string[] path, Action callBack)
+        internal void Load(string[] path, Action<object> callBack, object data)
         {
-            if (_loaderBatch != null) _loaderBatch.Load(path, callBack);
+            if (_loader != null) _loader.Load(path, callBack, data);
+        }
+
+        internal void LoadBatch(string[] path, Action<object> callBack)
+        {
+            LoadBatch(path, callBack, null);
+        }
+
+        internal void LoadBatch(string[] path, Action<object> callBack, object data)
+        {
+            if (_loaderBatch != null) _loaderBatch.Load(path, callBack, data);
         }
     }
 }

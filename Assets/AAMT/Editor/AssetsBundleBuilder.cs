@@ -36,7 +36,7 @@ namespace AAMT.Editor
             {
                 case BuildSetting.BuildTarget.windows:
                     return BuildTarget.StandaloneWindows;
-                case BuildSetting.BuildTarget.android_1:
+                case BuildSetting.BuildTarget.android:
                     return BuildTarget.Android;
                 case BuildSetting.BuildTarget.ios:
                     return BuildTarget.iOS;

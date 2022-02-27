@@ -7,18 +7,19 @@ namespace AAMT
 {
     [CreateAssetMenu(fileName = "BuildSetting", menuName = "AAMT/BuildSetting", order = 0)]
     public class BuildSetting : ScriptableObject
-    { 
+    {
         [Serializable]
         public enum LoadType
         {
             LocalAssets,
             Bundle,
         }
+
         [Serializable]
         public enum BuildTarget
         {
             windows,
-            android_1,
+            android,
             ios,
         }
 
@@ -62,6 +63,7 @@ namespace AAMT
 #if UNITY_EDITOR
             var sprite =
                 AssetDatabase.LoadAssetAtPath<UnityEngine.Object>("Assets/AAMT/Data/BuildSetting.asset");
+            Debug.LogFormat("Load buildSetting.assets bundle.path={0}", "Assets/AAMT/Data/BuildSetting.asset");
             _buildSetting = ScriptableObject.Instantiate(sprite) as BuildSetting;
             if (_buildSetting != null) _buildSetting.Init();
 #else
@@ -73,6 +75,7 @@ namespace AAMT
             }
 
             var path = $"{Application.streamingAssetsPath}/{buildTag}/BuildSetting.asset.ab".ToLower();
+            Debug.LogFormat("Load buildSetting.assets bundle.path={0}", path);
             var bundle =
                 AssetBundle.LoadFromFile(path);
             _buildSetting = bundle.LoadAsset<BuildSetting>("buildsetting.asset");
@@ -85,7 +88,7 @@ namespace AAMT
             switch (Application.platform)
             {
                 case RuntimePlatform.Android:
-                    return BuildTarget.android_1.ToString();
+                    return BuildTarget.android.ToString();
                 case RuntimePlatform.IPhonePlayer:
                     return BuildTarget.ios.ToString();
                 case RuntimePlatform.WindowsEditor:

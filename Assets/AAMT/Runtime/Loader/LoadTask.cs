@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace AAMT
@@ -8,71 +9,64 @@ namespace AAMT
     public class LoadTask
     {
         private readonly BundleManager _bundleManager;
-        private string _resPath;
-        private Action _callBack;
+        private Action<object> _callBack;
+        private readonly object _data;
 
-        public LoadTask(string resPath, Action callBack)
+        private static readonly FlexibleDictionary<string, bool> CommonLoadingAbNames =
+            new FlexibleDictionary<string, bool>();
+
+        private readonly List<string> _loadingAbNames;
+
+        private LoadTask(string[] resPaths, Action<object> callBack, object data)
         {
+            _loadingAbNames = new List<string>();
             _bundleManager = AssetsManager.Instance.bundleManager;
-            _resPath = resPath.ToLower();
+            _data = data;
             _callBack = callBack;
+            Init(resPaths);
         }
 
-        public void Start()
+        public static LoadTask GetTask(string[] resPath, Action<object> callBack, object data)
         {
-            if (string.IsNullOrEmpty(_resPath))
+            return new LoadTask(resPath, callBack, data);
+        }
+
+        private void Init(string[] resPaths)
+        {
+            foreach (var resPath in resPaths)
+            {
+                InitPath(resPath);
+            }
+        }
+
+        private void InitPath(string resPath)
+        {
+            if (string.IsNullOrEmpty(resPath))
             {
                 Debug.LogError("加载的资源为空.");
                 OnLoadComplete();
                 return;
             }
 
-            if (!_bundleManager.pathToBundle.ContainsKey(_resPath))
+            if (!_bundleManager.pathToBundle.ContainsKey(resPath))
             {
-                Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}", _resPath);
+                Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}", resPath);
                 OnLoadComplete();
                 return;
             }
 
-            StartLoad();
-        }
+            var abName = _bundleManager.pathToBundle[resPath];
 
-        private async void StartLoad()
-        {
-            var abName = _bundleManager.pathToBundle[_resPath];
-            //加载依赖项
-
-            var results = await LoadDependencies(abName);
-            foreach (var assetBundleCreateRequest in results)
+            if (AddToAbNameList(abName))
             {
-                AssetsManager.Instance.bundleManager.AddBundle(assetBundleCreateRequest.assetBundle);
+                _loadingAbNames.Add(abName);
+                DetDependenciesAbNames(abName);
             }
-
-            if (!_bundleManager.HasBundleByBundleName(abName))
-            {
-                var abRequest = await Load(abName);
-                AssetsManager.Instance.bundleManager.AddBundle(abRequest.assetBundle);
-            }
-
-            OnLoadComplete();
         }
 
-        private Task<AssetBundleCreateRequest> Load(string abName)
+        private void DetDependenciesAbNames(string sourceAbName)
         {
-            var abPath = $"{BuildSetting.AssetSetting.GetLoadPath}/{abName}";
-            var result = AssetBundle.LoadFromFileAsync(abPath);
-            return Task.FromResult(result);
-        }
-
-        /// <summary>
-        /// 加载依赖
-        /// </summary>
-        /// <param name="loadPath"></param>
-        /// <returns></returns>
-        private Task<AssetBundleCreateRequest[]> LoadDependencies(string targAbName)
-        {
-            var tasks = new List<Task<AssetBundleCreateRequest>>();
-            var abPaths = _bundleManager.assetBundleManifest.GetAllDependencies(targAbName);
+            var abPaths = _bundleManager.assetBundleManifest.GetAllDependencies(sourceAbName);
             for (int i = 0; i < abPaths.Length; i++)
             {
                 var abName = abPaths[i].ToLower();
@@ -81,16 +75,66 @@ namespace AAMT
                     continue;
                 }
 
-                tasks.Add(Load(abName));
+                if (AddToAbNameList(abName))
+                {
+                    _loadingAbNames.Add(abName);
+                }
+            }
+        }
+
+        public void Run()
+        {
+            foreach (var loadingAbName in _loadingAbNames)
+            {
+                AssetsManagerRuntime.Instance.StartCoroutine(Load(loadingAbName));
+            }
+        }
+
+        IEnumerator Load(string abName)
+        {
+            var abPath = $"{BuildSetting.AssetSetting.GetLoadPath}/{abName}";
+            var request = AssetBundle.LoadFromFileAsync(abPath);
+            yield return request;
+            if (request.assetBundle == null)
+            {
+                Debug.LogErrorFormat("加载资源失败,abName={0}", abName);
+            }
+            else
+            {
+                _bundleManager.AddBundle(request.assetBundle);
+                OnLoadOnAbComplete(abName);
+            }
+        }
+
+        private void OnLoadOnAbComplete(string abName)
+        {
+            var i = _loadingAbNames.IndexOf(abName);
+            if (i != -1)
+            {
+                _loadingAbNames.RemoveAt(i);
             }
 
-            return Task.WhenAll(tasks);
+            if (CommonLoadingAbNames.ContainsKey(abName))
+            {
+                CommonLoadingAbNames.Remove(abName);
+            }
+
+            if (_loadingAbNames.Count == 0)
+            {
+                OnLoadComplete();
+            }
+        }
+
+        private bool AddToAbNameList(string abName)
+        {
+            if (CommonLoadingAbNames.ContainsKey(abName)) return false;
+            CommonLoadingAbNames.Add(abName, true);
+            return true;
         }
 
         private void OnLoadComplete()
         {
-            _resPath = null;
-            _callBack?.Invoke();
+            _callBack?.Invoke(_data);
             _callBack = null;
         }
     }

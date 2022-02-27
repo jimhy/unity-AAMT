@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace AAMT
@@ -13,7 +11,7 @@ namespace AAMT
     {
         private readonly BundleManager _bundleManager;
         private string[] _resPathList;
-        private Action _callBack;
+        private Action<object> _callBack;
         private int _loadIndex;
 
         public BundleLoader()
@@ -21,11 +19,16 @@ namespace AAMT
             _bundleManager = AssetsManager.Instance.bundleManager;
         }
 
-        public void Load(string[] path, Action callBack)
+        public void Load(string[] path, Action<object> callBack)
         {
             _resPathList = path;
             _callBack = callBack;
             StartLoad();
+        }
+
+        public void Load(string[] path, Action<object> callBack, object data)
+        {
+            throw new NotImplementedException();
         }
 
         private void StartLoad()
@@ -58,7 +61,7 @@ namespace AAMT
             if (_bundleManager.HasBundleByAssetsPath(path))
                 StartLoad();
             else
-                AssetsManagerRuntime.Instance.Coroutine(LoadAssetBundle(path));
+                AssetsManagerRuntime.Instance.StartCoroutine(LoadAssetBundle(path));
         }
 
 
@@ -106,7 +109,7 @@ namespace AAMT
 
         private void OnLoadComplete()
         {
-            _callBack?.Invoke();
+            _callBack?.Invoke(null);
         }
     }
 }

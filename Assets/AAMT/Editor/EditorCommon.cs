@@ -4,13 +4,19 @@ namespace AAMT
 {
     public class EditorCommon
     {
-        public static void UpdateProgress(string title, int progress, int progressMax, string desc)
+        internal static void UpdateProgress(string title, int progress, int progressMax, string desc)
         {
             title = title + "...[" + progress + " - " + progressMax + "]";
             float value = (float) progress / (float) progressMax;
             EditorUtility.DisplayProgressBar(title, desc, value);
         }
-        public static void ClearConsole()
+
+        internal static void ClearProgressBar()
+        {
+            EditorUtility.ClearProgressBar();
+        }
+        
+        internal static void ClearConsole()
         {
             var assembly = System.Reflection.Assembly.GetAssembly(typeof(SceneView));
             var type = assembly.GetType("UnityEditor.LogEntries");
