@@ -324,6 +324,9 @@
      <Reference Include="log4netPlastic">
      <HintPath>D:\workspace\JAssetsManager\Library\PackageCache\com.unity.collab-proxy@1.15.12\Lib\Editor\PlasticSCM\log4netPlastic.dll</HintPath>
      </Reference>
+     <Reference Include="TexturePackerImporter">
+     <HintPath>D:\workspace\JAssetsManager\Assets\codeandweb.com\Editor\TexturePackerImporter.dll</HintPath>
+     </Reference>
      <Reference Include="ReportGeneratorMerged">
      <HintPath>D:\workspace\JAssetsManager\Library\PackageCache\com.unity.testtools.codecoverage@1.0.1\lib\ReportGenerator\ReportGeneratorMerged.dll</HintPath>
      </Reference>

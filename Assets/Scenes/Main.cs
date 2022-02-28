@@ -1,23 +1,18 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Management.Instrumentation;
-using System.Threading;
-using System.Threading.Tasks;
 using AAMT;
 using UnityEngine;
-using UnityEngine.Networking;
+using UnityEngine.U2D;
 
 namespace GameLogic
 {
     public class Main : MonoBehaviour
     {
         public GameObject loadButton;
-        public GameObject loadButtonBatch;
-        public UILabel _loadTimeLabel;
-        public UILabel _instanceTimeLabel;
+        public UILabel loadTimeLabel;
+        public UILabel instanceTimeLabel;
         public Transform roleLayer;
         public GameObject loadingImg;
+        public UITexture texture;
+        public UI2DSprite sprite;
 
         #region 配置
 
@@ -402,55 +397,56 @@ namespace GameLogic
             loadingImg.SetActive(false);
             _loadStopwatch = new System.Diagnostics.Stopwatch();
             _instanceStopwatch = new System.Diagnostics.Stopwatch();
-            if (loadButton != null) UIEventListener.Get(loadButton).onClick = OnLoad;
-            if (loadButtonBatch != null) UIEventListener.Get(loadButtonBatch).onClick = OnLoadBatch;
+            if (loadButton != null) UIEventListener.Get(loadButton).onClick = OnLoad1;
         }
-
 
         private void OnLoad(GameObject go)
         {
             loadingImg.SetActive(true);
-            _loadTimeLabel.text = "开始加载...";
+            loadTimeLabel.text = "开始加载...";
             _loadStopwatch.Start();
-            AssetsManager.Instance.LoadAssets(pathList, OnLoadComplete1);
+            AssetsManager.LoadAssets(pathList, OnLoadComplete);
         }
 
-        private void OnLoadBatch(GameObject go)
+        private void OnLoad1(GameObject go)
         {
             loadingImg.SetActive(true);
-            _loadTimeLabel.text = "开始加载...";
+            loadTimeLabel.text = "开始加载...";
             _loadStopwatch.Start();
-            AssetsManager.Instance.LoadAssetsBatch(pathList, OnLoadComplete2);
-        }
-
-        private void OnLoadComplete1(object data)
-        {
-            SetUseTimeView();
-            _instanceStopwatch.Start();
-            foreach (var path in pathList)
+            Debug.Log("StartLoad role list");
+            // AssetsManager.GetAssets<GameObject>(pathList, go =>
+            // {
+            //     loadingImg.SetActive(false);
+            //     SetUseTimeView();
+            //     Debug.LogFormat("complete->{0}", go.name);
+            //     if (go != null) Instantiate(go, RandomPosition(), Quaternion.identity, roleLayer);
+            // });
+            // var uiPath = "UI/Images/BuySpreeRound.png";
+            // Debug.Log("StartLoad image");
+            // AssetsManager.GetAssets<Texture2D>(uiPath,
+            //     img =>
+            //     {
+            //         Debug.LogFormat("complete->{0}", texture.name);
+            //         texture.mainTexture = img;
+            //     });
+            var uiPath = "ui/userinfo/userinfopanel.png";
+            AssetsManager.GetAssets<ASpriteAtlas>(uiPath, atlas =>
             {
-                AssetsManager.Instance.GetAssets<GameObject>(path, obj =>
+                foreach (var sp in atlas.GetSprites())
                 {
-                    if (obj == null) return;
-                    var go = Instantiate(obj);
-                    go.transform.position = RandomPosition();
-                    go.transform.parent = roleLayer;
-                });
-            }
-
-            loadingImg.SetActive(false);
-
-            _instanceStopwatch.Stop();
-            _instanceTimeLabel.text = $"instance used time:{_instanceStopwatch.Elapsed.TotalSeconds} s";
+                    Debug.Log(sp.name);
+                }
+            });
         }
 
-        private void OnLoadComplete2(object data)
+        private void OnLoadComplete(object data)
         {
             SetUseTimeView();
             _instanceStopwatch.Start();
             foreach (var path in pathList)
             {
-                AssetsManager.Instance.GetAssets<GameObject>(path, go =>
+                Debug.LogFormat("Start to get assets:{0}", path);
+                AssetsManager.GetAssets<GameObject>(path, go =>
                 {
                     Debug.LogFormat("GetAssets:{0}", go.name);
                     if (go != null) Instantiate(go, RandomPosition(), Quaternion.identity, roleLayer);
@@ -460,14 +456,14 @@ namespace GameLogic
             loadingImg.SetActive(false);
 
             _instanceStopwatch.Stop();
-            _instanceTimeLabel.text = $"instance used time:{_instanceStopwatch.Elapsed.TotalSeconds} s";
+            instanceTimeLabel.text = $"instance used time:{_instanceStopwatch.Elapsed.TotalSeconds} s";
         }
 
         private void SetUseTimeView()
         {
             _loadStopwatch.Stop();
             var str = $"load used time:{_loadStopwatch.Elapsed.TotalSeconds} s";
-            _loadTimeLabel.text = str;
+            loadTimeLabel.text = str;
         }
 
         private Vector3 RandomPosition()

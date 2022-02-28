@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -15,7 +16,7 @@ namespace AAMT
         private LoaderManager _loaderManager;
         internal BundleManager bundleManager { get; private set; }
 
-        public static AssetsManager Instance
+        internal static AssetsManager Instance
         {
             get
             {
@@ -42,39 +43,38 @@ namespace AAMT
             runtimeGameObject.AddComponent<AssetsManagerRuntime>();
         }
 
-        public void LoadAssets(string[] assetsPath, Action<object> callBack)
+        public static void LoadAssets(string[] assetsPath, Action<object> callBack)
         {
-            _loaderManager.Load(assetsPath, callBack);
+            Instance._loaderManager.Load(assetsPath, callBack, null);
         }
 
-        public void LoadAssets(string[] assetsPath, Action<object> callBack, object data)
+        public static void LoadAssets(string[] assetsPath, Action<object> callBack, object data)
         {
-            _loaderManager.Load(assetsPath, callBack, data);
+            Instance._loaderManager.Load(assetsPath, callBack, data);
         }
 
-        public void LoadAssetsBatch(string[] assetsPath, Action<object> callBack)
+        public static void GetAssets<T>(string path, Action<T> callBack) where T : Object
         {
-            _loaderManager.LoadBatch(assetsPath, callBack, null);
-        }
-
-        public void LoadAssetsBatch(string[] assetsPath, Action<object> callBack, object data)
-        {
-            _loaderManager.LoadBatch(assetsPath, callBack, data);
-        }
-
-        public void GetAssets<T>(string path, Action<T> callBack) where T : Object
-        {
-            if (bundleManager.HasBundleByAssetsPath(path))
+            path = path.ToLower();
+            if (Instance.bundleManager.HasBundleByAssetsPath(path))
             {
-                bundleManager.GetAssets(path, callBack);
+                Instance.bundleManager.GetAssets(path, callBack);
             }
             else
             {
-                _loaderManager.Load(new[] {path}, (cb) =>
+                Instance._loaderManager.Load(new[] {path}, (cb) =>
                 {
                     var mcb = cb as Action<T>;
-                    bundleManager.GetAssets(path, mcb);
+                    Instance.bundleManager.GetAssets(path, mcb);
                 }, callBack);
+            }
+        }
+
+        public static void GetAssets<T>(string[] paths, Action<T> callBack) where T : Object
+        {
+            foreach (var path in paths)
+            {
+                GetAssets(path, callBack);
             }
         }
     }

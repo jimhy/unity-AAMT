@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -41,6 +42,7 @@ namespace AAMT
 
         private void InitPath(string resPath)
         {
+            resPath = Tools.FilterSpriteUri(resPath);
             if (string.IsNullOrEmpty(resPath))
             {
                 Debug.LogError("加载的资源为空.");
@@ -48,14 +50,14 @@ namespace AAMT
                 return;
             }
 
-            if (!_bundleManager.pathToBundle.ContainsKey(resPath))
+            if (!_bundleManager.PathToBundle.ContainsKey(resPath))
             {
                 Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}", resPath);
                 OnLoadComplete();
                 return;
             }
 
-            var abName = _bundleManager.pathToBundle[resPath];
+            var abName = _bundleManager.PathToBundle[resPath];
 
             if (AddToAbNameList(abName))
             {
@@ -66,7 +68,7 @@ namespace AAMT
 
         private void DetDependenciesAbNames(string sourceAbName)
         {
-            var abPaths = _bundleManager.assetBundleManifest.GetAllDependencies(sourceAbName);
+            var abPaths = _bundleManager.AssetBundleManifest.GetAllDependencies(sourceAbName);
             for (int i = 0; i < abPaths.Length; i++)
             {
                 var abName = abPaths[i].ToLower();

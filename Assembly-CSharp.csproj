@@ -88,8 +88,8 @@
      <Compile Include="Assets\NGUI\Scripts\Interaction\UIProgressBar.cs" />
      <Compile Include="Assets\Scenes\Main.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UIDragDropItem.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Loader\LoadTask.cs" />
      <Compile Include="Assets\NGUI\Scripts\Internal\PropertyReference.cs" />
-     <Compile Include="Assets\AAMT\Runtime\Loader\BundleLoader.cs" />
      <Compile Include="Assets\NGUI\Scripts\Tweening\TweenOrthoSize.cs" />
      <Compile Include="Assets\Bindler\Role\ChessFixEffect.cs" />
      <Compile Include="Assets\NGUI\Scripts\Internal\ActiveAnimation.cs" />
@@ -184,7 +184,7 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UIInput.cs" />
      <Compile Include="Assets\Bindler\Role\DynamicBoneColliderBase.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\Other\Spin.cs" />
-     <Compile Include="Assets\AAMT\Runtime\Loader\BundleLoaderBatch.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Loader\BundleLoader.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UIViewport.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UIButtonKeys.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\Other\PerspectivePixelPerfect.cs" />
@@ -210,7 +210,8 @@
      <Compile Include="Assets\Bindler\SimpleAnimationComponent\CustomPlayableExtensions.cs" />
      <Compile Include="Assets\NGUI\Scripts\Internal\NGUIDebug.cs" />
      <Compile Include="Assets\NGUI\Scripts\Tweening\TweenRotation.cs" />
-     <Compile Include="Assets\AAMT\Runtime\Loader\LoadTask.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Tools.cs" />
+     <Compile Include="Assets\AAMT\Runtime\SpriteAtlasManager.cs" />
      <None Include="Assets\Res\Shaders\UVliudong02.shader" />
      <None Include="Assets\Res\Shaders\GuideMask.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo20.txt" />
@@ -309,6 +310,7 @@
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored 3.shader" />
      <None Include="Assets\Res\Shaders\AlphaValue.shader" />
      <None Include="Assets\Res\Shaders\moxing_fresnel.shader" />
+     <None Include="Assets\codeandweb.com\Readme.txt" />
      <None Include="Assets\Res\Shaders\ice.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Fantasy\Fantasy Font - Normal.txt" />
      <None Include="Assets\Res\Shaders\Heat_Distortion.shader" />

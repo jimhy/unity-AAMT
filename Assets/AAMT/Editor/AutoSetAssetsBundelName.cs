@@ -203,7 +203,8 @@ namespace AAMT
                 path.EndsWith(".meta") ||
                 path.EndsWith(".cs") ||
                 path.EndsWith(".xml") ||
-                path.EndsWith(".txt")
+                path.EndsWith(".txt") ||
+                path.EndsWith(".tpsheet")
                )
                 return false;
             return true;
