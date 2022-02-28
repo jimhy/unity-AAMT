@@ -11,9 +11,9 @@ namespace AAMT
         {
             _bundleManager = AssetsManager.Instance.bundleManager;
         }
-        public void Load(string[] path, Action<object> callBack, object data)
+        public LoaderHandler Load(string[] path)
         {
-            LoadTask.GetTask(path, callBack, data).Run();
+            return LoadTask.GetTask(path).Run();
         }
     }
 }

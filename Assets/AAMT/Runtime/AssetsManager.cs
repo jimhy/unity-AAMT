@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -43,14 +41,9 @@ namespace AAMT
             runtimeGameObject.AddComponent<AssetsManagerRuntime>();
         }
 
-        public static void LoadAssets(string[] assetsPath, Action<object> callBack)
+        public static LoaderHandler LoadAssets(string[] assetsPath)
         {
-            Instance._loaderManager.Load(assetsPath, callBack, null);
-        }
-
-        public static void LoadAssets(string[] assetsPath, Action<object> callBack, object data)
-        {
-            Instance._loaderManager.Load(assetsPath, callBack, data);
+            return Instance._loaderManager.Load(assetsPath);
         }
 
         public static void GetAssets<T>(string path, Action<T> callBack) where T : Object
@@ -62,11 +55,12 @@ namespace AAMT
             }
             else
             {
-                Instance._loaderManager.Load(new[] {path}, (cb) =>
+                var handler = Instance._loaderManager.Load(new[] {path});
+                handler.customData = callBack;
+                handler.onComplete = loaderHandler =>
                 {
-                    var mcb = cb as Action<T>;
-                    Instance.bundleManager.GetAssets(path, mcb);
-                }, callBack);
+                    Instance.bundleManager.GetAssets(path, loaderHandler.customData as Action<T>);
+                };
             }
         }
 

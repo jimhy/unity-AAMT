@@ -10,26 +10,23 @@ namespace AAMT
     public class LoadTask
     {
         private readonly BundleManager _bundleManager;
-        private Action<object> _callBack;
-        private readonly object _data;
+        private LoaderHandler _loaderHandler;
 
         private static readonly FlexibleDictionary<string, bool> CommonLoadingAbNames =
             new FlexibleDictionary<string, bool>();
 
         private readonly List<string> _loadingAbNames;
 
-        private LoadTask(string[] resPaths, Action<object> callBack, object data)
+        private LoadTask(string[] resPaths)
         {
             _loadingAbNames = new List<string>();
             _bundleManager = AssetsManager.Instance.bundleManager;
-            _data = data;
-            _callBack = callBack;
             Init(resPaths);
         }
 
-        public static LoadTask GetTask(string[] resPath, Action<object> callBack, object data)
+        public static LoadTask GetTask(string[] resPath)
         {
-            return new LoadTask(resPath, callBack, data);
+            return new LoadTask(resPath);
         }
 
         private void Init(string[] resPaths)
@@ -84,12 +81,16 @@ namespace AAMT
             }
         }
 
-        public void Run()
+        public LoaderHandler Run()
         {
+            _loaderHandler = new LoaderHandler();
+            _loaderHandler.totalCount = _loadingAbNames.Count;
             foreach (var loadingAbName in _loadingAbNames)
             {
                 AssetsManagerRuntime.Instance.StartCoroutine(Load(loadingAbName));
             }
+
+            return _loaderHandler;
         }
 
         IEnumerator Load(string abName)
@@ -110,6 +111,13 @@ namespace AAMT
 
         private void OnLoadOnAbComplete(string abName)
         {
+            _loaderHandler.currentCount++;
+            if (_loaderHandler.currentCount > _loaderHandler.totalCount)
+            {
+                _loaderHandler.currentCount = _loaderHandler.totalCount;
+                Debug.LogErrorFormat("这里不可能出现这种问题,请检查逻辑.");
+            }
+            _loaderHandler.OnProgress();
             var i = _loadingAbNames.IndexOf(abName);
             if (i != -1)
             {
@@ -136,8 +144,7 @@ namespace AAMT
 
         private void OnLoadComplete()
         {
-            _callBack?.Invoke(_data);
-            _callBack = null;
+            _loaderHandler.OnComplete();
         }
     }
 }

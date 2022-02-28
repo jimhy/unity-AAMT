@@ -14,9 +14,33 @@ namespace AAMT
             }
         }
 
-        internal void Load(string[] path, Action<object> callBack, object data)
+        internal LoaderHandler Load(string[] path)
         {
-            if (_loader != null) _loader.Load(path, callBack, data);
+            if (_loader != null) return _loader.Load(path);
+            return default;
+        }
+    }
+
+    public class LoaderHandler
+    {
+        internal int currentCount;
+        internal int totalCount;
+        public long currentBytes { get; internal set; }
+        public long totalBytes { get; internal set; }
+        public object customData { get; set; }
+        public Action<LoaderHandler> onComplete;
+        public Action<LoaderHandler> onProgress;
+
+        public float progress => totalCount == 0 ? 0 : (float) currentCount / (float) totalCount;
+
+        internal void OnProgress()
+        {
+            onProgress?.Invoke(this);
+        }
+
+        internal void OnComplete()
+        {
+            onComplete?.Invoke(this);
         }
     }
 }

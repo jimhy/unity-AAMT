@@ -1,6 +1,5 @@
 using AAMT;
 using UnityEngine;
-using UnityEngine.U2D;
 
 namespace GameLogic
 {
@@ -13,6 +12,7 @@ namespace GameLogic
         public GameObject loadingImg;
         public UITexture texture;
         public UI2DSprite sprite;
+        public UISlider slider;
 
         #region 配置
 
@@ -394,10 +394,11 @@ namespace GameLogic
 
         void Start()
         {
+            slider.value = 0;
             loadingImg.SetActive(false);
             _loadStopwatch = new System.Diagnostics.Stopwatch();
             _instanceStopwatch = new System.Diagnostics.Stopwatch();
-            if (loadButton != null) UIEventListener.Get(loadButton).onClick = OnLoad1;
+            if (loadButton != null) UIEventListener.Get(loadButton).onClick = OnLoad;
         }
 
         private void OnLoad(GameObject go)
@@ -405,7 +406,12 @@ namespace GameLogic
             loadingImg.SetActive(true);
             loadTimeLabel.text = "开始加载...";
             _loadStopwatch.Start();
-            AssetsManager.LoadAssets(pathList, OnLoadComplete);
+            var handler = AssetsManager.LoadAssets(pathList);
+            handler.onComplete = OnLoadComplete;
+            handler.onProgress = loaderHandler =>
+            {
+                slider.value = loaderHandler.progress;
+            };
         }
 
         private void OnLoad1(GameObject go)
@@ -439,7 +445,7 @@ namespace GameLogic
             });
         }
 
-        private void OnLoadComplete(object data)
+        private void OnLoadComplete(LoaderHandler handler)
         {
             SetUseTimeView();
             _instanceStopwatch.Start();
