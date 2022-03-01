@@ -7,16 +7,49 @@ using Object = UnityEngine.Object;
 
 namespace AAMT
 {
+    public class BundleHandle
+    {
+        internal int ReferenceCount { get; private set; }
+        private readonly AssetBundle _assetBundle;
+
+        internal BundleHandle(AssetBundle assetBundle)
+        {
+            _assetBundle = assetBundle;
+        }
+
+        internal AssetBundleRequest LoadAssetAsync<T>(string assetName) where T : Object
+        {
+            ReferenceCount++;
+            return _assetBundle.LoadAssetAsync<T>(assetName);
+        }
+
+        internal AssetBundleRequest LoadAssetWithSubAssetsAsync<T>(string assetName) where T : Object
+        {
+            ReferenceCount++;
+            return _assetBundle.LoadAssetWithSubAssetsAsync<T>(assetName);
+        }
+
+        internal void Release()
+        {
+            if (--ReferenceCount <= 0) Destroy();
+        }
+
+        internal void Destroy()
+        {
+            _assetBundle.UnloadAsync(true);
+        }
+    }
+
     public class BundleManager
     {
         internal AssetBundleManifest AssetBundleManifest { get; private set; }
         internal Dictionary<string, string> PathToBundle { get; private set; }
-        internal Dictionary<string, AssetBundle> Bundles { get; set; }
-        private SpriteAtlasManager _atlasManager;
+        internal Dictionary<string, BundleHandle> Bundles { get; }
+        private readonly SpriteAtlasManager _atlasManager;
 
         public BundleManager()
         {
-            Bundles = new Dictionary<string, AssetBundle>();
+            Bundles = new Dictionary<string, BundleHandle>();
             _atlasManager = new SpriteAtlasManager(this);
             InitManifest();
             InitBundleMap();
@@ -30,7 +63,7 @@ namespace AAMT
             if (mainBundle != null)
                 AssetBundleManifest = mainBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
             else
-                Debug.LogError("mian ab资源加载错误");
+                Debug.LogError("Manifest ab资源加载错误");
 
             mainBundle.Unload(false);
         }
@@ -38,7 +71,7 @@ namespace AAMT
         private void InitBundleMap()
         {
             PathToBundle = new Dictionary<string, string>();
-            var fileName = "assets-width-bundle";
+            const string fileName = "assets-width-bundle";
             var path = $"{BuildSetting.AssetSetting.GetLoadPath}/{fileName}.txt";
             Debug.LogFormat("Load assets-width-bundle file.path={0}", path);
             var content = ReadTextFileData(path);
@@ -57,7 +90,7 @@ namespace AAMT
             }
         }
 
-        internal string ReadTextFileData(string path)
+        private string ReadTextFileData(string path)
         {
             var request = UnityWebRequest.Get(path);
             request.SendWebRequest();
@@ -77,8 +110,8 @@ namespace AAMT
         internal void AddBundle(AssetBundle ab)
         {
             if (ab == null) return;
-            // Debug.LogFormat("AddBundle:{0}", ab.name);
-            if (!Bundles.ContainsKey(ab.name)) Bundles.Add(ab.name, ab);
+            Debug.LogFormat("AddBundle:{0}", ab.name);
+            if (!Bundles.ContainsKey(ab.name)) Bundles.Add(ab.name, new BundleHandle(ab));
             else Debug.LogErrorFormat("重复添加ab包，应该是出现了重复加载，会出现双份内存的情况，请检查。path:{0}", ab.name);
         }
 
@@ -102,32 +135,25 @@ namespace AAMT
 
         public void GetAssets<T>(string path, Action<T> callBack) where T : Object
         {
-            if (typeof(T) == typeof(Sprite) || typeof(T) == typeof(ASpriteAtlas)) _atlasManager.GetAssets(path, callBack);
+            if (typeof(T) == typeof(Sprite) || typeof(T) == typeof(AAMTSpriteAtlas))
+                _atlasManager.GetAssets(path, callBack);
             else AssetsManagerRuntime.Instance.StartCoroutine(StartGetAssets(path, callBack));
         }
 
         private IEnumerator<AssetBundleRequest> StartGetAssets<T>(string path, Action<T> callBack) where T : Object
         {
-            path = path.ToLower();
-            if (!PathToBundle.ContainsKey(path))
+            Tools.ParsingLoadUri(path, out var abName, out var itemName, out _);
+            if (abName == null || itemName == null)
             {
-                Debug.LogErrorFormat("获取资源时，找不到对应的ab包。path:{0}", path);
+                Debug.LogErrorFormat("加载资源失败,abName:{0},itemName:{1}", abName, itemName);
                 callBack?.Invoke(default);
                 yield break;
             }
 
-            var abName = PathToBundle[path];
             if (!Bundles.ContainsKey(abName))
             {
                 callBack?.Invoke(default);
                 yield break;
-            }
-
-            var itemName = path;
-            var n = path.LastIndexOf("/", StringComparison.Ordinal);
-            if (n != -1)
-            {
-                itemName = path.Substring(n + 1);
             }
 
             var request = Bundles[abName].LoadAssetAsync<T>(itemName);
@@ -140,6 +166,36 @@ namespace AAMT
             }
 
             callBack?.Invoke(request.asset as T);
+        }
+
+        internal void Release(string path)
+        {
+            var abName = CheckAndGetAbName(path);
+            if (!string.IsNullOrEmpty(abName)) Bundles[abName].Release();
+        }
+
+        internal void Destroy(string path)
+        {
+            var abName = CheckAndGetAbName(path);
+            if (!string.IsNullOrEmpty(abName)) Bundles[abName].Destroy();
+        }
+
+        private string CheckAndGetAbName(string path)
+        {
+            Tools.ParsingLoadUri(path, out var abName, out _, out _);
+            if (abName == null)
+            {
+                Debug.LogErrorFormat("释放资源失败，找不到abName,path={0}", path);
+                return string.Empty;
+            }
+
+            if (!Bundles.ContainsKey(abName))
+            {
+                Debug.LogErrorFormat("释放资源失败，找不到abName 对应的ab包", path);
+                return string.Empty;
+            }
+
+            return abName;
         }
     }
 }

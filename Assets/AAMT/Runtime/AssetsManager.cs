@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 using Object = UnityEngine.Object;
 
 namespace AAMT
@@ -21,7 +23,7 @@ namespace AAMT
                 if (_instance == null)
                 {
                     _instance = new AssetsManager();
-                    _instance.init();
+                    _instance.Init();
                 }
 
                 return _instance;
@@ -32,7 +34,7 @@ namespace AAMT
         {
         }
 
-        private void init()
+        private void Init()
         {
             bundleManager = new BundleManager();
             _loaderManager = new LoaderManager();
@@ -56,10 +58,13 @@ namespace AAMT
             else
             {
                 var handler = Instance._loaderManager.Load(new[] {path});
-                handler.customData = callBack;
+                handler.customData = new List<object>() {path, callBack};
                 handler.onComplete = loaderHandler =>
                 {
-                    Instance.bundleManager.GetAssets(path, loaderHandler.customData as Action<T>);
+                    var list = loaderHandler.customData as List<object>;
+                    var currentPath = list[0] as string;
+                    var cb = list[1] as Action<T>;
+                    Instance.bundleManager.GetAssets(currentPath, cb);
                 };
             }
         }
@@ -69,6 +74,32 @@ namespace AAMT
             foreach (var path in paths)
             {
                 GetAssets(path, callBack);
+            }
+        }
+
+        public static void Release(string path)
+        {
+            Instance.bundleManager.Release(path);
+        }
+
+        public static void Release(string[] path)
+        {
+            foreach (var s in path)
+            {
+                Release(s);
+            }
+        }
+
+        public static void Destroy(string path)
+        {
+            Instance.bundleManager.Destroy(path);
+        }
+
+        public static void Destroy(string[] path)
+        {
+            foreach (var s in path)
+            {
+                Destroy(s);
             }
         }
     }

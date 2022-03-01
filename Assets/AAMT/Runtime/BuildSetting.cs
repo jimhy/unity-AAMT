@@ -53,7 +53,15 @@ namespace AAMT
         {
             get
             {
+#if UNITY_EDITOR
+                if (Application.isPlaying && _buildSetting == null || !Application.isPlaying)
+                {
+                    LoadAssetSetting();
+                }
+#else
                 if (_buildSetting == null) LoadAssetSetting();
+#endif
+
                 return _buildSetting;
             }
         }

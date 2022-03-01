@@ -24,7 +24,7 @@ namespace AAMT.Editor
             BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.ChunkBasedCompression,
                 GetBuildTarget());
             AssetDatabase.Refresh();
-            
+
             CreateManifestMapFile();
             CreateAssetsListFile();
             Debug.Log("Assets bundle build complete!!");
@@ -150,6 +150,7 @@ namespace AAMT.Editor
         private static void RemoveBundleCache()
         {
             var path = BuildSetting.AssetSetting.GetBuildPath;
+            Debug.LogFormat("path={0}", path);
             if (Directory.Exists(path))
             {
                 Directory.Delete(path, true);

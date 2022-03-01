@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 
 namespace AAMT
 {
-    public class ASpriteAtlas : Object
+    public class AAMTSpriteAtlas : Object
     {
         private Dictionary<string, Sprite> _sprites = new Dictionary<string, Sprite>();
 
@@ -34,9 +34,10 @@ namespace AAMT
 
         internal void Add(AssetBundleRequest request)
         {
-            foreach (Sprite sprite in request.allAssets)
+            foreach (var o in request.allAssets)
             {
-                _sprites[sprite.name] = sprite;
+                var sprite = o as Sprite;
+                if (sprite != null) _sprites[sprite.name] = sprite;
             }
         }
     }
@@ -44,7 +45,7 @@ namespace AAMT
     public class SpriteAtlasManager
     {
         private BundleManager _manager;
-        private Dictionary<string, ASpriteAtlas> _atlasMap = new Dictionary<string, ASpriteAtlas>();
+        private Dictionary<string, AAMTSpriteAtlas> _atlasMap = new Dictionary<string, AAMTSpriteAtlas>();
 
         public SpriteAtlasManager(BundleManager manager)
         {
@@ -55,35 +56,21 @@ namespace AAMT
         {
             if (typeof(T) == typeof(Sprite))
                 AssetsManagerRuntime.Instance.StartCoroutine(StartGetAssets(path, callBack));
-            else if (typeof(T) == typeof(ASpriteAtlas))
+            else if (typeof(T) == typeof(AAMTSpriteAtlas))
                 AssetsManagerRuntime.Instance.StartCoroutine(StartGetAssets2(path, callBack));
         }
 
         private IEnumerator<AssetBundleRequest> StartGetAssets2<T>(string path, Action<T> callBack) where T : Object
         {
-            path = path.ToLower();
-            if (!_manager.PathToBundle.ContainsKey(path))
+            Tools.ParsingLoadUri(path, out var abName, out var atlasName, out _);
+            if (abName == null || atlasName == null)
             {
-                Debug.LogErrorFormat("获取资源时，找不到对应的ab包。path:{0}", path);
+                Debug.LogErrorFormat("加载资源失败,abName:{0},atlasName:{1}", abName, atlasName);
                 callBack?.Invoke(default);
                 yield break;
             }
 
-            var abName = _manager.PathToBundle[path];
-            if (!_manager.Bundles.ContainsKey(abName))
-            {
-                callBack?.Invoke(default);
-                yield break;
-            }
-
-            var atlasName = path;
-            var n = path.LastIndexOf("/", StringComparison.Ordinal);
-            if (n != -1)
-            {
-                atlasName = path.Substring(n + 1);
-            }
-
-            ASpriteAtlas atl;
+            AAMTSpriteAtlas atl;
             if (_atlasMap.ContainsKey(atlasName))
             {
                 atl = _atlasMap[atlasName];
@@ -99,7 +86,7 @@ namespace AAMT
                 yield break;
             }
 
-            atl = new ASpriteAtlas();
+            atl = new AAMTSpriteAtlas();
             _atlasMap.Add(atlasName, atl);
             atl.Add(request);
             callBack?.Invoke(atl as T);
@@ -114,39 +101,15 @@ namespace AAMT
         /// <returns></returns>
         private IEnumerator<AssetBundleRequest> StartGetAssets<T>(string path, Action<T> callBack) where T : Object
         {
-            path = path.ToLower();
-            var n = path.LastIndexOf("?", StringComparison.Ordinal);
-            if (n == -1)
+            Tools.ParsingLoadUri(path, out var abName, out var atlasName, out string spriteName);
+            if (abName == null || atlasName == null || spriteName == null)
             {
-                Debug.LogErrorFormat("获取Sprite资源格式错误");
+                Debug.LogErrorFormat("加载资源失败,abName:{0},atlasName:{1},spriteName:{2}", abName, atlasName, spriteName);
                 callBack?.Invoke(default);
                 yield break;
             }
 
-            var spriteName = path[(n + 1)..];
-            path = path[..n];
-            if (!_manager.PathToBundle.ContainsKey(path))
-            {
-                Debug.LogErrorFormat("获取资源时，找不到对应的ab包。path:{0}", path);
-                callBack?.Invoke(default);
-                yield break;
-            }
-
-            var abName = _manager.PathToBundle[path];
-            if (!_manager.Bundles.ContainsKey(abName))
-            {
-                callBack?.Invoke(default);
-                yield break;
-            }
-
-            var atlasName = path;
-            n = path.LastIndexOf("/", StringComparison.Ordinal);
-            if (n != -1)
-            {
-                atlasName = path[(n + 1)..];
-            }
-
-            ASpriteAtlas atl;
+            AAMTSpriteAtlas atl;
             if (_atlasMap.ContainsKey(atlasName))
             {
                 atl = _atlasMap[atlasName];
@@ -164,10 +127,11 @@ namespace AAMT
             }
 
             Sprite result = default;
-            atl = new ASpriteAtlas();
+            atl = new AAMTSpriteAtlas();
             _atlasMap.Add(atlasName, atl);
             atl.Add(request);
             result = atl.GetSprite(spriteName);
+
             if (result != null) callBack?.Invoke(result as T);
             else callBack?.Invoke(default);
             yield return request;

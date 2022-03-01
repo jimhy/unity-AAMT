@@ -7,6 +7,10 @@ using UnityEngine;
 
 namespace AAMT
 {
+    public class LoadingABHandle
+    {
+        public Type t;
+    }
     public class LoadTask
     {
         private readonly BundleManager _bundleManager;
