@@ -11,6 +11,7 @@ namespace AAMT
     {
         public Type t;
     }
+
     public class LoadTask
     {
         private readonly BundleManager _bundleManager;
@@ -20,10 +21,12 @@ namespace AAMT
             new FlexibleDictionary<string, bool>();
 
         private readonly List<string> _loadingAbNames;
+        private readonly List<string> _alreadyLoadingAbNames;
 
         private LoadTask(string[] resPaths)
         {
             _loadingAbNames = new List<string>();
+            _alreadyLoadingAbNames = new List<string>();
             _bundleManager = AssetsManager.Instance.bundleManager;
             Init(resPaths);
         }
@@ -89,9 +92,16 @@ namespace AAMT
         {
             _loaderHandler = new LoaderHandler();
             _loaderHandler.totalCount = _loadingAbNames.Count;
-            foreach (var loadingAbName in _loadingAbNames)
+            if (_loadingAbNames.Count > 0)
             {
-                AssetsManagerRuntime.Instance.StartCoroutine(Load(loadingAbName));
+                foreach (var loadingAbName in _loadingAbNames)
+                {
+                    AssetsManagerRuntime.Instance.StartCoroutine(Load(loadingAbName));
+                }
+            }
+            else
+            {
+                AssetsManagerRuntime.Instance.StartCoroutine(CheckAlreadyLoadingAbs());
             }
 
             return _loaderHandler;
@@ -121,6 +131,7 @@ namespace AAMT
                 _loaderHandler.currentCount = _loaderHandler.totalCount;
                 Debug.LogErrorFormat("这里不可能出现这种问题,请检查逻辑.");
             }
+
             _loaderHandler.OnProgress();
             var i = _loadingAbNames.IndexOf(abName);
             if (i != -1)
@@ -135,13 +146,18 @@ namespace AAMT
 
             if (_loadingAbNames.Count == 0)
             {
-                OnLoadComplete();
+                AssetsManagerRuntime.Instance.StartCoroutine(CheckAlreadyLoadingAbs());
             }
         }
 
         private bool AddToAbNameList(string abName)
         {
-            if (CommonLoadingAbNames.ContainsKey(abName)) return false;
+            if (CommonLoadingAbNames.ContainsKey(abName))
+            {
+                _alreadyLoadingAbNames.Add(abName);
+                return false;
+            }
+
             CommonLoadingAbNames.Add(abName, true);
             return true;
         }
@@ -149,6 +165,25 @@ namespace AAMT
         private void OnLoadComplete()
         {
             _loaderHandler.OnComplete();
+        }
+
+        IEnumerator CheckAlreadyLoadingAbs()
+        {
+            while (_alreadyLoadingAbNames.Count > 0)
+            {
+                for (int i = _alreadyLoadingAbNames.Count - 1; i >= 0; i--)
+                {
+                    var abName = _alreadyLoadingAbNames[i];
+                    if (!CommonLoadingAbNames.ContainsKey(abName))
+                    {
+                        _alreadyLoadingAbNames.RemoveAt(i);
+                    }
+                }
+
+                yield return 0;
+            }
+
+            OnLoadComplete();
         }
     }
 }

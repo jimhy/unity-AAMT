@@ -1,3 +1,4 @@
+using System.Threading;
 using AAMT;
 using UnityEngine;
 
@@ -446,7 +447,8 @@ namespace GameLogic
             {
                 if (obj != null)
                 {
-                    Instantiate(obj, Vector3.one, Quaternion.identity, UIRoot);
+                    var go = Instantiate(obj, Vector3.zero, Quaternion.identity, UIRoot);
+                    go.SetActive(true);
                 }
             });
             uiPath = "Test/P3/P3.prefab";
@@ -454,7 +456,8 @@ namespace GameLogic
             {
                 if (obj != null)
                 {
-                    Instantiate(obj, new Vector3(0, 100, 0), Quaternion.identity, UIRoot);
+                    var p3 = Instantiate(obj, Vector3.zero, Quaternion.identity, UIRoot);
+                    p3.transform.localPosition = new Vector3(0, 200);
                 }
             });
         }

@@ -7,39 +7,6 @@ using Object = UnityEngine.Object;
 
 namespace AAMT
 {
-    public class BundleHandle
-    {
-        internal int ReferenceCount { get; private set; }
-        private readonly AssetBundle _assetBundle;
-
-        internal BundleHandle(AssetBundle assetBundle)
-        {
-            _assetBundle = assetBundle;
-        }
-
-        internal AssetBundleRequest LoadAssetAsync<T>(string assetName) where T : Object
-        {
-            ReferenceCount++;
-            return _assetBundle.LoadAssetAsync<T>(assetName);
-        }
-
-        internal AssetBundleRequest LoadAssetWithSubAssetsAsync<T>(string assetName) where T : Object
-        {
-            ReferenceCount++;
-            return _assetBundle.LoadAssetWithSubAssetsAsync<T>(assetName);
-        }
-
-        internal void Release()
-        {
-            if (--ReferenceCount <= 0) Destroy();
-        }
-
-        internal void Destroy()
-        {
-            _assetBundle.UnloadAsync(true);
-        }
-    }
-
     public class BundleManager
     {
         internal AssetBundleManifest AssetBundleManifest { get; private set; }
