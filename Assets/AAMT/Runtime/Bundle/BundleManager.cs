@@ -87,6 +87,16 @@ namespace AAMT
             return Bundles.ContainsKey(abName);
         }
 
+        internal BundleHandle GetBundleByBundleName(string abName)
+        {
+            if (Bundles.ContainsKey(abName))
+            {
+                return Bundles[abName];
+            }
+
+            return null;
+        }
+
         internal bool HasBundleByAssetsPath(string assetPath)
         {
             assetPath = Tools.FilterSpriteUri(assetPath);

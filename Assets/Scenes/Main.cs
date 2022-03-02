@@ -407,9 +407,13 @@ namespace GameLogic
             handler.onProgress = loaderHandler => { slider.value = loaderHandler.progress; };
         }
 
+        private int index = 0;
+
         private void OnRelease(GameObject go)
         {
-            var path = "Test/P3/P3.prefab";
+            var paths = new string[] {"Test/P3/P3.prefab", "Test/P1/P1.prefab"};
+            if (index >= paths.Length) return;
+            var path = paths[index++];
             AssetsManager.Release(path);
         }
 
