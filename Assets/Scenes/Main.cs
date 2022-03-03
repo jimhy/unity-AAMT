@@ -2,18 +2,19 @@ using System.Threading;
 using AAMT;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace GameLogic
 {
     public class Main : MonoBehaviour
     {
-        public GameObject loadButton;
-        public GameObject releaseButton;
+        public Button loadButton;
+        public Button releaseButton;
         public Transform roleLayer;
         public GameObject loadingImg;
-        public UITexture texture;
-        public UI2DSprite sprite;
-        public UISlider slider;
+        public Image image;
+        public Slider slider;
+        public RawImage rawImage;
         public Transform uiRoot;
 
         #region 配置
@@ -396,8 +397,8 @@ namespace GameLogic
         {
             slider.value = 0;
             loadingImg.SetActive(false);
-            if (loadButton != null) UIEventListener.Get(loadButton).onClick = OnLoad1;
-            if (releaseButton != null) UIEventListener.Get(releaseButton).onClick = OnRelease;
+            if (loadButton != null) loadButton.onClick.AddListener(OnLoad1);
+            if (releaseButton != null) releaseButton.onClick.AddListener(OnRelease);
         }
 
         private void OnLoad(GameObject go)
@@ -410,7 +411,7 @@ namespace GameLogic
 
         private int index = 0;
 
-        private void OnRelease(GameObject go)
+        private void OnRelease()
         {
             var paths = new string[] {"Test/P3/P3.prefab", "Test/P1/P1.prefab"};
             if (index >= paths.Length) return;
@@ -418,9 +419,10 @@ namespace GameLogic
             AssetsManager.Release(path);
         }
 
-        private void OnLoad1(GameObject go)
+        private void OnLoad1()
         {
             loadingImg.SetActive(true);
+            string uiPath = "";
             // AssetsManager.GetAssets<GameObject>(pathList, obj =>
             // {
             //     loadingImg.SetActive(false);
@@ -431,28 +433,28 @@ namespace GameLogic
             //         Debug.LogFormat("instance id={0}", go.GetInstanceID());
             //     }
             // });
-            // var uiPath = "UI/Images/BuySpreeRound.png";
-            // Debug.Log("StartLoad image");
-            // AssetsManager.GetAssets<Texture2D>(uiPath,
-            //     img =>
-            //     {
-            //         Debug.LogFormat("complete->{0}", texture.name);
-            //         texture.mainTexture = img;
-            //     });
-            var uiPath = "ui/userinfo/userinfopanel.png";
+            uiPath = "UI/UserInfo/sc_bg.png";
+
+            AssetsManager.GetAssets<Texture2D>(uiPath,
+                tx =>
+                {
+                    loadingImg.SetActive(false);
+                    rawImage.texture = tx;
+                });
+
+            uiPath = "ui/userinfo/userinfopanel.png";
             AssetsManager.GetAssets<AAMTSpriteAtlas>(uiPath, atlas =>
             {
+                loadingImg.SetActive(false);
+
                 foreach (var sp in atlas.GetSprites())
                 {
                     Debug.Log(sp.name);
                 }
             });
             uiPath = "ui/userinfo/userinfopanel.png?dw_pic_08";
-            AssetsManager.GetAssets<Sprite>(uiPath, sp =>
-            {
-                sprite.sprite2D = sp;
-            });
-            // var uiPath = "Test/P1/P1.prefab";
+            AssetsManager.GetAssets<Sprite>(uiPath, sp => { image.sprite = sp; });
+            // uiPath = "Test/P1/P1.prefab";
             // AssetsManager.GetAssets<GameObject>(uiPath, obj =>
             // {
             //     if (obj != null)

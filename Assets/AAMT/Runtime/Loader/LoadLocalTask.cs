@@ -50,6 +50,7 @@ namespace AAMT
 
         IEnumerator Load()
         {
+#if UNITY_EDITOR
             while (_resPaths.Count > 0)
             {
                 var assetName = _resPaths[0];
@@ -71,6 +72,10 @@ namespace AAMT
 
                 OnLoadOneAssetComplete(assetName);
             }
+#else
+            yield return 0;
+
+#endif
         }
 
         private void OnLoadOneAssetComplete(string assetName)

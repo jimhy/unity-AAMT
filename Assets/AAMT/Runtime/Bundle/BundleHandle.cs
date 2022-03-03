@@ -22,14 +22,14 @@ namespace AAMT
         internal AssetBundleRequest LoadAssetAsync<T>(string assetName) where T : Object
         {
             ReferenceCount++;
-            Debug.LogFormat("增加引用计数,当前引用计数:ab{0},count:{1}", _assetBundle.name, ReferenceCount);
+            Debug.LogFormat("增加引用计数,abName{0},当前引用计数:{1}", _assetBundle.name, ReferenceCount);
             return _assetBundle.LoadAssetAsync<T>(assetName);
         }
 
         internal AssetBundleRequest LoadAssetWithSubAssetsAsync<T>(string assetName) where T : Object
         {
             ReferenceCount++;
-            Debug.LogFormat("增加引用计数SubAssets,当前引用计数:ab{0},count:{1}", _assetBundle.name, ReferenceCount);
+            Debug.LogFormat("增加引用计数SubAssets,abName:{0},当前引用计数:{1}", _assetBundle.name, ReferenceCount);
             return _assetBundle.LoadAssetWithSubAssetsAsync<T>(assetName);
         }
 

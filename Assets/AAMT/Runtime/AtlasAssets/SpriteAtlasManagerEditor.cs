@@ -17,6 +17,8 @@ namespace AAMT
         protected override IEnumerator StartGetAssetsAtlas<T>(string path, Action<T> callBack)
         {
             yield return 0;
+#if UNITY_EDITOR
+
             Tools.ParsingLoadUri(path, out var uri, out var abName, out var atlasName, out string spriteName);
             if (string.IsNullOrEmpty(path) || string.IsNullOrEmpty(atlasName))
             {
@@ -49,6 +51,7 @@ namespace AAMT
             }
 
             callBack?.Invoke(atl as T);
+#endif
         }
 
         protected override void StartGetAssetsSprite<T>(string path, Action<T> callBack)

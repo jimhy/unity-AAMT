@@ -35,10 +35,14 @@ namespace AAMT
 
         private void Init()
         {
+#if UNITY_EDITOR
             if (SettingManager.AssetSetting.GetLoadType == AssetSetting.LoadType.LocalAssets)
                 ResourceManager = new LocalAssetManager();
             else
                 ResourceManager = new BundleManager();
+#else
+                ResourceManager = new BundleManager();
+#endif
 
             _loaderManager = new LoaderManager();
             var runtimeGameObject = new GameObject
