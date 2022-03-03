@@ -17,7 +17,7 @@ namespace AAMT.Editor
         public static void BuildAssetsBundles()
         {
             EditorCommon.ClearConsole();
-            var path = BuildSetting.AssetSetting.GetBuildPath.ToLower();
+            var path = SettingManager.AssetSetting.GetBuildPath.ToLower();
             Debug.LogFormat("Start build assets bundles to path:{0}", path);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
@@ -32,13 +32,13 @@ namespace AAMT.Editor
 
         private static BuildTarget GetBuildTarget()
         {
-            switch (BuildSetting.AssetSetting.GetBuildTarget)
+            switch (SettingManager.AssetSetting.GetBuildTarget)
             {
-                case BuildSetting.BuildTarget.windows:
+                case AssetSetting.BuildTarget.windows:
                     return BuildTarget.StandaloneWindows;
-                case BuildSetting.BuildTarget.android:
+                case AssetSetting.BuildTarget.android:
                     return BuildTarget.Android;
-                case BuildSetting.BuildTarget.ios:
+                case AssetSetting.BuildTarget.ios:
                     return BuildTarget.iOS;
                 default:
                     return EditorUserBuildSettings.activeBuildTarget;
@@ -51,20 +51,20 @@ namespace AAMT.Editor
         public static void CreateAssetsListFile()
         {
             var assetsInfoName = "assets-info.txt";
-            var txtPath = $"{BuildSetting.AssetSetting.GetBuildPath}/{assetsInfoName}";
+            var txtPath = $"{SettingManager.AssetSetting.GetBuildPath}/{assetsInfoName}";
             if (File.Exists(txtPath)) File.Delete(txtPath);
 
             FileStream fs = new FileStream(txtPath, FileMode.CreateNew, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
 
-            var files = Directory.GetFiles(BuildSetting.AssetSetting.GetBuildPath, "*", SearchOption.AllDirectories);
+            var files = Directory.GetFiles(SettingManager.AssetSetting.GetBuildPath, "*", SearchOption.AllDirectories);
             int i = 1;
             foreach (var file in files)
             {
                 if (!CheckFile(file) || file.IndexOf(assetsInfoName, StringComparison.Ordinal) != -1) continue;
                 EditorCommon.UpdateProgress("正在计算文件", i++, files.Length, file);
                 FileInfo fileInfo = new FileInfo(file);
-                var newPath = file.Replace(BuildSetting.AssetSetting.GetBuildPath, "")
+                var newPath = file.Replace(SettingManager.AssetSetting.GetBuildPath, "")
                     .Replace("\\", "/");
                 newPath = newPath.Substring(1, newPath.Length - 1);
                 newPath = $"{newPath}?{Md5ByFile(file)}";
@@ -83,15 +83,15 @@ namespace AAMT.Editor
         /// </summary>
         private static void CreateManifestMapFile()
         {
-            var files = Directory.GetFiles(BuildSetting.AssetSetting.GetBuildPath, "*.manifest",
+            var files = Directory.GetFiles(SettingManager.AssetSetting.GetBuildPath, "*.manifest",
                 SearchOption.AllDirectories);
-            var mapPath = $"{BuildSetting.AssetSetting.GetBuildPath}/{assetsWidthBundleName}.txt";
+            var mapPath = $"{SettingManager.AssetSetting.GetBuildPath}/{assetsWidthBundleName}.txt";
             if (File.Exists(mapPath)) File.Delete(mapPath);
 
             FileStream fs = new FileStream(mapPath, FileMode.CreateNew, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
             var regex = new Regex(@"- Assets/Res/([\w\/\.]+)");
-            var buildPath = BuildSetting.AssetSetting.GetBuildPath + "/";
+            var buildPath = SettingManager.AssetSetting.GetBuildPath + "/";
             var i = 1;
             foreach (var file in files)
             {
@@ -149,7 +149,7 @@ namespace AAMT.Editor
         [MenuItem("AAMT/Remove Bundle Cache", false, 52)]
         private static void RemoveBundleCache()
         {
-            var path = BuildSetting.AssetSetting.GetBuildPath;
+            var path = SettingManager.AssetSetting.GetBuildPath;
             Debug.LogFormat("path={0}", path);
             if (Directory.Exists(path))
             {

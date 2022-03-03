@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Playables;
 using Object = UnityEngine.Object;
 
 namespace AAMT
@@ -14,7 +13,7 @@ namespace AAMT
         private static AssetsManager _instance;
 
         private LoaderManager _loaderManager;
-        internal BundleManager bundleManager { get; private set; }
+        internal IResourceManager ResourceManager { get; private set; }
 
         internal static AssetsManager Instance
         {
@@ -36,10 +35,16 @@ namespace AAMT
 
         private void Init()
         {
-            bundleManager = new BundleManager();
+            if (SettingManager.AssetSetting.GetLoadType == AssetSetting.LoadType.LocalAssets)
+                ResourceManager = new LocalAssetManager();
+            else
+                ResourceManager = new BundleManager();
+
             _loaderManager = new LoaderManager();
-            var runtimeGameObject = new GameObject();
-            runtimeGameObject.name = "JAssetsManagerRuntime";
+            var runtimeGameObject = new GameObject
+            {
+                name = "JAssetsManagerRuntime"
+            };
             runtimeGameObject.AddComponent<AssetsManagerRuntime>();
         }
 
@@ -51,9 +56,9 @@ namespace AAMT
         public static void GetAssets<T>(string path, Action<T> callBack) where T : Object
         {
             path = path.ToLower();
-            if (Instance.bundleManager.HasBundleByAssetsPath(path))
+            if (Instance.ResourceManager.HasAssetsByPath(path))
             {
-                Instance.bundleManager.GetAssets(path, callBack);
+                Instance.ResourceManager.GetAssets(path, callBack);
             }
             else
             {
@@ -61,15 +66,15 @@ namespace AAMT
                 handler.customData = new List<object>() {path, callBack};
                 handler.onComplete = loaderHandler =>
                 {
-                    var list = loaderHandler.customData as List<object>;
+                    if (loaderHandler.customData is not List<object> list) return;
                     var currentPath = list[0] as string;
                     var cb = list[1] as Action<T>;
-                    Instance.bundleManager.GetAssets(currentPath, cb);
+                    Instance.ResourceManager.GetAssets(currentPath, cb);
                 };
             }
         }
 
-        public static void GetAssets<T>(string[] paths, Action<T> callBack) where T : Object
+        public static void GetAssets<T>(IEnumerable<string> paths, Action<T> callBack) where T : Object
         {
             foreach (var path in paths)
             {
@@ -79,10 +84,11 @@ namespace AAMT
 
         public static void Release(string path)
         {
-            Instance.bundleManager.Release(path);
+            path = path.ToLower();
+            Instance.ResourceManager.Release(path);
         }
 
-        public static void Release(string[] path)
+        public static void Release(IEnumerable<string> path)
         {
             foreach (var s in path)
             {
@@ -92,10 +98,11 @@ namespace AAMT
 
         public static void Destroy(string path)
         {
-            Instance.bundleManager.Destroy(path);
+            path = path.ToLower();
+            Instance.ResourceManager.Destroy(path);
         }
 
-        public static void Destroy(string[] path)
+        public static void Destroy(IEnumerable<string> path)
         {
             foreach (var s in path)
             {

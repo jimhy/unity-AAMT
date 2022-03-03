@@ -8,7 +8,7 @@ namespace AAMT
     /// <summary>
     /// Supports the evaluation of embedded runtime variables in addressables locations
     /// </summary>
-    public static class JAssetManagerRuntimeProperties
+    public static class AAMTRuntimeProperties
     {
 #if !UNITY_EDITOR && UNITY_WSA_10_0 && ENABLE_DOTNET
         static Assembly[] GetAssemblies()
@@ -116,7 +116,12 @@ namespace AAMT
         /// <returns>The evaluated string after resolving all tokens.</returns>
         public static string EvaluateString(string input)
         {
-            return EvaluateString(input, '{', '}', EvaluateProperty);
+            var output = EvaluateString(input, '{', '}', EvaluateProperty);
+            if (output[^1] == '/')
+            {
+                output = output[..^1];
+            }
+            return output;
         }
 
         /// <summary>

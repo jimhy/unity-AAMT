@@ -7,14 +7,14 @@ using Object = UnityEngine.Object;
 
 namespace AAMT
 {
-    public class BundleManager
+    public class BundleManager:IResourceManager
     {
         internal AssetBundleManifest AssetBundleManifest { get; private set; }
         internal Dictionary<string, string> PathToBundle { get; private set; }
         internal Dictionary<string, BundleHandle> Bundles { get; }
         private readonly SpriteAtlasManager _atlasManager;
 
-        public BundleManager()
+        internal BundleManager()
         {
             Bundles = new Dictionary<string, BundleHandle>();
             _atlasManager = new SpriteAtlasManager(this);
@@ -26,7 +26,7 @@ namespace AAMT
         {
             var mainBundle =
                 AssetBundle.LoadFromFile(
-                    $"{BuildSetting.AssetSetting.GetLoadPath}/{BuildSetting.AssetSetting.GetBuildTargetToString}");
+                    $"{SettingManager.AssetSetting.GetLoadPath}/{SettingManager.AssetSetting.GetBuildTargetToString}");
             if (mainBundle != null)
                 AssetBundleManifest = mainBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
             else
@@ -39,7 +39,7 @@ namespace AAMT
         {
             PathToBundle = new Dictionary<string, string>();
             const string fileName = "assets-width-bundle";
-            var path = $"{BuildSetting.AssetSetting.GetLoadPath}/{fileName}.txt";
+            var path = $"{SettingManager.AssetSetting.GetLoadPath}/{fileName}.txt";
             Debug.LogFormat("Load assets-width-bundle file.path={0}", path);
             var content = ReadTextFileData(path);
             if (string.IsNullOrEmpty(content))
@@ -97,7 +97,7 @@ namespace AAMT
             return null;
         }
 
-        internal bool HasBundleByAssetsPath(string assetPath)
+        public bool HasAssetsByPath(string assetPath)
         {
             assetPath = Tools.FilterSpriteUri(assetPath);
             if (!PathToBundle.ContainsKey(assetPath))
@@ -145,13 +145,13 @@ namespace AAMT
             callBack?.Invoke(request.asset as T);
         }
 
-        internal void Release(string path)
+        public void Release(string path)
         {
             var abName = CheckAndGetAbName(path);
             if (!string.IsNullOrEmpty(abName)) Bundles[abName].Release();
         }
 
-        internal void Destroy(string path)
+        public void Destroy(string path)
         {
             var abName = CheckAndGetAbName(path);
             if (!string.IsNullOrEmpty(abName)) Bundles[abName].Destroy();

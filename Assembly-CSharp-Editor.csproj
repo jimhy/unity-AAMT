@@ -63,7 +63,7 @@
      <Compile Include="Assets\NGUI\Scripts\Editor\UICameraEditor.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\UITableEditor.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\UIDrawCallViewer.cs" />
-     <Compile Include="Assets\AAMT\Editor\EditorCommon.cs" />
+     <Compile Include="Assets\AAMT\Editor\Sprites\EditorCommon.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\NGUIAtlasInspector.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\UIWidgetInspector.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\UIDragObjectEditor.cs" />
@@ -75,7 +75,7 @@
      <Compile Include="Assets\NGUI\Scripts\Editor\UIColorPickerEditor.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\FreeType.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\NGUIFontInspector.cs" />
-     <Compile Include="Assets\AAMT\Editor\RemoveMissingScripts.cs" />
+     <Compile Include="Assets\AAMT\Editor\Sprites\RemoveMissingScripts.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\ComponentSelector.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\UIGridEditor.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\UIToggleInspector.cs" />
@@ -91,7 +91,7 @@
      <Compile Include="Assets\NGUI\Scripts\Editor\UIWidgetContainerEditor.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\NGUISnap.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\NGUIContextMenu.cs" />
-     <Compile Include="Assets\AAMT\Editor\AutoSetAssetsBundelName.cs" />
+     <Compile Include="Assets\AAMT\Editor\Sprites\AutoSetAssetsBundelName.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\PropertyReferenceDrawer.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\UIButtonEditor.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\NGUIMenu.cs" />
@@ -119,7 +119,7 @@
      <Compile Include="Assets\NGUI\Scripts\Editor\TweenOrthoSizeEditor.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Editor\InvDatabaseInspector.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\UIButtonColorEditor.cs" />
-     <Compile Include="Assets\AAMT\Editor\AssetsBundleBuilder.cs" />
+     <Compile Include="Assets\AAMT\Editor\Sprites\AssetsBundleBuilder.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\UIAtlasMaker.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\TweenWidthEditor.cs" />
      <Compile Include="Assets\NGUI\Scripts\Editor\UITweenerEditor.cs" />

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace AAMT
@@ -12,15 +11,34 @@ namespace AAMT
             return Regex.Replace(input, @"\?.+", "");
         }
 
-        internal static void ParsingLoadUri(string input, out string abName, out string itemName,
-            [CanBeNull] out string spriteName)
+        internal static void ParsingLoadUri(string input, out string abName, out string itemName, out string spriteName)
         {
-            var bundleManager = AssetsManager.Instance.bundleManager;
+            ParsingLoadUri(input, out _, out abName, out itemName, out spriteName);
+        }
+
+        internal static void ParsingLoadUri(string input, out string uri, out string abName, out string itemName,
+            out string spriteName)
+        {
+            if (AssetsManager.Instance.ResourceManager is LocalAssetManager)
+            {
+                ForEditor(input, out uri, out abName, out itemName, out spriteName);
+            }
+            else
+            {
+                ForBundle(input, out uri, out abName, out itemName, out spriteName);
+            }
+        }
+
+        private static void ForBundle(string input, out string uri, out string abName, out string itemName,
+            out string spriteName)
+        {
+            var bundleManager = AssetsManager.Instance.ResourceManager as BundleManager;
             input = input.ToLower();
-            var uri = input;
+            uri = input;
             abName = null;
             spriteName = null;
             itemName = null;
+            if (bundleManager == null) return;
             var n = input.LastIndexOf("?", StringComparison.Ordinal);
             if (n != -1)
             {
@@ -35,6 +53,29 @@ namespace AAMT
             }
 
             abName = bundleManager.PathToBundle[uri];
+            n = uri.LastIndexOf("/", StringComparison.Ordinal);
+            if (n != -1)
+            {
+                itemName = uri[(n + 1)..];
+            }
+        }
+
+        private static void ForEditor(string input, out string uri, out string abName, out string itemName,
+            out string spriteName)
+        {
+            input = input.ToLower();
+            uri = input;
+            abName = null;
+            spriteName = null;
+            itemName = null;
+
+            var n = input.LastIndexOf("?", StringComparison.Ordinal);
+            if (n != -1)
+            {
+                spriteName = input[(n + 1)..];
+                uri = input[..n];
+            }
+
             n = uri.LastIndexOf("/", StringComparison.Ordinal);
             if (n != -1)
             {

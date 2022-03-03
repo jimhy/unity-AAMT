@@ -7,12 +7,7 @@ using UnityEngine;
 
 namespace AAMT
 {
-    public class LoadingABHandle
-    {
-        public Type t;
-    }
-
-    public class LoadTask
+    public class LoadBundleTask
     {
         private readonly BundleManager _bundleManager;
         private LoaderHandler _loaderHandler;
@@ -23,17 +18,22 @@ namespace AAMT
         private readonly List<string> _loadingAbNames;
         private readonly List<string> _alreadyLoadingAbNames;
 
-        private LoadTask(string[] resPaths)
+        private LoadBundleTask(string[] resPaths)
         {
             _loadingAbNames = new List<string>();
             _alreadyLoadingAbNames = new List<string>();
-            _bundleManager = AssetsManager.Instance.bundleManager;
+            _bundleManager = AssetsManager.Instance.ResourceManager as BundleManager;
             Init(resPaths);
         }
 
-        public static LoadTask GetTask(string[] resPath)
+        public static LoadBundleTask GetTask(string[] resPath)
         {
-            return new LoadTask(resPath);
+            return new LoadBundleTask(resPath);
+        }
+
+        //TODO:后续做
+        private void LoadScene(string path)
+        {
         }
 
         private void Init(string[] resPaths)
@@ -109,7 +109,7 @@ namespace AAMT
 
         IEnumerator Load(string abName)
         {
-            var abPath = $"{BuildSetting.AssetSetting.GetLoadPath}/{abName}";
+            var abPath = $"{SettingManager.AssetSetting.GetLoadPath}/{abName}";
             var request = AssetBundle.LoadFromFileAsync(abPath);
             yield return request;
             if (request.assetBundle == null)
@@ -119,11 +119,11 @@ namespace AAMT
             else
             {
                 _bundleManager.AddBundle(request.assetBundle);
-                OnLoadOnAbComplete(abName);
+                OnLoadOneAbComplete(abName);
             }
         }
 
-        private void OnLoadOnAbComplete(string abName)
+        private void OnLoadOneAbComplete(string abName)
         {
             _loaderHandler.currentCount++;
             if (_loaderHandler.currentCount > _loaderHandler.totalCount)
@@ -132,7 +132,6 @@ namespace AAMT
                 Debug.LogErrorFormat("这里不可能出现这种问题,请检查逻辑.");
             }
 
-            _loaderHandler.OnProgress();
             var i = _loadingAbNames.IndexOf(abName);
             if (i != -1)
             {
@@ -146,8 +145,11 @@ namespace AAMT
 
             if (_loadingAbNames.Count == 0)
             {
+                _loaderHandler.currentCount = 1;
                 AssetsManagerRuntime.Instance.StartCoroutine(CheckAlreadyLoadingAbs());
             }
+
+            _loaderHandler.OnProgress();
         }
 
         private bool AddToAbNameList(string abName)

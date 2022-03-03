@@ -8,10 +8,10 @@ namespace AAMT
 
         internal LoaderManager()
         {
-            if (BuildSetting.AssetSetting.GetLoadType == BuildSetting.LoadType.Bundle)
-            {
+            if (SettingManager.AssetSetting.GetLoadType == AssetSetting.LoadType.Bundle)
                 _loader = new BundleLoader();
-            }
+            else if (SettingManager.AssetSetting.GetLoadType == AssetSetting.LoadType.LocalAssets)
+                _loader = new LocalLoader();
         }
 
         internal LoaderHandler Load(string[] path)

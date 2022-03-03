@@ -50,6 +50,7 @@
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\UIStorageSlot.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UISavedOption.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UIScrollBar.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Tools.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UITextList.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\Game\UICursor.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UISoundVolume.cs" />
@@ -65,7 +66,7 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UIStretch.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\Other\LookAtTarget.cs" />
      <Compile Include="Assets\AAMT\Runtime\AssetsManagerRuntime.cs" />
-     <Compile Include="Assets\AAMT\Runtime\Loader\ILoader.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Interfacies\ILoader.cs" />
      <Compile Include="Assets\NGUI\Scripts\Tweening\TweenFOV.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\NGUIAtlas.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UICenterOnClick.cs" />
@@ -74,9 +75,11 @@
      <Compile Include="Assets\NGUI\Scripts\Internal\BetterList.cs" />
      <Compile Include="Assets\NGUI\Scripts\UI\UILocalize.cs" />
      <Compile Include="Assets\NGUI\Scripts\Internal\BMGlyph.cs" />
+     <Compile Include="Assets\AAMT\Runtime\AtlasAssets\SpriteAtlasManager.cs" />
      <Compile Include="Assets\NGUI\Scripts\Tweening\AnimatedWidget.cs" />
      <Compile Include="Assets\NGUI\Scripts\Tweening\TweenFill.cs" />
      <Compile Include="Assets\NGUI\Scripts\Tweening\TweenPosition.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Bundle\BundleHandle.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\LanguageSelection.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UITable.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\System\InvAttachmentPoint.cs" />
@@ -88,7 +91,7 @@
      <Compile Include="Assets\NGUI\Scripts\Interaction\UIProgressBar.cs" />
      <Compile Include="Assets\Scenes\Main.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UIDragDropItem.cs" />
-     <Compile Include="Assets\AAMT\Runtime\Loader\LoadTask.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Loader\LoadBundleTask.cs" />
      <Compile Include="Assets\NGUI\Scripts\Internal\PropertyReference.cs" />
      <Compile Include="Assets\NGUI\Scripts\Tweening\TweenOrthoSize.cs" />
      <Compile Include="Assets\Bindler\Role\ChessFixEffect.cs" />
@@ -113,7 +116,7 @@
      <Compile Include="Assets\Bindler\Role\TitleAttribute.cs" />
      <Compile Include="Assets\NGUI\Scripts\Internal\UIDrawCall.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UIDraggableCamera.cs" />
-     <Compile Include="Assets\AAMT\Runtime\BuildSetting.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Setting\AssetSetting.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UIGrid.cs" />
      <Compile Include="Assets\NGUI\Scripts\Internal\BMFont.cs" />
      <Compile Include="Assets\AAMT\Runtime\Loader\LoaderManager.cs" />
@@ -135,7 +138,7 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UISpriteCollection.cs" />
      <Compile Include="Assets\NGUI\Examples\Scripts\InventorySystem\System\InvGameItem.cs" />
      <Compile Include="Assets\NGUI\Scripts\Internal\UIWidget.cs" />
-     <Compile Include="Assets\AAMT\Runtime\AddressablesRuntimeProperties.cs" />
+     <Compile Include="Assets\AAMT\Runtime\AAMTRuntimeProperties.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UIDragScrollView.cs" />
      <Compile Include="Assets\NGUI\Scripts\Internal\NGUIMath.cs" />
      <Compile Include="Assets\NGUI\Scripts\Interaction\UIPlayAnimation.cs" />
@@ -210,10 +213,13 @@
      <Compile Include="Assets\Bindler\SimpleAnimationComponent\CustomPlayableExtensions.cs" />
      <Compile Include="Assets\NGUI\Scripts\Internal\NGUIDebug.cs" />
      <Compile Include="Assets\NGUI\Scripts\Tweening\TweenRotation.cs" />
-     <Compile Include="Assets\AAMT\Runtime\Tools.cs" />
-     <Compile Include="Assets\AAMT\Runtime\SpriteAtlasManager.cs" />
-     <Compile Include="Assets\AAMT\Runtime\Bundle\BundleHandle.cs" />
-     <None Include="Assets\streamingassets\windows\assets-info.txt" />
+     <Compile Include="Assets\AAMT\Runtime\Loader\LocalLoader.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Loader\LoadLocalTask.cs" />
+     <Compile Include="Assets\AAMT\Runtime\LocalAsset\LocalAssetManager.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Interfacies\IResourceManager.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Setting\SettingManager.cs" />
+     <Compile Include="Assets\AAMT\Runtime\AtlasAssets\AAMTSpriteAtlas.cs" />
+     <Compile Include="Assets\AAMT\Runtime\AtlasAssets\SpriteAtlasManagerEditor.cs" />
      <None Include="Assets\Res\Shaders\UVliudong02.shader" />
      <None Include="Assets\Res\Shaders\GuideMask.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo20.txt" />
@@ -275,7 +281,6 @@
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored.shader" />
      <None Include="Assets\Res\Shaders\saoguangzhezhao02.shader" />
      <None Include="Assets\Resources\BillingMode.json" />
-     <None Include="Assets\streamingassets\windows\assets-width-bundle.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed 1.shader" />
      <None Include="Assets\Res\Config\AIConf.json" />
      <None Include="Assets\Res\Shaders\saoguang_zhezhao.shader" />

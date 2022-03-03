@@ -1,6 +1,7 @@
 using System.Threading;
 using AAMT;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GameLogic
 {
@@ -13,56 +14,56 @@ namespace GameLogic
         public UITexture texture;
         public UI2DSprite sprite;
         public UISlider slider;
-        public Transform UIRoot;
+        public Transform uiRoot;
 
         #region 配置
 
         private string[] pathList = new string[]
         {
             "roles/prefabs/lz_02_lv1_hd.prefab",
-            // "roles/prefabs/lz_02_lv1_low.prefab",
-            // "roles/prefabs/lz_02_lv2_hd.prefab",
-            // "roles/prefabs/lz_02_lv2_low.prefab",
-            // "roles/prefabs/lz_02_lv3_hd.prefab",
-            // "roles/prefabs/lz_02_lv3_low.prefab",
-            // "roles/prefabs/lz_03_lv1_hd.prefab",
-            // "roles/prefabs/lz_03_lv1_low.prefab",
-            // "roles/prefabs/lz_03_lv2_hd.prefab",
-            // "roles/prefabs/lz_03_lv2_low.prefab",
-            // "roles/prefabs/lz_03_lv3_hd.prefab",
-            // "roles/prefabs/lz_03_lv3_low.prefab",
-            // "roles/prefabs/lz_04_lv1_hd.prefab",
-            // "roles/prefabs/lz_04_lv1_low.prefab",
-            // "roles/prefabs/lz_04_lv2_hd.prefab",
-            // "roles/prefabs/lz_04_lv2_low.prefab",
-            // "roles/prefabs/lz_04_lv3_hd.prefab",
-            // "roles/prefabs/lz_04_lv3_low.prefab",
-            // "roles/prefabs/mh_01_lv1_hd.prefab",
-            // "roles/prefabs/mh_01_lv1_low.prefab",
-            // "roles/prefabs/mh_01_lv2_hd.prefab",
-            // "roles/prefabs/mh_01_lv2_low.prefab",
-            // "roles/prefabs/mh_01_lv3_hd.prefab",
-            // "roles/prefabs/mh_01_lv3_low.prefab",
-            // "roles/prefabs/mh_02_lv1_hd.prefab",
-            // "roles/prefabs/mh_02_lv1_low.prefab",
-            // "roles/prefabs/mh_02_lv2_hd.prefab",
-            // "roles/prefabs/mh_02_lv2_low.prefab",
-            // "roles/prefabs/mh_02_lv3_hd.prefab",
-            // "roles/prefabs/mh_02_lv3_low.prefab",
-            // "roles/prefabs/mh_03_lv1_hd.prefab",
-            // "roles/prefabs/mh_03_lv1_low.prefab",
-            // "roles/prefabs/mh_03_lv2_hd.prefab",
-            // "roles/prefabs/mh_03_lv2_low.prefab",
-            // "roles/prefabs/mh_03_lv3_hd.prefab",
-            // "roles/prefabs/mh_03_lv3_low.prefab",
-            // "roles/prefabs/mh_04_lv1_hd.prefab",
-            // "roles/prefabs/mh_04_lv1_low.prefab",
-            // "roles/prefabs/mh_04_lv2_hd.prefab",
-            // "roles/prefabs/mh_04_lv2_low.prefab",
-            // "roles/prefabs/mh_04_lv3_hd.prefab",
-            // "roles/prefabs/mh_04_lv3_low.prefab",
-            // "roles/prefabs/mh_05_lv1_hd.prefab",
-            // "roles/prefabs/mh_05_lv1_low.prefab",
+            "roles/prefabs/lz_02_lv1_low.prefab",
+            "roles/prefabs/lz_02_lv2_hd.prefab",
+            "roles/prefabs/lz_02_lv2_low.prefab",
+            "roles/prefabs/lz_02_lv3_hd.prefab",
+            "roles/prefabs/lz_02_lv3_low.prefab",
+            "roles/prefabs/lz_03_lv1_hd.prefab",
+            "roles/prefabs/lz_03_lv1_low.prefab",
+            "roles/prefabs/lz_03_lv2_hd.prefab",
+            "roles/prefabs/lz_03_lv2_low.prefab",
+            "roles/prefabs/lz_03_lv3_hd.prefab",
+            "roles/prefabs/lz_03_lv3_low.prefab",
+            "roles/prefabs/lz_04_lv1_hd.prefab",
+            "roles/prefabs/lz_04_lv1_low.prefab",
+            "roles/prefabs/lz_04_lv2_hd.prefab",
+            "roles/prefabs/lz_04_lv2_low.prefab",
+            "roles/prefabs/lz_04_lv3_hd.prefab",
+            "roles/prefabs/lz_04_lv3_low.prefab",
+            "roles/prefabs/mh_01_lv1_hd.prefab",
+            "roles/prefabs/mh_01_lv1_low.prefab",
+            "roles/prefabs/mh_01_lv2_hd.prefab",
+            "roles/prefabs/mh_01_lv2_low.prefab",
+            "roles/prefabs/mh_01_lv3_hd.prefab",
+            "roles/prefabs/mh_01_lv3_low.prefab",
+            "roles/prefabs/mh_02_lv1_hd.prefab",
+            "roles/prefabs/mh_02_lv1_low.prefab",
+            "roles/prefabs/mh_02_lv2_hd.prefab",
+            "roles/prefabs/mh_02_lv2_low.prefab",
+            "roles/prefabs/mh_02_lv3_hd.prefab",
+            "roles/prefabs/mh_02_lv3_low.prefab",
+            "roles/prefabs/mh_03_lv1_hd.prefab",
+            "roles/prefabs/mh_03_lv1_low.prefab",
+            "roles/prefabs/mh_03_lv2_hd.prefab",
+            "roles/prefabs/mh_03_lv2_low.prefab",
+            "roles/prefabs/mh_03_lv3_hd.prefab",
+            "roles/prefabs/mh_03_lv3_low.prefab",
+            "roles/prefabs/mh_04_lv1_hd.prefab",
+            "roles/prefabs/mh_04_lv1_low.prefab",
+            "roles/prefabs/mh_04_lv2_hd.prefab",
+            "roles/prefabs/mh_04_lv2_low.prefab",
+            "roles/prefabs/mh_04_lv3_hd.prefab",
+            "roles/prefabs/mh_04_lv3_low.prefab",
+            "roles/prefabs/mh_05_lv1_hd.prefab",
+            "roles/prefabs/mh_05_lv1_low.prefab",
             // "roles/prefabs/mh_05_lv2_hd.prefab",
             // "roles/prefabs/mh_05_lv2_low.prefab",
             // "roles/prefabs/mh_05_lv3_hd.prefab",
@@ -438,32 +439,37 @@ namespace GameLogic
             //         Debug.LogFormat("complete->{0}", texture.name);
             //         texture.mainTexture = img;
             //     });
-            // var uiPath = "ui/userinfo/userinfopanel.png";
-            // AssetsManager.GetAssets<AAMTSpriteAtlas>(uiPath, atlas =>
+            var uiPath = "ui/userinfo/userinfopanel.png";
+            AssetsManager.GetAssets<AAMTSpriteAtlas>(uiPath, atlas =>
+            {
+                foreach (var sp in atlas.GetSprites())
+                {
+                    Debug.Log(sp.name);
+                }
+            });
+            uiPath = "ui/userinfo/userinfopanel.png?dw_pic_08";
+            AssetsManager.GetAssets<Sprite>(uiPath, sp =>
+            {
+                sprite.sprite2D = sp;
+            });
+            // var uiPath = "Test/P1/P1.prefab";
+            // AssetsManager.GetAssets<GameObject>(uiPath, obj =>
             // {
-            //     foreach (var sp in atlas.GetSprites())
+            //     if (obj != null)
             //     {
-            //         Debug.Log(sp.name);
+            //         var go = Instantiate(obj, Vector3.zero, Quaternion.identity, uiRoot);
+            //         go.SetActive(true);
             //     }
             // });
-            var uiPath = "Test/P1/P1.prefab";
-            AssetsManager.GetAssets<GameObject>(uiPath, obj =>
-            {
-                if (obj != null)
-                {
-                    var go = Instantiate(obj, Vector3.zero, Quaternion.identity, UIRoot);
-                    go.SetActive(true);
-                }
-            });
-            uiPath = "Test/P3/P3.prefab";
-            AssetsManager.GetAssets<GameObject>(uiPath, obj =>
-            {
-                if (obj != null)
-                {
-                    var p3 = Instantiate(obj, Vector3.zero, Quaternion.identity, UIRoot);
-                    p3.transform.localPosition = new Vector3(0, 200);
-                }
-            });
+            // uiPath = "Test/P3/P3.prefab";
+            // AssetsManager.GetAssets<GameObject>(uiPath, obj =>
+            // {
+            //     if (obj != null)
+            //     {
+            //         var p3 = Instantiate(obj, Vector3.zero, Quaternion.identity, uiRoot);
+            //         p3.transform.localPosition = new Vector3(0, 200);
+            //     }
+            // });
         }
 
         private void OnLoadComplete(LoaderHandler handler)
