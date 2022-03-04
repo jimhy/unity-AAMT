@@ -79,8 +79,9 @@ namespace AAMT.Editor
         }
 
         /// <summary>
-        /// 创建资源文件对应的Bundle文件，用于资源加载是，查找资源对于的Bundle文件名
+        /// 创建资源文件对应的Bundle文件，用于资源加载时，查找资源对于的Bundle文件名
         /// </summary>
+        [MenuItem("AAMT/CreateManifestMapFile")]
         private static void CreateManifestMapFile()
         {
             var files = Directory.GetFiles(SettingManager.AssetSetting.GetBuildPath, "*.manifest",

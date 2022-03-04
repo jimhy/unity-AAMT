@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace AAMT
 {
@@ -29,11 +30,6 @@ namespace AAMT
         public static LoadBundleTask GetTask(string[] resPath)
         {
             return new LoadBundleTask(resPath);
-        }
-
-        //TODO:后续做
-        private void LoadScene(string path)
-        {
         }
 
         private void Init(string[] resPaths)
@@ -171,6 +167,12 @@ namespace AAMT
 
         IEnumerator CheckAlreadyLoadingAbs()
         {
+            if (_alreadyLoadingAbNames.Count <= 0)
+            {
+                //为了防止已经加载过的资源没有回调，
+                //这里需要下一帧再执行下面的逻辑，因为需要用户用返回的handler注册complete事件。
+                yield return 0;
+            }
             while (_alreadyLoadingAbNames.Count > 0)
             {
                 for (int i = _alreadyLoadingAbNames.Count - 1; i >= 0; i--)

@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using AAMT;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -397,11 +399,11 @@ namespace GameLogic
         {
             slider.value = 0;
             loadingImg.SetActive(false);
-            if (loadButton != null) loadButton.onClick.AddListener(OnLoad1);
+            if (loadButton != null) loadButton.onClick.AddListener(OnLoad);
             if (releaseButton != null) releaseButton.onClick.AddListener(OnRelease);
         }
 
-        private void OnLoad(GameObject go)
+        private void OnLoad()
         {
             loadingImg.SetActive(true);
             var handler = AssetsManager.LoadAssets(pathList);
@@ -415,7 +417,7 @@ namespace GameLogic
         {
             var paths = new string[] {"Test/P3/P3.prefab", "Test/P1/P1.prefab"};
             if (index >= paths.Length) return;
-            var path = paths[index++];
+            var path = paths[0];
             AssetsManager.Release(path);
         }
 
@@ -423,55 +425,55 @@ namespace GameLogic
         {
             loadingImg.SetActive(true);
             string uiPath = "";
-            // AssetsManager.GetAssets<GameObject>(pathList, obj =>
-            // {
-            //     loadingImg.SetActive(false);
-            //     Debug.LogFormat("complete->{0}", obj.GetInstanceID());
-            //     if (obj != null)
-            //     {
-            //         var go = Instantiate(obj, RandomPosition(), Quaternion.identity, roleLayer);
-            //         Debug.LogFormat("instance id={0}", go.GetInstanceID());
-            //     }
-            // });
-            uiPath = "UI/UserInfo/sc_bg.png";
-
-            AssetsManager.GetAssets<Texture2D>(uiPath,
-                tx =>
-                {
-                    loadingImg.SetActive(false);
-                    rawImage.texture = tx;
-                });
-
-            uiPath = "ui/userinfo/userinfopanel.png";
-            AssetsManager.GetAssets<AAMTSpriteAtlas>(uiPath, atlas =>
+            AssetsManager.GetAssets<GameObject>(pathList, obj =>
             {
                 loadingImg.SetActive(false);
-
-                foreach (var sp in atlas.GetSprites())
+                Debug.LogFormat("complete->{0}", obj.GetInstanceID());
+                if (obj != null)
                 {
-                    Debug.Log(sp.name);
+                    var go = Instantiate(obj, RandomPosition(), Quaternion.identity, roleLayer);
+                    Debug.LogFormat("instance id={0}", go.GetInstanceID());
                 }
             });
-            uiPath = "ui/userinfo/userinfopanel.png?dw_pic_08";
-            AssetsManager.GetAssets<Sprite>(uiPath, sp => { image.sprite = sp; });
-            // uiPath = "Test/P1/P1.prefab";
-            // AssetsManager.GetAssets<GameObject>(uiPath, obj =>
-            // {
-            //     if (obj != null)
+            // uiPath = "UI/UserInfo/sc_bg.png";
+            //
+            // AssetsManager.GetAssets<Texture2D>(uiPath,
+            //     tx =>
             //     {
-            //         var go = Instantiate(obj, Vector3.zero, Quaternion.identity, uiRoot);
-            //         go.SetActive(true);
+            //         loadingImg.SetActive(false);
+            //         rawImage.texture = tx;
+            //     });
+            //
+            // uiPath = "ui/userinfo/userinfopanel.png";
+            // AssetsManager.GetAssets<AAMTSpriteAtlas>(uiPath, atlas =>
+            // {
+            //     loadingImg.SetActive(false);
+            //
+            //     foreach (var sp in atlas.GetSprites())
+            //     {
+            //         Debug.Log(sp.name);
             //     }
             // });
-            // uiPath = "Test/P3/P3.prefab";
-            // AssetsManager.GetAssets<GameObject>(uiPath, obj =>
-            // {
-            //     if (obj != null)
-            //     {
-            //         var p3 = Instantiate(obj, Vector3.zero, Quaternion.identity, uiRoot);
-            //         p3.transform.localPosition = new Vector3(0, 200);
-            //     }
-            // });
+            // uiPath = "ui/userinfo/userinfopanel.png?dw_pic_08";
+            // AssetsManager.GetAssets<Sprite>(uiPath, sp => { image.sprite = sp; });
+            uiPath = "Test/P1/P1.prefab";
+            AssetsManager.GetAssets<GameObject>(uiPath, obj =>
+            {
+                if (obj != null)
+                {
+                    var go = Instantiate(obj, Vector3.zero, Quaternion.identity, uiRoot);
+                    go.SetActive(true);
+                }
+            });
+            uiPath = "Test/P3/P3.prefab";
+            AssetsManager.GetAssets<GameObject>(uiPath, obj =>
+            {
+                if (obj != null)
+                {
+                    var p3 = Instantiate(obj, Vector3.zero, Quaternion.identity, uiRoot);
+                    p3.transform.localPosition = new Vector3(0, 200);
+                }
+            });
         }
 
         private void OnLoadComplete(LoaderHandler handler)

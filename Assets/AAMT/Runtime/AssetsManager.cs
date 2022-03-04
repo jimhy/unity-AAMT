@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace AAMT
@@ -57,6 +59,11 @@ namespace AAMT
             return Instance._loaderManager.Load(assetsPath);
         }
 
+        public static LoaderHandler LoadAssets(string assetsPath)
+        {
+            return Instance._loaderManager.Load(new[] {assetsPath});
+        }
+
         public static void GetAssets<T>(string path, Action<T> callBack) where T : Object
         {
             path = path.ToLower();
@@ -84,6 +91,27 @@ namespace AAMT
             {
                 GetAssets(path, callBack);
             }
+        }
+
+        public static void LoadScene(string path, [CanBeNull] Action callBack)
+        {
+            LoadScene(path, LoadSceneMode.Additive, callBack);
+        }
+
+        public static void LoadScene(string path, LoadSceneMode mode, [CanBeNull] Action callBack)
+        {
+            path = path.ToLower();
+            var h = Instance._loaderManager.Load(new []{path});
+            h.onComplete = handler =>
+            {
+                if (!Instance.ResourceManager.HasAssetsByPath(path))
+                {
+                    Debug.LogFormat("加载场景失败,path:{0}",path);
+                    callBack?.Invoke();
+                    return;
+                }
+                // SceneManager.LoadSceneAsync()
+            };
         }
 
         public static void Release(string path)
