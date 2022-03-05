@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3217451973
+CRC: 2619151707
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 7e8944ae0bbad7fccfc381d6dd91f5d1
+    Hash: 58214ab31f4bd813e8ccca18ec9ff804
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 27d84d16c31ae18c8bda7e442fb7caef
+    Hash: f23b47aba41be8458d9fd1fd48569e6c
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -59,6 +59,10 @@ ClassTypes:
   Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8c4df6040d80cfa4abe5929563bec5f6, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 29cc5dade26e974419059429171350f4, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -77,6 +81,8 @@ ClassTypes:
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
-- Assets/Scenes/SampleScene.unity
+- Assets/Sample/2.LoadPrefab/LoadPrefabScene.unity
+- Assets/Sample/1.LoadAssetsInEditor/LoadAssetsInEditorScene.unity
+- Assets/Sample/SampleScene.unity
 Dependencies:
 - e:/workspace/j-assets-manager/assets/../build/windows/res-ui-canvas.prefab.ab

@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buildTarget: 0
   buildPath: '{UnityEngine.Application.dataPath}/../Build/'
-  loadPath: '{UnityEngine.Application.dataPath}/Res'
+  loadPath: '{UnityEngine.Application.dataPath}'
   loadType: 0

@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 1045183896
+CRC: 3434040459
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -9,27 +9,30 @@ AssetBundleManifest:
       Name: res-config.ab
       Dependencies: {}
     Info_2:
-      Name: res-shaders.ab
-      Dependencies: {}
-    Info_3:
       Name: res-ui-canvas.prefab.ab
       Dependencies: {}
-    Info_4:
+    Info_3:
       Name: res-test-p1.ab
       Dependencies:
         Dependency_0: res-test-p2.ab
         Dependency_1: res-test-p3.ab
-    Info_5:
+    Info_4:
       Name: res-test-p2.ab
       Dependencies:
         Dependency_0: res-test-p3.ab
-    Info_6:
+    Info_5:
       Name: res-test-p3.ab
       Dependencies: {}
-    Info_7:
+    Info_6:
       Name: res-ui-userinfo.ab
       Dependencies: {}
-    Info_8:
+    Info_7:
       Name: scenes-samplescene.unity.ab
       Dependencies:
         Dependency_0: res-ui-canvas.prefab.ab
+    Info_8:
+      Name: res-prefabs-capsule.prefab.ab
+      Dependencies: {}
+    Info_9:
+      Name: res-prefabs-sphere.prefab.ab
+      Dependencies: {}
