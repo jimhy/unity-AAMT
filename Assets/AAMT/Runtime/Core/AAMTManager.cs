@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -10,20 +11,20 @@ namespace AAMT
     /// <summary>
     /// Automatic Assets Manager Tools
     /// </summary>
-    public class AssetsManager
+    public class AAMTManager
     {
-        private static AssetsManager _instance;
+        private static AAMTManager _instance;
 
         private LoaderManager _loaderManager;
         internal IResourceManager ResourceManager { get; private set; }
 
-        internal static AssetsManager Instance
+        internal static AAMTManager Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = new AssetsManager();
+                    _instance = new AAMTManager();
                     _instance.Init();
                 }
 
@@ -31,7 +32,7 @@ namespace AAMT
             }
         }
 
-        private AssetsManager()
+        private AAMTManager()
         {
         }
 
@@ -49,9 +50,10 @@ namespace AAMT
             _loaderManager = new LoaderManager();
             var runtimeGameObject = new GameObject
             {
-                name = "JAssetsManagerRuntime"
+                name = "AAMTRuntime"
             };
-            runtimeGameObject.AddComponent<AssetsManagerRuntime>();
+            runtimeGameObject.AddComponent<AAMTRuntime>();
+            GameObject.DontDestroyOnLoad(runtimeGameObject);
         }
 
         public static LoaderHandler LoadAssets(string[] assetsPath)
@@ -100,19 +102,14 @@ namespace AAMT
 
         public static void LoadScene(string path, LoadSceneMode mode, [CanBeNull] Action callBack)
         {
-            path = path.ToLower();
-            var h = Instance._loaderManager.Load(new []{path});
+            var h = Instance._loaderManager.Load(new []{path.ToLower()});
             h.onComplete = handler =>
             {
-                if (!Instance.ResourceManager.HasAssetsByPath(path))
-                {
-                    Debug.LogFormat("加载场景失败,path:{0}",path);
-                    callBack?.Invoke();
-                    return;
-                }
-                // SceneManager.LoadSceneAsync()
+                Instance.ResourceManager.ChangeScene(path,callBack);
             };
         }
+        
+        
 
         public static void Release(string path)
         {

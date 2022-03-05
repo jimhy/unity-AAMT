@@ -11,6 +11,22 @@ namespace AAMT
             return Regex.Replace(input, @"\?.+", "");
         }
 
+        internal static string FilterSceneName(string input)
+        {
+            var n = input.LastIndexOf(".unity", StringComparison.Ordinal);
+            if (n == -1)
+            {
+                return input;
+            }
+
+            n = input.LastIndexOf(".", StringComparison.Ordinal);
+            var n1 = input.LastIndexOf("/", StringComparison.Ordinal);
+            if (n1 == -1) n1 = 0;
+            else n1++;
+
+            return input.Substring(n1, n - n1);
+        }
+
         internal static void ParsingLoadUri(string input, out string abName, out string itemName, out string spriteName)
         {
             ParsingLoadUri(input, out _, out abName, out itemName, out spriteName);
@@ -19,7 +35,7 @@ namespace AAMT
         internal static void ParsingLoadUri(string input, out string uri, out string abName, out string itemName,
             out string spriteName)
         {
-            if (AssetsManager.Instance.ResourceManager is LocalAssetManager)
+            if (AAMTManager.Instance.ResourceManager is LocalAssetManager)
             {
                 ForEditor(input, out uri, out abName, out itemName, out spriteName);
             }
@@ -32,7 +48,7 @@ namespace AAMT
         private static void ForBundle(string input, out string uri, out string abName, out string itemName,
             out string spriteName)
         {
-            var bundleManager = AssetsManager.Instance.ResourceManager as BundleManager;
+            var bundleManager = AAMTManager.Instance.ResourceManager as BundleManager;
             input = input.ToLower();
             uri = input;
             abName = null;

@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace AAMT
 {
-    internal class AssetsManagerRuntime : MonoBehaviour
+    internal class AAMTRuntime : MonoBehaviour
     {
         public Action OnUpdate;
-        internal static AssetsManagerRuntime Instance { get; private set; }
+        internal static AAMTRuntime Instance { get; private set; }
 
-        private AssetsManagerRuntime()
+        private AAMTRuntime()
         {
         }
 

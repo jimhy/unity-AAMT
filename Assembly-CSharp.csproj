@@ -41,10 +41,10 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\AAMT\Runtime\Tools.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Utils\Tools.cs" />
      <Compile Include="Assets\Bindler\Role\DynamicBonePlaneCollider.cs" />
      <Compile Include="Assets\AAMT\Runtime\LocalAsset\LocalAssetManager.cs" />
-     <Compile Include="Assets\AAMT\Runtime\AssetsManagerRuntime.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Core\AAMTRuntime.cs" />
      <Compile Include="Assets\AAMT\Runtime\Interfacies\ILoader.cs" />
      <Compile Include="Assets\AAMT\Runtime\Loader\LoadLocalTask.cs" />
      <Compile Include="Assets\AAMT\Runtime\AtlasAssets\SpriteAtlasManager.cs" />
@@ -62,8 +62,8 @@
      <Compile Include="Assets\Scenes\DrawFps.cs" />
      <Compile Include="Assets\Bindler\SimpleAnimationComponent\SimpleAnimation_impl.cs" />
      <Compile Include="Assets\Bindler\SimpleAnimationComponent\SimpleAnimationPlayable.cs" />
-     <Compile Include="Assets\AAMT\Runtime\AssetsManager.cs" />
-     <Compile Include="Assets\AAMT\Runtime\AAMTRuntimeProperties.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Core\AAMTManager.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Core\AAMTRuntimeProperties.cs" />
      <Compile Include="Assets\AAMT\Runtime\Setting\SettingManager.cs" />
      <Compile Include="Assets\Bindler\Role\RoleBindler.cs" />
      <Compile Include="Assets\Bindler\Role\DynamicBone.cs" />

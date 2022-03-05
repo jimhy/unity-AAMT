@@ -9,9 +9,7 @@ namespace AAMT
     public class AutoSetAssetsBundelName : AssetPostprocessor
     {
         private static string dbName = "autoNameAB";
-        public static UnityEngine.Object File;
         public static readonly string ResourcePath = Application.dataPath + "/Resources/autoNameAB";
-        public static string RoleFbxPath = Application.dataPath + "/Res/Role/fbx";
 
         [MenuItem("Assets/AAMT/AutoNamingAB/自动命名autoNameAB", false, 51)]
         public static void AutoAddAbName()
@@ -123,14 +121,14 @@ namespace AAMT
             path = path.Replace("\\", "/").ToLower();
             rootPath = rootPath.Replace("\\", "/").ToLower();
             if (!CheckPath(path)) return;
-            var tempPath = path.Replace("assets/res/", "");
+            var tempPath = path.Replace("assets/", "");
             if (!string.IsNullOrEmpty(rootPath))
             {
-                int pos = rootPath.IndexOf("assets/res/", StringComparison.Ordinal);
+                int pos = rootPath.IndexOf("assets/", StringComparison.Ordinal);
                 if (pos > 0)
                 {
                     rootPath = rootPath.Substring(pos);
-                    rootPath = rootPath.Replace("assets/res/", "");
+                    rootPath = rootPath.Replace("assets/", "");
                 }
             }
 
@@ -138,7 +136,7 @@ namespace AAMT
             if (p != null) tempPath = p;
             AssetImporter item = AssetImporter.GetAtPath(path);
             tempPath = tempPath.Replace("/", "-");
-            if (path.EndsWith(".unity") || !isSetName) item.assetBundleName = null;
+            if (!isSetName) item.assetBundleName = null;
             else item.assetBundleName = tempPath + ".ab";
         }
 
@@ -147,7 +145,7 @@ namespace AAMT
             var currentPath = Path.GetDirectoryName(path)?.Replace("\\", "/");
             if (string.IsNullOrEmpty(currentPath)) currentPath = path;
             var directoryName = Path.GetFileName(currentPath).Replace("\\", "/");
-            var configFile = $"assets/res/{currentPath}/{dbName}";
+            var configFile = $"assets/{currentPath}/{dbName}";
             if (!System.IO.File.Exists(configFile))
             {
                 if (currentPath != rootPath && rootPath != String.Empty)
@@ -198,7 +196,7 @@ namespace AAMT
 
         private static bool CheckPath(string path)
         {
-            if (!path.StartsWith("assets/res/") ||
+            if (!path.StartsWith("assets/") ||
                 path.LastIndexOf(".", StringComparison.Ordinal) == -1 ||
                 path.EndsWith(".meta") ||
                 path.EndsWith(".cs") ||

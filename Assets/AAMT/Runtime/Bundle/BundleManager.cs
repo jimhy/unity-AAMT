@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -8,7 +10,7 @@ using Object = UnityEngine.Object;
 
 namespace AAMT
 {
-    public class BundleManager:IResourceManager
+    public class BundleManager : IResourceManager
     {
         internal AssetBundleManifest AssetBundleManifest { get; private set; }
         internal Dictionary<string, string> PathToBundle { get; private set; }
@@ -115,7 +117,26 @@ namespace AAMT
         {
             if (typeof(T) == typeof(Sprite) || typeof(T) == typeof(AAMTSpriteAtlas))
                 _atlasManager.GetAssets(path, callBack);
-            else AssetsManagerRuntime.Instance.StartCoroutine(StartGetAssets(path, callBack));
+            else AAMTRuntime.Instance.StartCoroutine(StartGetAssets(path, callBack));
+        }
+
+        public void ChangeScene(string path, Action callBack)
+        {
+            if (string.IsNullOrEmpty(path) || !HasAssetsByPath(path.ToLower()))
+            {
+                Debug.LogErrorFormat("加载场景失败,path:{0}", path);
+                callBack?.Invoke();
+                return;
+            }
+
+            AAMTRuntime.Instance.StartCoroutine(LoadScene(path, callBack));
+        }
+
+        private IEnumerator LoadScene(string path, Action callBack)
+        {
+            var sceneName = Tools.FilterSceneName(path);
+            yield return SceneManager.LoadSceneAsync(sceneName);
+            callBack?.Invoke();
         }
 
         private IEnumerator<AssetBundleRequest> StartGetAssets<T>(string path, Action<T> callBack) where T : Object

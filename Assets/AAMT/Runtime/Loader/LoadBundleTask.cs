@@ -23,7 +23,7 @@ namespace AAMT
         {
             _loadingAbNames = new List<string>();
             _alreadyLoadingAbNames = new List<string>();
-            _bundleManager = AssetsManager.Instance.ResourceManager as BundleManager;
+            _bundleManager = AAMTManager.Instance.ResourceManager as BundleManager;
             Init(resPaths);
         }
 
@@ -42,6 +42,7 @@ namespace AAMT
 
         private void InitPath(string resPath)
         {
+            resPath = resPath.ToLower();
             resPath = Tools.FilterSpriteUri(resPath);
             if (string.IsNullOrEmpty(resPath))
             {
@@ -93,12 +94,12 @@ namespace AAMT
             {
                 foreach (var loadingAbName in _loadingAbNames)
                 {
-                    AssetsManagerRuntime.Instance.StartCoroutine(Load(loadingAbName));
+                    AAMTRuntime.Instance.StartCoroutine(Load(loadingAbName));
                 }
             }
             else
             {
-                AssetsManagerRuntime.Instance.StartCoroutine(CheckAlreadyLoadingAbs());
+                AAMTRuntime.Instance.StartCoroutine(CheckAlreadyLoadingAbs());
             }
 
             return _loaderHandler;
@@ -143,7 +144,7 @@ namespace AAMT
             if (_loadingAbNames.Count == 0)
             {
                 _loaderHandler.currentCount = 1;
-                AssetsManagerRuntime.Instance.StartCoroutine(CheckAlreadyLoadingAbs());
+                AAMTRuntime.Instance.StartCoroutine(CheckAlreadyLoadingAbs());
             }
 
             _loaderHandler.OnProgress();

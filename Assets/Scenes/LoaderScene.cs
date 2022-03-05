@@ -16,12 +16,11 @@ public class LoaderScene : MonoBehaviour
 
     private void onLoadScene()
     {
-        var path = "scenes/samplescene.unity";
-        var handler = AssetsManager.LoadAssets(path);
-        handler.onComplete = loaderHandler =>
+        var path = "scenes/SampleScene.unity";
+        AAMTManager.LoadScene(path, () =>
         {
-            SceneManager.LoadSceneAsync("SampleScene");
-        };
+            Debug.Log("Load Scene Complete!!");
+        });
     }
 
     // Update is called once per frame

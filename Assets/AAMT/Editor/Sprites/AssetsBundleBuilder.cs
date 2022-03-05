@@ -91,7 +91,7 @@ namespace AAMT.Editor
 
             FileStream fs = new FileStream(mapPath, FileMode.CreateNew, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
-            var regex = new Regex(@"- Assets/Res/([\w\/\.]+)");
+            var regex = new Regex(@"- Assets/([\w\/\.]+)");
             var buildPath = SettingManager.AssetSetting.GetBuildPath + "/";
             var i = 1;
             foreach (var file in files)

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace AAMT
@@ -34,7 +35,19 @@ namespace AAMT
             if (typeof(T) == typeof(Sprite) || typeof(T) == typeof(AAMTSpriteAtlas))
                 _atlasManager.GetAssets(path, callBack);
             else
-                AssetsManagerRuntime.Instance.StartCoroutine(StartGetAssets(path, callBack));
+                AAMTRuntime.Instance.StartCoroutine(StartGetAssets(path, callBack));
+        }
+
+        public void ChangeScene(string path, Action callBack)
+        {
+            AAMTRuntime.Instance.StartCoroutine(LoadScene(path, callBack));
+        }
+
+        private IEnumerator LoadScene(string path, Action callBack)
+        {
+            var sceneName = Tools.FilterSceneName(path);
+            yield return SceneManager.LoadSceneAsync(sceneName);
+            callBack?.Invoke();
         }
 
         /// <summary>

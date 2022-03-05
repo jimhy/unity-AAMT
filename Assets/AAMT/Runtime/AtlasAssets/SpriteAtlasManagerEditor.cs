@@ -64,7 +64,7 @@ namespace AAMT
                 return;
             }
 
-            AssetsManagerRuntime.Instance.StartCoroutine(StartGetAssetsAtlas<AAMTSpriteAtlas>(path, (atl) =>
+            AAMTRuntime.Instance.StartCoroutine(StartGetAssetsAtlas<AAMTSpriteAtlas>(path, (atl) =>
             {
                 var result = atl.GetSprite(spriteName);
 

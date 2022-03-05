@@ -15,7 +15,7 @@ namespace AAMT
         {
             _waitingDependency = new List<string>();
             _assetBundle = assetBundle;
-            _bundleManager = AssetsManager.Instance.ResourceManager as BundleManager;
+            _bundleManager = AAMTManager.Instance.ResourceManager as BundleManager;
             CalculationReferenceDependency(true);
         }
 
@@ -52,7 +52,7 @@ namespace AAMT
 
             if (_waitingDependency.Count > 0)
             {
-                AssetsManagerRuntime.Instance.StartCoroutine(CheckWaitingDependency());
+                AAMTRuntime.Instance.StartCoroutine(CheckWaitingDependency());
             }
         }
 

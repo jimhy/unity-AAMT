@@ -13,7 +13,7 @@ namespace AAMT
 
         private LoadLocalTask(string[] resPaths)
         {
-            _manager = AssetsManager.Instance.ResourceManager as LocalAssetManager;
+            _manager = AAMTManager.Instance.ResourceManager as LocalAssetManager;
             _resPaths = new List<string>();
             foreach (var p in resPaths)
             {
@@ -38,7 +38,7 @@ namespace AAMT
             _loaderHandler.totalCount = _resPaths.Count;
             if (_resPaths.Count > 0)
             {
-                AssetsManagerRuntime.Instance.StartCoroutine(Load());
+                AAMTRuntime.Instance.StartCoroutine(Load());
             }
             else
             {

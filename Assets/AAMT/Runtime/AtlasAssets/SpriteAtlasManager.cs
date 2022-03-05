@@ -26,7 +26,7 @@ namespace AAMT
             if (typeof(T) == typeof(Sprite))
                 StartGetAssetsSprite(path, callBack);
             else if (typeof(T) == typeof(AAMTSpriteAtlas))
-                AssetsManagerRuntime.Instance.StartCoroutine(StartGetAssetsAtlas(path, callBack));
+                AAMTRuntime.Instance.StartCoroutine(StartGetAssetsAtlas(path, callBack));
         }
 
         protected virtual IEnumerator StartGetAssetsAtlas<T>([NotNull] string path, [NotNull] Action<T> callBack)
@@ -50,7 +50,7 @@ namespace AAMT
 
             if (_loadingAssets.IndexOf(atlasName) != -1)
             {
-                AssetsManagerRuntime.Instance.StartCoroutine(WaitToSameLoadFinish(atlasName, callBack));
+                AAMTRuntime.Instance.StartCoroutine(WaitToSameLoadFinish(atlasName, callBack));
                 yield break;
             }
 
@@ -100,7 +100,7 @@ namespace AAMT
                 return;
             }
 
-            AssetsManagerRuntime.Instance.StartCoroutine(StartGetAssetsAtlas<AAMTSpriteAtlas>(path, (atl) =>
+            AAMTRuntime.Instance.StartCoroutine(StartGetAssetsAtlas<AAMTSpriteAtlas>(path, (atl) =>
             {
                 var result = atl.GetSprite(spriteName);
 
