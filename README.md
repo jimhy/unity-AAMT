@@ -1,7 +1,7 @@
 # AAMT(Auto-Assets-Manager-tools) Unity自动化资源管理工具
 
 ### 当前版本 v0.1.0
-
+### 讨论QQ群:85968052
 ### 功能
 - 自动管理、打包Bundle
 - 自动热更管理
