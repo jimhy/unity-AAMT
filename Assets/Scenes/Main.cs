@@ -399,7 +399,7 @@ namespace GameLogic
         {
             slider.value = 0;
             loadingImg.SetActive(false);
-            if (loadButton != null) loadButton.onClick.AddListener(OnLoad);
+            if (loadButton != null) loadButton.onClick.AddListener(OnLoad1);
             if (releaseButton != null) releaseButton.onClick.AddListener(OnRelease);
         }
 
@@ -425,16 +425,16 @@ namespace GameLogic
         {
             loadingImg.SetActive(true);
             string uiPath = "";
-            AssetsManager.GetAssets<GameObject>(pathList, obj =>
-            {
-                loadingImg.SetActive(false);
-                Debug.LogFormat("complete->{0}", obj.GetInstanceID());
-                if (obj != null)
-                {
-                    var go = Instantiate(obj, RandomPosition(), Quaternion.identity, roleLayer);
-                    Debug.LogFormat("instance id={0}", go.GetInstanceID());
-                }
-            });
+            // AssetsManager.GetAssets<GameObject>(pathList, obj =>
+            // {
+            //     loadingImg.SetActive(false);
+            //     Debug.LogFormat("complete->{0}", obj.GetInstanceID());
+            //     if (obj != null)
+            //     {
+            //         var go = Instantiate(obj, RandomPosition(), Quaternion.identity, roleLayer);
+            //         Debug.LogFormat("instance id={0}", go.GetInstanceID());
+            //     }
+            // });
             // uiPath = "UI/UserInfo/sc_bg.png";
             //
             // AssetsManager.GetAssets<Texture2D>(uiPath,

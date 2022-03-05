@@ -103,19 +103,20 @@ namespace AAMT
 
         internal void Release()
         {
-            if (--ReferenceCount <= 0) Destroy();
+            --ReferenceCount;
             Debug.LogFormat("减少引用计数,当前引用计数:ab{0},count:{1}", _assetBundle.name, ReferenceCount);
+            if (ReferenceCount <= 0) Destroy();
         }
 
         internal void Destroy()
         {
             if (_assetBundle == null) return;
             Debug.LogFormat("释放Bundle资源,abName{0}", _assetBundle.name);
+            CalculationReferenceDependency(false);
             _assetBundle.UnloadAsync(true);
             _assetBundle = null;
             _bundleManager = null;
             _waitingDependency = null;
-            CalculationReferenceDependency(false);
         }
     }
 }

@@ -52,7 +52,8 @@ namespace AAMT
 
             if (!_bundleManager.PathToBundle.ContainsKey(resPath))
             {
-                Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}", resPath);
+                Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}/{1}", SettingManager.AssetSetting.GetLoadPath,
+                    resPath);
                 OnLoadComplete();
                 return;
             }
@@ -173,6 +174,7 @@ namespace AAMT
                 //这里需要下一帧再执行下面的逻辑，因为需要用户用返回的handler注册complete事件。
                 yield return 0;
             }
+
             while (_alreadyLoadingAbNames.Count > 0)
             {
                 for (int i = _alreadyLoadingAbNames.Count - 1; i >= 0; i--)
