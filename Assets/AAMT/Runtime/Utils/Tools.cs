@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace AAMT
 {
@@ -35,7 +37,7 @@ namespace AAMT
         internal static void ParsingLoadUri(string input, out string uri, out string abName, out string itemName,
             out string spriteName)
         {
-            if (AAMTManager.Instance.ResourceManager is LocalAssetManager)
+            if (AAMTManager.Instance.resourceManager is LocalAssetManager)
             {
                 ForEditor(input, out uri, out abName, out itemName, out spriteName);
             }
@@ -48,7 +50,7 @@ namespace AAMT
         private static void ForBundle(string input, out string uri, out string abName, out string itemName,
             out string spriteName)
         {
-            var bundleManager = AAMTManager.Instance.ResourceManager as BundleManager;
+            var bundleManager = AAMTManager.Instance.resourceManager as BundleManager;
             input = input.ToLower();
             uri = input;
             abName = null;
@@ -62,13 +64,13 @@ namespace AAMT
                 uri = input[..n];
             }
 
-            if (!bundleManager.PathToBundle.ContainsKey(uri))
+            if (!bundleManager.pathToBundle.ContainsKey(uri))
             {
                 Debug.LogErrorFormat("获取资源时，找不到对应的ab包。path:{0}", uri);
                 return;
             }
 
-            abName = bundleManager.PathToBundle[uri];
+            abName = bundleManager.pathToBundle[uri];
             n = uri.LastIndexOf("/", StringComparison.Ordinal);
             if (n != -1)
             {
@@ -97,6 +99,23 @@ namespace AAMT
             {
                 itemName = uri[(n + 1)..];
             }
+        }
+
+        public static string ReadTextFileData(string path)
+        {
+            var request = UnityWebRequest.Get(path);
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+            }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogErrorFormat("ReadTextFileData error,errorCode:{0},path:{1}", request.result, path);
+                return string.Empty;
+            }
+
+            return request.downloadHandler.text;
         }
     }
 }

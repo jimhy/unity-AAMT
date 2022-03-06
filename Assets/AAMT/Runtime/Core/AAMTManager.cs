@@ -13,47 +13,45 @@ namespace AAMT
     /// </summary>
     public class AAMTManager
     {
-        private static AAMTManager _instance;
+        internal static readonly AAMTManager Instance = new AAMTManager();
 
         private LoaderManager _loaderManager;
-        internal IResourceManager ResourceManager { get; private set; }
-
-        internal static AAMTManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new AAMTManager();
-                    _instance.Init();
-                }
-
-                return _instance;
-            }
-        }
+        internal IResourceManager resourceManager { get; private set; }
+        private AAMTDownloadManager _downloadManager;
 
         private AAMTManager()
         {
+            Init();
         }
 
         private void Init()
         {
 #if UNITY_EDITOR
             if (SettingManager.AssetSetting.GetLoadType == AssetSetting.LoadType.LocalAssets)
-                ResourceManager = new LocalAssetManager();
+                resourceManager = new LocalAssetManager();
             else
-                ResourceManager = new BundleManager();
+                resourceManager = new BundleManager();
 #else
-                ResourceManager = new BundleManager();
+            resourceManager = new BundleManager();
 #endif
-
+            _downloadManager = new AAMTDownloadManager();
             _loaderManager = new LoaderManager();
             var runtimeGameObject = new GameObject
             {
                 name = "AAMTRuntime"
             };
             runtimeGameObject.AddComponent<AAMTRuntime>();
-            GameObject.DontDestroyOnLoad(runtimeGameObject);
+            Object.DontDestroyOnLoad(runtimeGameObject);
+        }
+
+        public static void MoveBundles()
+        {
+            Instance._downloadManager.MoveBundles();
+        }
+
+        public static void UpdateAssets()
+        {
+            Instance._downloadManager.UpdateAssets();
         }
 
         public static LoaderHandler LoadAssets(string[] assetsPath)
@@ -69,9 +67,9 @@ namespace AAMT
         public static void GetAssets<T>(string path, Action<T> callBack) where T : Object
         {
             path = path.ToLower();
-            if (Instance.ResourceManager.HasAssetsByPath(path))
+            if (Instance.resourceManager.HasAssetsByPath(path))
             {
-                Instance.ResourceManager.GetAssets(path, callBack);
+                Instance.resourceManager.GetAssets(path, callBack);
             }
             else
             {
@@ -82,7 +80,7 @@ namespace AAMT
                     if (loaderHandler.customData is not List<object> list) return;
                     var currentPath = list[0] as string;
                     var cb = list[1] as Action<T>;
-                    Instance.ResourceManager.GetAssets(currentPath, cb);
+                    Instance.resourceManager.GetAssets(currentPath, cb);
                 };
             }
         }
@@ -102,19 +100,15 @@ namespace AAMT
 
         public static void LoadScene(string path, LoadSceneMode mode, [CanBeNull] Action callBack)
         {
-            var h = Instance._loaderManager.Load(new []{path.ToLower()});
-            h.onComplete = handler =>
-            {
-                Instance.ResourceManager.ChangeScene(path,callBack);
-            };
+            var h = Instance._loaderManager.Load(new[] {path.ToLower()});
+            h.onComplete = _ => { Instance.resourceManager.ChangeScene(path, callBack); };
         }
-        
-        
+
 
         public static void Release(string path)
         {
             path = path.ToLower();
-            Instance.ResourceManager.Release(path);
+            Instance.resourceManager.Release(path);
         }
 
         public static void Release(IEnumerable<string> path)
@@ -128,7 +122,7 @@ namespace AAMT
         public static void Destroy(string path)
         {
             path = path.ToLower();
-            Instance.ResourceManager.Destroy(path);
+            Instance.resourceManager.Destroy(path);
         }
 
         public static void Destroy(IEnumerable<string> path)

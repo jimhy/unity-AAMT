@@ -9,7 +9,7 @@ namespace AAMT
 
         internal LoaderManager()
         {
-            if (SettingManager.AssetSetting.GetLoadType == AssetSetting.LoadType.Bundle)
+            if (SettingManager.AssetSetting.GetLoadType == AssetSetting.LoadType.LocalBundle)
                 _loader = new BundleLoader();
             else if (SettingManager.AssetSetting.GetLoadType == AssetSetting.LoadType.LocalAssets)
                 _loader = new LocalLoader();

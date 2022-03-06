@@ -15,7 +15,7 @@ namespace AAMT
         {
             _waitingDependency = new List<string>();
             _assetBundle = assetBundle;
-            _bundleManager = AAMTManager.Instance.ResourceManager as BundleManager;
+            _bundleManager = AAMTManager.Instance.resourceManager as BundleManager;
             CalculationReferenceDependency(true);
         }
 
@@ -35,7 +35,7 @@ namespace AAMT
 
         private void CalculationReferenceDependency(bool isAdd)
         {
-            var deps = _bundleManager.AssetBundleManifest.GetDirectDependencies(_assetBundle.name);
+            var deps = _bundleManager.assetBundleManifest.GetDirectDependencies(_assetBundle.name);
             foreach (var dep in deps)
             {
                 var bundle = _bundleManager.GetBundleByBundleName(dep);

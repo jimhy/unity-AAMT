@@ -120,7 +120,7 @@ namespace AAMT
         {
             path = path.Replace("\\", "/").ToLower();
             rootPath = rootPath.Replace("\\", "/").ToLower();
-            if (!CheckPath(path)) return;
+            if (!EditorCommon.CheckPath(path)) return;
             var tempPath = path.Replace("assets/", "");
             if (!string.IsNullOrEmpty(rootPath))
             {
@@ -135,7 +135,6 @@ namespace AAMT
             var p = GetBundleName(tempPath, rootPath);
             if (p != null) tempPath = p;
             AssetImporter item = AssetImporter.GetAtPath(path);
-            tempPath = tempPath.Replace("/", "-");
             if (!isSetName) item.assetBundleName = null;
             else item.assetBundleName = tempPath + ".ab";
         }
@@ -146,7 +145,7 @@ namespace AAMT
             if (string.IsNullOrEmpty(currentPath)) currentPath = path;
             var directoryName = Path.GetFileName(currentPath).Replace("\\", "/");
             var configFile = $"assets/{currentPath}/{dbName}";
-            if (!System.IO.File.Exists(configFile))
+            if (!File.Exists(configFile))
             {
                 if (currentPath != rootPath && rootPath != String.Empty)
                 {
@@ -165,7 +164,6 @@ namespace AAMT
                 }
 
                 path = currentPath.Replace(directoryName, "");
-                // if (path.Length != 0 && path[path.Length - 1] == '/') path = path.Remove(path.Length - 1);
                 if (string.IsNullOrEmpty(path)) return null;
                 return GetBundleName(path);
             }
@@ -192,20 +190,6 @@ namespace AAMT
             }
 
             return -1;
-        }
-
-        private static bool CheckPath(string path)
-        {
-            if (!path.StartsWith("assets/") ||
-                path.LastIndexOf(".", StringComparison.Ordinal) == -1 ||
-                path.EndsWith(".meta") ||
-                path.EndsWith(".cs") ||
-                path.EndsWith(".xml") ||
-                path.EndsWith(".txt") ||
-                path.EndsWith(".tpsheet")
-               )
-                return false;
-            return true;
         }
     }
 }

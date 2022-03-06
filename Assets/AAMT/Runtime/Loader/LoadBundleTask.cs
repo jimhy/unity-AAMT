@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace AAMT
 {
@@ -13,8 +10,7 @@ namespace AAMT
         private readonly BundleManager _bundleManager;
         private LoaderHandler _loaderHandler;
 
-        private static readonly FlexibleDictionary<string, bool> CommonLoadingAbNames =
-            new FlexibleDictionary<string, bool>();
+        private static readonly FlexibleDictionary<string, bool> CommonLoadingAbNames = new();
 
         private readonly List<string> _loadingAbNames;
         private readonly List<string> _alreadyLoadingAbNames;
@@ -23,7 +19,7 @@ namespace AAMT
         {
             _loadingAbNames = new List<string>();
             _alreadyLoadingAbNames = new List<string>();
-            _bundleManager = AAMTManager.Instance.ResourceManager as BundleManager;
+            _bundleManager = AAMTManager.Instance.resourceManager as BundleManager;
             Init(resPaths);
         }
 
@@ -51,7 +47,7 @@ namespace AAMT
                 return;
             }
 
-            if (!_bundleManager.PathToBundle.ContainsKey(resPath))
+            if (!_bundleManager.pathToBundle.ContainsKey(resPath))
             {
                 Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}/{1}", SettingManager.AssetSetting.GetLoadPath,
                     resPath);
@@ -59,21 +55,19 @@ namespace AAMT
                 return;
             }
 
-            var abName = _bundleManager.PathToBundle[resPath];
+            var abName = _bundleManager.pathToBundle[resPath];
 
-            if (AddToAbNameList(abName))
-            {
-                _loadingAbNames.Add(abName);
-                DetDependenciesAbNames(abName);
-            }
+            if (!AddToAbNameList(abName)) return;
+            _loadingAbNames.Add(abName);
+            DetDependenciesAbNames(abName);
         }
 
         private void DetDependenciesAbNames(string sourceAbName)
         {
-            var abPaths = _bundleManager.AssetBundleManifest.GetAllDependencies(sourceAbName);
-            for (int i = 0; i < abPaths.Length; i++)
+            var abPaths = _bundleManager.assetBundleManifest.GetAllDependencies(sourceAbName);
+            foreach (var t in abPaths)
             {
-                var abName = abPaths[i].ToLower();
+                var abName = t.ToLower();
                 if (_bundleManager.HasBundleByBundleName(abName))
                 {
                     continue;
@@ -88,8 +82,10 @@ namespace AAMT
 
         public LoaderHandler Run()
         {
-            _loaderHandler = new LoaderHandler();
-            _loaderHandler.totalCount = _loadingAbNames.Count;
+            _loaderHandler = new LoaderHandler
+            {
+                totalCount = _loadingAbNames.Count
+            };
             if (_loadingAbNames.Count > 0)
             {
                 foreach (var loadingAbName in _loadingAbNames)
@@ -105,7 +101,7 @@ namespace AAMT
             return _loaderHandler;
         }
 
-        IEnumerator Load(string abName)
+        private IEnumerator Load(string abName)
         {
             var abPath = $"{SettingManager.AssetSetting.GetLoadPath}/{abName}";
             var request = AssetBundle.LoadFromFileAsync(abPath);
@@ -167,7 +163,7 @@ namespace AAMT
             _loaderHandler.OnComplete();
         }
 
-        IEnumerator CheckAlreadyLoadingAbs()
+        private IEnumerator CheckAlreadyLoadingAbs()
         {
             if (_alreadyLoadingAbNames.Count <= 0)
             {

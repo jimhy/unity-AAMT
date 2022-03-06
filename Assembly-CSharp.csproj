@@ -52,7 +52,9 @@
      <Compile Include="Assets\AAMT\Runtime\Bundle\BundleHandle.cs" />
      <Compile Include="Assets\Sample\Main.cs" />
      <Compile Include="Assets\AAMT\Runtime\Loader\LoadBundleTask.cs" />
+     <Compile Include="Assets\Sample\2.LoadPrefab\LoadPrefab.cs" />
      <Compile Include="Assets\Bindler\Role\ChessFixEffect.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Core\AAMTDownloadManager.cs" />
      <Compile Include="Assets\AAMT\Runtime\Interfacies\IResourceManager.cs" />
      <Compile Include="Assets\AAMT\Runtime\AtlasAssets\SpriteAtlasManagerEditor.cs" />
      <Compile Include="Assets\Bindler\Role\AnimatorPlayer.cs" />
@@ -76,8 +78,9 @@
      <Compile Include="Assets\AAMT\Runtime\AtlasAssets\AAMTSpriteAtlas.cs" />
      <Compile Include="Assets\AAMT\Runtime\Bundle\BundleManager.cs" />
      <Compile Include="Assets\Bindler\SimpleAnimationComponent\CustomPlayableExtensions.cs" />
-     <Compile Include="Assets\Sample\2.LoadPrefab\LoadPrefab.cs" />
      <Compile Include="Assets\Sample\1.LoadAssetsInEditor\LoadAssetsInEditor.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Bundle\MoveBundleTask.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Bundle\MoveBundleManager.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\Res\Config\BuffDataConf.json" />
@@ -96,6 +99,7 @@
      <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+     <None Include="Assets\StreamingAssets\assets-info.txt" />
      <None Include="Assets\Res\Config\RoleDataConf.json" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
      <None Include="Assets\codeandweb.com\Readme.txt" />

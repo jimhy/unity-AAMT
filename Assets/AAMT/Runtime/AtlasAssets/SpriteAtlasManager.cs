@@ -55,7 +55,7 @@ namespace AAMT
             }
 
             _loadingAssets.Add(atlasName);
-            var request = manager.Bundles[abName].LoadAssetWithSubAssetsAsync<Sprite>(atlasName);
+            var request = manager.bundles[abName].LoadAssetWithSubAssetsAsync<Sprite>(atlasName);
             yield return request;
             _loadingAssets.Remove(atlasName);
             if (request.allAssets.Length == 0)

@@ -17,17 +17,30 @@ namespace AAMT.Editor
         public static void BuildAssetsBundles()
         {
             EditorCommon.ClearConsole();
+            SetSettingManagerAbName();
             var path = SettingManager.AssetSetting.GetBuildPath.ToLower();
             Debug.LogFormat("Start build assets bundles to path:{0}", path);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.ChunkBasedCompression,
                 GetBuildTarget());
-            AssetDatabase.Refresh();
 
             CreateManifestMapFile();
             CreateAssetsListFile();
+            AssetDatabase.Refresh();
             Debug.Log("Assets bundle build complete!!");
+        }
+
+        private static void SetSettingManagerAbName()
+        {
+            var filePath = $"{Application.dataPath}/AAMT/Data";
+            var files = Directory.GetFiles(filePath, "*asset", SearchOption.AllDirectories);
+            foreach (var path in files)
+            {
+                var p = path.Replace(Application.dataPath, "assets");
+                AssetImporter item = AssetImporter.GetAtPath(p);
+                item.assetBundleName = "aamt.ab";
+            }
         }
 
         private static BuildTarget GetBuildTarget()
@@ -51,8 +64,10 @@ namespace AAMT.Editor
         public static void CreateAssetsListFile()
         {
             var assetsInfoName = "assets-info.txt";
-            var txtPath = $"{SettingManager.AssetSetting.GetBuildPath}/{assetsInfoName}";
+            var txtPath = $"{Application.streamingAssetsPath}/{assetsInfoName}";
             if (File.Exists(txtPath)) File.Delete(txtPath);
+            if (!Directory.Exists(Application.streamingAssetsPath))
+                Directory.CreateDirectory(Application.streamingAssetsPath);
 
             FileStream fs = new FileStream(txtPath, FileMode.CreateNew, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
@@ -67,7 +82,7 @@ namespace AAMT.Editor
                 var newPath = file.Replace(SettingManager.AssetSetting.GetBuildPath, "")
                     .Replace("\\", "/");
                 newPath = newPath.Substring(1, newPath.Length - 1);
-                newPath = $"{newPath}?{Md5ByFile(file)}";
+                newPath = $"{newPath}?{Md5ByFile(file)}?{fileInfo.Length}";
                 sw.WriteLine(newPath);
             }
 
@@ -81,7 +96,6 @@ namespace AAMT.Editor
         /// <summary>
         /// 创建资源文件对应的Bundle文件，用于资源加载时，查找资源对于的Bundle文件名
         /// </summary>
-        [MenuItem("AAMT/CreateManifestMapFile")]
         private static void CreateManifestMapFile()
         {
             var files = Directory.GetFiles(SettingManager.AssetSetting.GetBuildPath, "*.manifest",

@@ -13,7 +13,7 @@ namespace AAMT
 
         private LoadLocalTask(string[] resPaths)
         {
-            _manager = AAMTManager.Instance.ResourceManager as LocalAssetManager;
+            _manager = AAMTManager.Instance.resourceManager as LocalAssetManager;
             _resPaths = new List<string>();
             foreach (var p in resPaths)
             {

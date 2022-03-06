@@ -47,6 +47,7 @@
      <Compile Include="Assets\codeandweb.com\Editor\SpritesheetImporter.cs" />
      <Compile Include="Assets\AAMT\Editor\Sprites\AssetsBundleBuilder.cs" />
      <Compile Include="Assets\codeandweb.com\Editor\UIImageSetSizeAndPivot.cs" />
+     <Compile Include="Assets\AAMT\Editor\Sprites\OnBuildHandler.cs" />
      <None Include="Assets\codeandweb.com\Editor\SettingsTexturePackerImporter.txt" />
      <Reference Include="UnityEngine">
      <HintPath>D:\Program Files\Unity 2021.2.12f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>

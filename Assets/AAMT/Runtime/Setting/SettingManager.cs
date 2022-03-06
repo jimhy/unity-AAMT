@@ -31,42 +31,19 @@ namespace AAMT
         {
 #if UNITY_EDITOR
             var sprite =
-                AssetDatabase.LoadAssetAtPath<UnityEngine.Object>("Assets/AAMT/Data/SettingManager.asset");
+                AssetDatabase.LoadAssetAtPath<Object>("Assets/AAMT/Data/SettingManager.asset");
             Debug.LogFormat("Load buildSetting.assets bundle.path={0}", "Assets/AAMT/Data/SettingManager.asset");
-            instance = ScriptableObject.Instantiate(sprite) as SettingManager;
+            instance = Instantiate(sprite) as SettingManager;
             if (instance != null) instance.assetSetting.Init();
 #else
-            var buildTag = GetBuildTagByCurrentPlatform();
-            if (buildTag == string.Empty)
-            {
-                Debug.LogErrorFormat("当前平台不支持:{0}", Application.platform.ToString());
-                return;
-            }
 
-            var path = $"{Application.streamingAssetsPath}/{buildTag}/BuildSetting.asset.ab".ToLower();
+            var path = $"{Application.streamingAssetsPath}/aamt.ab".ToLower();
             Debug.LogFormat("Load buildSetting.assets bundle.path={0}", path);
             var bundle =
                 AssetBundle.LoadFromFile(path);
-            instance = bundle.LoadAsset<SettingManager>("buildsetting.asset");
+            instance = bundle.LoadAsset<SettingManager>("SettingManager.asset");
             instance.assetSetting.Init();
 #endif
-        }
-
-
-        private static string GetBuildTagByCurrentPlatform()
-        {
-            switch (Application.platform)
-            {
-                case RuntimePlatform.Android:
-                    return AssetSetting.BuildTarget.android.ToString();
-                case RuntimePlatform.IPhonePlayer:
-                    return AssetSetting.BuildTarget.ios.ToString();
-                case RuntimePlatform.WindowsEditor:
-                case RuntimePlatform.WindowsPlayer:
-                    return AssetSetting.BuildTarget.windows.ToString();
-            }
-
-            return string.Empty;
         }
     }
 }
