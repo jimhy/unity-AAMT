@@ -14,18 +14,17 @@ namespace AAMT
         {
             get
             {
-#if UNITY_EDITOR
-                if (Application.isPlaying && instance == null || !Application.isPlaying)
-                {
-                    LoadAssetSetting();
-                }
-#else
                 if (instance == null) LoadAssetSetting();
-#endif
-
                 return instance.assetSetting;
             }
         }
+
+#if UNITY_EDITOR
+        public static void ReloadAssetSetting()
+        {
+            LoadAssetSetting();
+        }
+#endif
 
         private static void LoadAssetSetting()
         {
@@ -36,7 +35,6 @@ namespace AAMT
             instance = Instantiate(sprite) as SettingManager;
             if (instance != null) instance.assetSetting.Init();
 #else
-
             var path = $"{Application.streamingAssetsPath}/aamt.ab".ToLower();
             Debug.LogFormat("Load buildSetting.assets bundle.path={0}", path);
             var bundle =

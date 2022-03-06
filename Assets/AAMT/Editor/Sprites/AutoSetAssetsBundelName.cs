@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace AAMT
 {
-    public class AutoSetAssetsBundelName : AssetPostprocessor
+    public class AutoSetAssetsBundelName
     {
         private static string dbName = "autoNameAB";
         public static readonly string ResourcePath = Application.dataPath + "/Resources/autoNameAB";

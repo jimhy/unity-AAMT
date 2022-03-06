@@ -15,4 +15,7 @@ MonoBehaviour:
   buildTarget: 0
   buildPath: '{UnityEngine.Application.dataPath}/../Build/'
   loadPath: '{UnityEngine.Application.dataPath}'
-  loadType: 0
+  remotePath: http://localhot:881
+  loadType: 1
+  moveAssetToPersistentDataPath: 0
+  streamingAssetsPaths: []

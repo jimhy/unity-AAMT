@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.ConstrainedExecution;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -9,7 +11,7 @@ using UnityEngine;
 
 namespace AAMT.Editor.Sprites
 {
-    public class OnBuildHandler : IPreprocessBuildWithReport, IPostprocessBuildWithReport
+    public class OnPreprocessHandler : AssetPostprocessor
     {
         public int callbackOrder { get; }
 
@@ -17,26 +19,57 @@ namespace AAMT.Editor.Sprites
         /// 打包前处理
         /// </summary>
         /// <param name="report"></param>
-        public void OnPreprocessBuild(BuildReport report)
+        private void OnPreprocessBuild(BuildReport report)
         {
             MoveBundleToStreamingAssets();
+            CreateBundleFilesDictionary();
         }
 
         /// <summary>
         /// 打包后处理
         /// </summary>
         /// <param name="report"></param>
-        public void OnPostprocessBuild(BuildReport report)
+        private void OnPostprocessBuild(BuildReport report)
+        {
+            DeleteTempFiles();
+        }
+
+        private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets,
+            string[] movedAssets,
+            string[] movedFromAssetPaths)
+        {
+            foreach (var path in importedAssets)
+            {
+                if (path.EndsWith(".asset") && path.IndexOf("AAMT/Data", StringComparison.Ordinal) != -1)
+                {
+                    SettingManager.ReloadAssetSetting();
+                }
+            }
+        }
+
+
+        private static void DeleteTempFiles()
         {
             var list = SettingManager.AssetSetting.GetStreamingAssetsPaths;
             foreach (var s in list)
             {
-                var path = $"{Application.streamingAssetsPath}/{s}";
+                var n = s.IndexOf("/", StringComparison.Ordinal);
+                var dir = s;
+                if (n != -1)
+                {
+                    dir = s[..n];
+                }
+
+                var path = $"{Application.streamingAssetsPath}/{dir}";
+                var meta = $"{path}.meta";
                 if (Directory.Exists(path)) Directory.Delete(path, true);
+                if (File.Exists(meta)) File.Delete(meta);
             }
+
             AssetDatabase.Refresh();
         }
 
+        [MenuItem("AAMT/MoveBundleToStreamingAssets")]
         private static void MoveBundleToStreamingAssets()
         {
             var fileNames = new string[] {"aamt.ab", "aamt.ab.manifest"};
@@ -55,12 +88,42 @@ namespace AAMT.Editor.Sprites
                 var sourcePath = $"{SettingManager.AssetSetting.GetBuildPath}/{s}";
                 var targetPath = $"{Application.streamingAssetsPath}/{s}";
                 EditorCommon.UpdateProgress("正在移动文件", ++i, list.Length, sourcePath);
-                Debug.LogFormat("sourcePath:{0}----targetPath:{1}", sourcePath, targetPath);
                 if (Directory.Exists(targetPath)) Directory.Delete(targetPath, true);
                 CopyDirectory(sourcePath, targetPath, true);
             }
 
             EditorCommon.ClearProgressBar();
+        }
+
+        [MenuItem("AAMT/CreateBundleFilesDictionary")]
+        private static void CreateBundleFilesDictionary()
+        {
+            if (!Directory.Exists(Application.streamingAssetsPath))
+            {
+                Debug.Log("不存在streamingAssetsPath目录");
+                return;
+            }
+
+            var dicPath = $"{Application.streamingAssetsPath}/{AAMTDefine.TOKEN_BUNDLE_FILES_DICTIONARY}";
+            var files = Directory.GetFiles(Application.streamingAssetsPath, "*", SearchOption.AllDirectories);
+            if (File.Exists(dicPath)) File.Delete(dicPath);
+            FileStream fs = new FileStream(dicPath, FileMode.CreateNew, FileAccess.Write);
+            StreamWriter sw = new StreamWriter(fs);
+            var tmpPath = $"{Application.streamingAssetsPath}\\";
+            var i = 0;
+            foreach (var file in files)
+            {
+                EditorCommon.UpdateProgress("正在写入文件列表", ++i, files.Length, file);
+                if (file.EndsWith(".meta") ||
+                    file.IndexOf(AAMTDefine.TOKEN_BUNDLE_FILES_DICTIONARY, StringComparison.Ordinal) != -1) continue;
+                var f = file.Replace(tmpPath, "");
+                sw.WriteLine(f);
+            }
+
+            sw.Close();
+            fs.Close();
+            EditorCommon.ClearProgressBar();
+            AssetDatabase.Refresh();
         }
 
         /// <summary>

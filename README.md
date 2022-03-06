@@ -18,7 +18,7 @@
 #### v0.2.0 `2022/3/6`
 
 - [X]  SetingManager bundle打包到StreammigAssets文件夹下，并且加载的时候也需要到StreamigAssets文件夹中去加载。
-- [ ]  增加移动需要到StreamingAssets文件加的路径列表。
+- [X]  增加移动需要到StreamingAssets文件加的路径列表。
 - [ ]  需要把assets-info.txt改成ScriptableObject文件，一起打包到aamt.ab里面。
 - [ ]  需要把移动到StreamingAssets文件夹的文件记录一个文件列表文件，供移动功能使用。
 - [ ]  需要加一个是否移动文件到StreammigAssets文件夹下的勾选框，并写移动文件逻辑。
