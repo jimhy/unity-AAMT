@@ -28,14 +28,14 @@ namespace AAMT
 
         private static void LoadAssetSetting()
         {
-#if UNITY_EDITOR
+#if !UNITY_EDITOR
             var sprite =
                 AssetDatabase.LoadAssetAtPath<Object>("Assets/AAMT/Data/SettingManager.asset");
             Debug.LogFormat("Load buildSetting.assets bundle.path={0}", "Assets/AAMT/Data/SettingManager.asset");
             instance = Instantiate(sprite) as SettingManager;
             if (instance != null) instance.assetSetting.Init();
 #else
-            var path = $"{Application.streamingAssetsPath}/aamt.ab".ToLower();
+            var path = $"{Application.streamingAssetsPath}/{AAMTDefine.AAMT_BUNDLE_NAME}".ToLower();
             Debug.LogFormat("Load buildSetting.assets bundle.path={0}", path);
             var bundle =
                 AssetBundle.LoadFromFile(path);

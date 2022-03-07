@@ -39,7 +39,7 @@ namespace AAMT.Editor
             {
                 var p = path.Replace(Application.dataPath, "assets");
                 AssetImporter item = AssetImporter.GetAtPath(p);
-                item.assetBundleName = "aamt.ab";
+                item.assetBundleName = AAMTDefine.AAMT_BUNDLE_NAME;
             }
         }
 
@@ -94,7 +94,7 @@ namespace AAMT.Editor
         }
 
         /// <summary>
-        /// 创建资源文件对应的Bundle文件，用于资源加载时，查找资源对于的Bundle文件名
+        /// 创建资源文件对应的Bundle文件，用于资源加载时，查找资源对应的Bundle文件名
         /// </summary>
         private static void CreateManifestMapFile()
         {

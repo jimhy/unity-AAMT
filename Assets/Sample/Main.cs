@@ -401,6 +401,7 @@ namespace GameLogic
             loadingImg.SetActive(false);
             if (loadButton != null) loadButton.onClick.AddListener(OnLoad1);
             if (releaseButton != null) releaseButton.onClick.AddListener(OnRelease);
+            AAMTManager.MoveBundles();
         }
 
         private void OnLoad()

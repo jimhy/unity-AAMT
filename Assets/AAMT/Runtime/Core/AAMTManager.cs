@@ -13,11 +13,19 @@ namespace AAMT
     /// </summary>
     public class AAMTManager
     {
-        internal static readonly AAMTManager Instance = new AAMTManager();
+        private static AAMTManager _instance;
+
+        internal static AAMTManager Instance
+        {
+            get
+            {
+                if (_instance == null) _instance = new AAMTManager();
+                return _instance;
+            }
+        }
 
         private LoaderManager _loaderManager;
         internal IResourceManager resourceManager { get; private set; }
-        private AAMTDownloadManager _downloadManager;
 
         private AAMTManager()
         {
@@ -26,6 +34,7 @@ namespace AAMT
 
         private void Init()
         {
+            AddRuntime();
 #if UNITY_EDITOR
             if (SettingManager.AssetSetting.GetLoadType == AssetSetting.LoadType.LocalAssets)
                 resourceManager = new LocalAssetManager();
@@ -34,24 +43,34 @@ namespace AAMT
 #else
             resourceManager = new BundleManager();
 #endif
-            _downloadManager = new AAMTDownloadManager();
             _loaderManager = new LoaderManager();
-            var runtimeGameObject = new GameObject
+        }
+
+        private static void AddRuntime()
+        {
+            if (GameObject.Find("AAMTRuntime") == null)
             {
-                name = "AAMTRuntime"
-            };
-            runtimeGameObject.AddComponent<AAMTRuntime>();
-            Object.DontDestroyOnLoad(runtimeGameObject);
+                var runtimeGameObject = new GameObject
+                {
+                    name = "AAMTRuntime"
+                };
+                runtimeGameObject.AddComponent<AAMTRuntime>();
+                Object.DontDestroyOnLoad(runtimeGameObject);
+            }
         }
 
         public static void MoveBundles()
         {
-            Instance._downloadManager.MoveBundles();
+            AddRuntime();
+            var _moveBundleManager = new MoveBundleManager();
+            _moveBundleManager.MoveAssets();
         }
 
         public static void UpdateAssets()
         {
-            Instance._downloadManager.UpdateAssets();
+            AddRuntime();
+            var _downloadManager = new AAMTDownloadManager();
+            _downloadManager.UpdateAssets();
         }
 
         public static LoaderHandler LoadAssets(string[] assetsPath)

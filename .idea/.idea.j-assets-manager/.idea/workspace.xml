@@ -2,73 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="92296c79-1583-4897-a0b2-5254fa7c2e3b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/AAMT/Editor/Sprites/OnBuildHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/AAMT/Editor/Sprites/OnBuildHandler.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Bundle/MoveBundleManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Bundle/MoveBundleManager.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Bundle/MoveBundleTask.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Bundle/MoveBundleTask.cs.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.j-assets-manager/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.j-assets-manager/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assembly-CSharp-Editor.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Assembly-CSharp-Editor.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assembly-CSharp.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Assembly-CSharp.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Data/Setting/android.asset.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Data/Setting/android.asset.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Data/Setting/editor.asset.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Data/Setting/editor.asset.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Data/Setting/win.asset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Data/Setting/win.asset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Data/SettingManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Data/SettingManager.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Data/SettingManager.asset.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Data/SettingManager.asset.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/AAMT/Editor/Sprites/AssetsBundleBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Editor/Sprites/AssetsBundleBuilder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Editor/Sprites/AutoSetAssetsBundelName.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Editor/Sprites/AutoSetAssetsBundelName.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/AAMT/Editor/Sprites/EditorCommon.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Editor/Sprites/EditorCommon.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Runtime/AtlasAssets/SpriteAtlasManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/AtlasAssets/SpriteAtlasManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Runtime/Bundle/BundleHandle.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Bundle/BundleHandle.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Runtime/Bundle/BundleManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Bundle/BundleManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Editor/Sprites/OnPreprocessHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Editor/Sprites/OnPreprocessHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Runtime/Bundle/MoveBundleManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Bundle/MoveBundleManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Runtime/Core/AAMTDefine.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Core/AAMTDefine.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/AAMT/Runtime/Core/AAMTManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Core/AAMTManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Runtime/Loader/LoadBundleTask.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Loader/LoadBundleTask.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Runtime/Loader/LoadLocalTask.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Loader/LoadLocalTask.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Runtime/Loader/LoaderManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Loader/LoaderManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Runtime/Setting/AssetSetting.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Setting/AssetSetting.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/AAMT/Runtime/Setting/SettingManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Setting/SettingManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AAMT/Runtime/Utils/Tools.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/AAMT/Runtime/Utils/Tools.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/Config/AIConf.json.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/Config/AIConf.json.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/Config/BuffDataConf.json.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/Config/BuffDataConf.json.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/Config/RoleDataConf.json.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/Config/RoleDataConf.json.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/Prefabs/Capsule.prefab.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/Prefabs/Capsule.prefab.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/Prefabs/Sphere.prefab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/Prefabs/Sphere.prefab.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/Test/P1/P1.prefab.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/Test/P1/P1.prefab.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/Test/P1/jz_bg.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/Test/P1/jz_bg.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/Test/P2/P2.prefab.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/Test/P2/P2.prefab.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/Test/P2/zdy_jj_yingle.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/Test/P2/zdy_jj_yingle.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/Test/P3/P3.prefab.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/Test/P3/P3.prefab.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/Test/P3/djs_rd_quan2.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/Test/P3/djs_rd_quan2.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/UI/Canvas.prefab.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/UI/Canvas.prefab.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/UI/UserInfo/Panel.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/UI/UserInfo/Panel.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/UI/UserInfo/Panel.prefab.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/UI/UserInfo/Panel.prefab.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/UI/UserInfo/sc_bg.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/UI/UserInfo/sc_bg.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Res/UI/UserInfo/userInfoPanel.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Res/UI/UserInfo/userInfoPanel.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Sample/LoaderScene.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sample/LoaderScene.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/assets-info.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/assets-width-bundle.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/buildsetting.asset.ab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/buildsetting.asset.ab.manifest" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/res-config.ab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/res-config.ab.manifest" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/res-test-p1.ab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/res-test-p1.ab.manifest" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/res-test-p2.ab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/res-test-p2.ab.manifest" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/res-test-p3.ab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/res-test-p3.ab.manifest" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/res-ui-canvas.prefab.ab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/res-ui-canvas.prefab.ab.manifest" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/res-ui-userinfo.ab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/res-ui-userinfo.ab.manifest" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/scenes-samplescene.unity.ab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/scenes-samplescene.unity.ab.manifest" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/windows" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Build/windows/windows.manifest" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.en.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Sample/Main.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Sample/Main.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -108,6 +52,7 @@
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@1.0.0/Tests/Runtime/Canvas/NoActiveCameraInSceneDoesNotCrashEditor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ab7de6937a4448b0a6ccd59e9820599a157200/10/52952180/MonoBehaviour.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Sample/Main.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/bc1d04d811fc4873ab7d8d9d4daddcc9568788/26/f8248b5e/FileInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/b6be4acca73e451496b9a18577b818e6be00/31/994a2c97/UnityWebRequestAsyncOperation.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/bc1d04d811fc4873ab7d8d9d4daddcc9568788/ba/308da4b9/Directory.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
@@ -133,7 +78,7 @@
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
+  <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor &amp; Play">
     <configuration name="Standalone Player" type="RunUnityExe" factoryName="Unity Executable">
       <option name="EXE_PATH" value="$PROJECT_DIR$/Build/win32\j-assets-manager.exe" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -142,20 +87,20 @@
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <method v="2" />
     </configuration>
-    <configuration name="Attach to Unity Editor &amp; Play" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+    <configuration name="Attach to Unity Editor &amp; Play" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="20048">
       <option name="allowRunningInParallel" value="false" />
       <option name="listenPortForConnections" value="false" />
-      <option name="pid" />
+      <option name="pid" value="20048" />
       <option name="projectPathOnTarget" />
       <option name="selectedOptions">
         <list />
       </option>
       <method v="2" />
     </configuration>
-    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="18868">
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="20048">
       <option name="allowRunningInParallel" value="false" />
       <option name="listenPortForConnections" value="false" />
-      <option name="pid" value="18868" />
+      <option name="pid" value="20048" />
       <option name="projectPathOnTarget" />
       <option name="selectedOptions">
         <list />
@@ -183,6 +128,7 @@
       <workItem from="1646316869764" duration="5254000" />
       <workItem from="1646443756238" duration="7953000" />
       <workItem from="1646524486073" duration="18590000" />
+      <workItem from="1646612271636" duration="13247000" />
     </task>
     <servers />
   </component>

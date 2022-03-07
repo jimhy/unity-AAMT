@@ -72,7 +72,7 @@ namespace AAMT.Editor.Sprites
         [MenuItem("AAMT/MoveBundleToStreamingAssets")]
         private static void MoveBundleToStreamingAssets()
         {
-            var fileNames = new string[] {"aamt.ab", "aamt.ab.manifest"};
+            var fileNames = new string[] {$"{AAMTDefine.AAMT_BUNDLE_NAME}", $"{AAMTDefine.AAMT_BUNDLE_NAME}.manifest"};
             foreach (var fileName in fileNames)
             {
                 var buildPath = $"{SettingManager.AssetSetting.GetBuildPath}/{fileName}";
@@ -86,7 +86,7 @@ namespace AAMT.Editor.Sprites
             foreach (var s in list)
             {
                 var sourcePath = $"{SettingManager.AssetSetting.GetBuildPath}/{s}";
-                var targetPath = $"{Application.streamingAssetsPath}/{s}";
+                var targetPath = $"{Application.streamingAssetsPath}/{SettingManager.AssetSetting.GetBuildTarget}/{s}";
                 EditorCommon.UpdateProgress("正在移动文件", ++i, list.Length, sourcePath);
                 if (Directory.Exists(targetPath)) Directory.Delete(targetPath, true);
                 CopyDirectory(sourcePath, targetPath, true);
@@ -116,7 +116,7 @@ namespace AAMT.Editor.Sprites
                 EditorCommon.UpdateProgress("正在写入文件列表", ++i, files.Length, file);
                 if (file.EndsWith(".meta") ||
                     file.IndexOf(AAMTDefine.TOKEN_BUNDLE_FILES_DICTIONARY, StringComparison.Ordinal) != -1) continue;
-                var f = file.Replace(tmpPath, "");
+                var f = file.Replace(tmpPath, "").Replace("\\", "/");
                 sw.WriteLine(f);
             }
 

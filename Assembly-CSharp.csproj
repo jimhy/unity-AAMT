@@ -46,6 +46,7 @@
      <Compile Include="Assets\AAMT\Runtime\LocalAsset\LocalAssetManager.cs" />
      <Compile Include="Assets\AAMT\Runtime\Core\AAMTRuntime.cs" />
      <Compile Include="Assets\AAMT\Runtime\Interfacies\ILoader.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Bundle\MoveBundleTask.cs" />
      <Compile Include="Assets\AAMT\Runtime\Loader\LoadLocalTask.cs" />
      <Compile Include="Assets\AAMT\Runtime\AtlasAssets\SpriteAtlasManager.cs" />
      <Compile Include="Assets\AAMT\Runtime\Bundle\BundleHandle.cs" />
@@ -61,14 +62,13 @@
      <Compile Include="Assets\Sample\DrawFps.cs" />
      <Compile Include="Assets\AAMT\Runtime\Core\AAMTManager.cs" />
      <Compile Include="Assets\AAMT\Runtime\Core\AAMTRuntimeProperties.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Core\AAMTDefine.cs" />
      <Compile Include="Assets\AAMT\Runtime\Setting\SettingManager.cs" />
+     <Compile Include="Assets\AAMT\Runtime\Bundle\MoveBundleManager.cs" />
      <Compile Include="Assets\AAMT\Runtime\Loader\BundleLoader.cs" />
      <Compile Include="Assets\AAMT\Runtime\AtlasAssets\AAMTSpriteAtlas.cs" />
      <Compile Include="Assets\AAMT\Runtime\Bundle\BundleManager.cs" />
      <Compile Include="Assets\Sample\1.LoadAssetsInEditor\LoadAssetsInEditor.cs" />
-     <Compile Include="Assets\AAMT\Runtime\Bundle\MoveBundleTask.cs" />
-     <Compile Include="Assets\AAMT\Runtime\Bundle\MoveBundleManager.cs" />
-     <Compile Include="Assets\AAMT\Runtime\Core\AAMTDefine.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\StreamingAssets\bundle-files-dictionary.txt" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
@@ -88,7 +88,6 @@
      <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
-     <None Include="Assets\StreamingAssets\assets-info.txt" />
      <None Include="Assets\Res\Config\RoleDataConf.json" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
      <None Include="Assets\codeandweb.com\Readme.txt" />
