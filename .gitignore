@@ -12,3 +12,7 @@ Roles/
 Roles.meta
 Build/
 Bin/
+pkg/
+.vs/
+.vsconfig/
+.vsconfig/

@@ -10,26 +10,31 @@ namespace AAMT
 {
     public class MoveBundleManager
     {
+        internal AsyncHandler handler;
+
         internal MoveBundleManager()
         {
+            handler = new AsyncHandler();
         }
 
         internal void MoveAssets()
         {
-            var path = $"{Application.streamingAssetsPath}/{AAMTDefine.TOKEN_BUNDLE_FILES_DICTIONARY}";
+            var buildTarget = SettingManager.assetSetting.getBuildTarget;
+            var path =
+                $"{Application.streamingAssetsPath}/{buildTarget}/{AAMTDefine.AAMT_BUNDLE_FILES_DICTIONARY}";
             var value = Tools.ReadTextFileData(path);
             if (string.IsNullOrEmpty(value))
             {
-                Debug.LogErrorFormat("加载assets-info文件失败,path:{0}", path);
                 return;
             }
 
             value = value.Replace("\r", "");
             var files = value.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            handler.totalCount = files.Length;
             foreach (var file in files)
             {
-                var sourcePath = $"{Application.streamingAssetsPath}/{file}";
-                var newPath = $"{Application.persistentDataPath}/{file}";
+                var sourcePath = $"{Application.streamingAssetsPath}/{buildTarget}/{file}".ToLower();
+                var newPath = $"{Application.persistentDataPath}/{buildTarget}/{file}".ToLower();
                 AAMTRuntime.Instance.StartCoroutine(MoveFile(newPath, sourcePath));
             }
         }
@@ -69,6 +74,18 @@ namespace AAMT
         {
             if (isSuccess) Debug.LogFormat("移动文件成功:{0}", path);
             else Debug.LogErrorFormat("移动文件失败:{0}", path);
+            if (handler == null) return;
+            handler.currentCount++;
+
+            if (handler.currentCount > handler.totalCount)
+                handler.currentCount = handler.totalCount;
+            handler.OnProgress();
+
+            if (handler.currentCount >= handler.totalCount)
+            {
+                handler.OnComplete();
+                handler = null;
+            }
         }
     }
 }

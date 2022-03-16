@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace AAMT
@@ -49,7 +50,6 @@ namespace AAMT
                     _waitingDependency.Add(dep);
                 }
             }
-
             if (_waitingDependency.Count > 0)
             {
                 AAMTRuntime.Instance.StartCoroutine(CheckWaitingDependency());

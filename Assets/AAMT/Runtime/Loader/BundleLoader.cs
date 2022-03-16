@@ -10,7 +10,7 @@ namespace AAMT
         {
         }
 
-        public LoaderHandler Load(string[] path)
+        public AsyncHandler Load(string[] path)
         {
             return LoadBundleTask.GetTask(path).Run();
         }

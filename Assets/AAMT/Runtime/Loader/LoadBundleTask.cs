@@ -8,7 +8,7 @@ namespace AAMT
     public class LoadBundleTask
     {
         private readonly BundleManager _bundleManager;
-        private LoaderHandler _loaderHandler;
+        private AsyncHandler _asyncHandler;
 
         private static readonly FlexibleDictionary<string, bool> CommonLoadingAbNames = new();
 
@@ -49,7 +49,7 @@ namespace AAMT
 
             if (!_bundleManager.pathToBundle.ContainsKey(resPath))
             {
-                Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}/{1}", SettingManager.AssetSetting.GetLoadPath,
+                Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}/{1}", SettingManager.assetSetting.getLoadPath,
                     resPath);
                 OnLoadComplete();
                 return;
@@ -80,9 +80,9 @@ namespace AAMT
             }
         }
 
-        public LoaderHandler Run()
+        public AsyncHandler Run()
         {
-            _loaderHandler = new LoaderHandler
+            _asyncHandler = new AsyncHandler
             {
                 totalCount = _loadingAbNames.Count
             };
@@ -98,12 +98,12 @@ namespace AAMT
                 AAMTRuntime.Instance.StartCoroutine(CheckAlreadyLoadingAbs());
             }
 
-            return _loaderHandler;
+            return _asyncHandler;
         }
 
         private IEnumerator Load(string abName)
         {
-            var abPath = $"{SettingManager.AssetSetting.GetLoadPath}/{abName}";
+            var abPath = $"{SettingManager.assetSetting.getLoadPath}/{abName}";
             var request = AssetBundle.LoadFromFileAsync(abPath);
             yield return request;
             if (request.assetBundle == null)
@@ -119,10 +119,10 @@ namespace AAMT
 
         private void OnLoadOneAbComplete(string abName)
         {
-            _loaderHandler.currentCount++;
-            if (_loaderHandler.currentCount > _loaderHandler.totalCount)
+            _asyncHandler.currentCount++;
+            if (_asyncHandler.currentCount > _asyncHandler.totalCount)
             {
-                _loaderHandler.currentCount = _loaderHandler.totalCount;
+                _asyncHandler.currentCount = _asyncHandler.totalCount;
                 Debug.LogErrorFormat("这里不可能出现这种问题,请检查逻辑.");
             }
 
@@ -139,11 +139,11 @@ namespace AAMT
 
             if (_loadingAbNames.Count == 0)
             {
-                _loaderHandler.currentCount = 1;
+                _asyncHandler.currentCount = 1;
                 AAMTRuntime.Instance.StartCoroutine(CheckAlreadyLoadingAbs());
             }
 
-            _loaderHandler.OnProgress();
+            _asyncHandler.OnProgress();
         }
 
         private bool AddToAbNameList(string abName)
@@ -160,7 +160,7 @@ namespace AAMT
 
         private void OnLoadComplete()
         {
-            _loaderHandler.OnComplete();
+            _asyncHandler.OnComplete();
         }
 
         private IEnumerator CheckAlreadyLoadingAbs()

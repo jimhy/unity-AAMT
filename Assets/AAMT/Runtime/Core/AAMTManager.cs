@@ -35,14 +35,10 @@ namespace AAMT
         private void Init()
         {
             AddRuntime();
-#if UNITY_EDITOR
-            if (SettingManager.AssetSetting.GetLoadType == AssetSetting.LoadType.LocalAssets)
+            if (SettingManager.assetSetting.getBuildTarget == AssetSetting.BuildTarget.editor)
                 resourceManager = new LocalAssetManager();
             else
                 resourceManager = new BundleManager();
-#else
-            resourceManager = new BundleManager();
-#endif
             _loaderManager = new LoaderManager();
         }
 
@@ -59,26 +55,28 @@ namespace AAMT
             }
         }
 
-        public static void MoveBundles()
+        public static AsyncHandler MoveBundles()
         {
             AddRuntime();
-            var _moveBundleManager = new MoveBundleManager();
-            _moveBundleManager.MoveAssets();
+            var moveBundleManager = new MoveBundleManager();
+            moveBundleManager.MoveAssets();
+            return moveBundleManager.handler;
         }
 
-        public static void UpdateAssets()
+        public static AsyncHandler UpdateAssets()
         {
             AddRuntime();
-            var _downloadManager = new AAMTDownloadManager();
-            _downloadManager.UpdateAssets();
+            var downloadManager = new BundleDowndloadManager();
+            downloadManager.Start();
+            return downloadManager.handler;
         }
 
-        public static LoaderHandler LoadAssets(string[] assetsPath)
+        public static AsyncHandler LoadAssets(string[] assetsPath)
         {
             return Instance._loaderManager.Load(assetsPath);
         }
 
-        public static LoaderHandler LoadAssets(string assetsPath)
+        public static AsyncHandler LoadAssets(string assetsPath)
         {
             return Instance._loaderManager.Load(new[] {assetsPath});
         }

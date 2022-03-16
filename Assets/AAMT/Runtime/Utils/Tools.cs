@@ -103,6 +103,12 @@ namespace AAMT
 
         public static string ReadTextFileData(string path)
         {
+            if (Application.platform == RuntimePlatform.Android &&
+                path.IndexOf("file:///", StringComparison.Ordinal) == -1)
+            {
+                path = $"file:///{path}";
+            }
+
             var request = UnityWebRequest.Get(path);
             request.SendWebRequest();
             while (!request.isDone)
@@ -112,6 +118,7 @@ namespace AAMT
             if (request.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogErrorFormat("ReadTextFileData error,errorCode:{0},path:{1}", request.result, path);
+                Debug.LogFormat("downloadHandler:{0}", request.downloadHandler.text);
                 return string.Empty;
             }
 

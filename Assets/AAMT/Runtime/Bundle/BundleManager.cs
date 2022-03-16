@@ -29,7 +29,7 @@ namespace AAMT
         {
             var mainBundle =
                 AssetBundle.LoadFromFile(
-                    $"{SettingManager.AssetSetting.GetLoadPath}/{SettingManager.AssetSetting.GetBuildTargetToString}");
+                    $"{SettingManager.assetSetting.getLoadPath}/{SettingManager.assetSetting.getBuildTargetToString}");
             if (mainBundle != null)
                 assetBundleManifest = mainBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
             else
@@ -41,8 +41,7 @@ namespace AAMT
         private void InitBundleMap()
         {
             pathToBundle = new Dictionary<string, string>();
-            const string fileName = "assets-width-bundle";
-            var path = $"{SettingManager.AssetSetting.GetLoadPath}/{fileName}.txt";
+            var path = $"{SettingManager.assetSetting.getLoadPath}/{AAMTDefine.AAMT_ASSETS_WIDTH_BUNDLE_NAME}";
             Debug.LogFormat("Load assets-width-bundle file.path={0}", path);
             var content = Tools.ReadTextFileData(path);
             if (string.IsNullOrEmpty(content))

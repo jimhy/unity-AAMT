@@ -13,16 +13,22 @@
 
 ---
 
+### 未来功能
+
+- [ ]  断点续传功能
+
 ### 版本历史
 
-#### v0.2.0 `2022/3/6`
+#### v0.2.0 `2022/3/8`
 
 - [X]  SetingManager bundle打包到StreammigAssets文件夹下，并且加载的时候也需要到StreamigAssets文件夹中去加载。
-- [X]  增加移动需要到StreamingAssets文件加的路径列表。
-- [X]  需要把移动到StreamingAssets文件夹的文件记录一个文件列表文件，供移动功能使用。
-- [X]  需要加一个是否移动文件到StreammigAssets文件夹下的勾选框，并写移动文件逻辑。
-- [ ]  需要加一个多加载路径的功能，把加载路径更改成路径列表并实现功能。
-- [ ]  实现远程加载AB功能
+- [X]  增加打包apk时需要移动到StreamingAssets文件夹的路径列表。
+- [X]  需要把移动到StreamingAssets文件夹的文件记录一个文件列表文件。
+- [X]  增加Setting文件中，需要把ab移动到StreamingAssets文件夹下的目录列表，一起打包到apk的功能。
+- [X]  第一次启动游戏时,把文件移动到PersistentDataPath文件夹中。
+- [X]  实现远程下载AB功能
+- [ ]  在SettingManager里面加上eidtor,window,android,ios等平台的配置文件保存属性
+- [ ]  加载AB时，需要首先在PersistentDataPath文件夹中找，如果找不到，就到StreamingAssets文件中找，如果找不到，就到远程目录下下载下来(需要勾选)。
 - [ ]  实现热更文件对比，并且下载热更文件逻辑。
 
 #### v0.1.0 `2022/3/5`

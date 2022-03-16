@@ -10,6 +10,7 @@ namespace GameLogic
 {
     public class Main : MonoBehaviour
     {
+        public Button initButton;
         public Button loadButton;
         public Button releaseButton;
         public Transform roleLayer;
@@ -18,6 +19,7 @@ namespace GameLogic
         public Slider slider;
         public RawImage rawImage;
         public Transform uiRoot;
+        public Text outputTf;
 
         #region 配置
 
@@ -394,14 +396,56 @@ namespace GameLogic
             QualitySettings.vSyncCount = 0;
         }
 
+        private void OnMessage(string condition, string stacktrace, LogType type)
+        {
+            if (outputTf != null)
+            {
+                outputTf.text += $"{condition}\n";
+            }
+        }
 
         void Start()
         {
+            Application.logMessageReceived += OnMessage;
             slider.value = 0;
             loadingImg.SetActive(false);
             if (loadButton != null) loadButton.onClick.AddListener(OnLoad1);
             if (releaseButton != null) releaseButton.onClick.AddListener(OnRelease);
-            AAMTManager.MoveBundles();
+            if (initButton != null) initButton.onClick.AddListener(OnInitAssets);
+        }
+
+        private void OnInitAssets()
+        {
+            if (PlayerPrefs.GetInt("hasMovedAB") == 0)
+            {
+                var handler = AAMTManager.MoveBundles();
+                handler.onProgress = loaderHandler =>
+                {
+                    if (slider != null) slider.value = handler.progress;
+                    Debug.LogFormat("move file progress:{0}", handler.progress);
+                };
+                handler.onComplete = loaderHandler =>
+                {
+                    PlayerPrefs.SetInt("hasMovedAB", 1);
+                    Debug.Log("move file complete!!");
+                    downloadAb();
+                };
+            }
+            else
+            {
+                downloadAb();
+            }
+        }
+
+        private void downloadAb()
+        {
+            var handler = AAMTManager.UpdateAssets();
+            handler.onProgress = asyncHandler =>
+            {
+                if (slider != null) slider.value = handler.progress;
+                Debug.LogFormat("down load file {0}/{1}bytes", handler.currentBytes, handler.totalBytes);
+            };
+            handler.onComplete = asyncHandler => { Debug.LogFormat("On Update Complete!!"); };
         }
 
         private void OnLoad()
@@ -481,7 +525,7 @@ namespace GameLogic
             });
         }
 
-        private void OnLoadComplete(LoaderHandler handler)
+        private void OnLoadComplete(AsyncHandler handler)
         {
             foreach (var path in pathList)
             {
