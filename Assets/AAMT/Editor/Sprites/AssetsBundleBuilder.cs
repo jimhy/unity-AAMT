@@ -1,32 +1,26 @@
-﻿using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.IO;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-namespace AAMT.Editor
+namespace AAMT
 {
     public static class AssetsBundleBuilder
     {
-        private static readonly string assetsWidthBundleName = "assets-width-bundle";
-
-
         [MenuItem("AAMT/Build Asset Bundles", false, 51)]
         public static void BuildAssetsBundles()
         {
             EditorCommon.ClearConsole();
             SetSettingManagerAbName();
-            var path = SettingManager.AssetSetting.GetBuildPath.ToLower();
+            var path = SettingManager.assetSetting.getBuildPath.ToLower();
             Debug.LogFormat("Start build assets bundles to path:{0}", path);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.ChunkBasedCompression,
-                GetBuildTarget());
+                EditorCommon.AamtToEditorTarget());
 
             CreateManifestMapFile();
-            CreateAssetsListFile();
+            CreateVersionFile();
             AssetDatabase.Refresh();
             Debug.Log("Assets bundle build complete!!");
         }
@@ -43,70 +37,35 @@ namespace AAMT.Editor
             }
         }
 
-        private static BuildTarget GetBuildTarget()
-        {
-            switch (SettingManager.AssetSetting.GetBuildTarget)
-            {
-                case AssetSetting.BuildTarget.windows:
-                    return BuildTarget.StandaloneWindows;
-                case AssetSetting.BuildTarget.android:
-                    return BuildTarget.Android;
-                case AssetSetting.BuildTarget.ios:
-                    return BuildTarget.iOS;
-                default:
-                    return EditorUserBuildSettings.activeBuildTarget;
-            }
-        }
 
         /// <summary>
         /// 创建资源列表文件,用于拷贝资源文件到Application.persistentDataPath文件夹里面
         /// </summary>
-        public static void CreateAssetsListFile()
+        [MenuItem("AAMT/CreateVersionFile", false, 54)]
+        public static void CreateVersionFile()
         {
-            var assetsInfoName = "assets-info.txt";
-            var txtPath = $"{Application.streamingAssetsPath}/{assetsInfoName}";
-            if (File.Exists(txtPath)) File.Delete(txtPath);
-            if (!Directory.Exists(Application.streamingAssetsPath))
-                Directory.CreateDirectory(Application.streamingAssetsPath);
-
-            FileStream fs = new FileStream(txtPath, FileMode.CreateNew, FileAccess.Write);
-            StreamWriter sw = new StreamWriter(fs);
-
-            var files = Directory.GetFiles(SettingManager.AssetSetting.GetBuildPath, "*", SearchOption.AllDirectories);
-            int i = 1;
-            foreach (var file in files)
-            {
-                if (!CheckFile(file) || file.IndexOf(assetsInfoName, StringComparison.Ordinal) != -1) continue;
-                EditorCommon.UpdateProgress("正在计算文件", i++, files.Length, file);
-                FileInfo fileInfo = new FileInfo(file);
-                var newPath = file.Replace(SettingManager.AssetSetting.GetBuildPath, "")
-                    .Replace("\\", "/");
-                newPath = newPath.Substring(1, newPath.Length - 1);
-                newPath = $"{newPath}?{Md5ByFile(file)}?{fileInfo.Length}";
-                sw.WriteLine(newPath);
-            }
-
-            sw.Close();
-            fs.Close();
-
-            EditorUtility.ClearProgressBar();
-            AssetDatabase.Refresh();
+            var dirPath = SettingManager.assetSetting.getBuildPath;
+            var txtPath = $"{dirPath}/{AAMTDefine.AAMT_ASSET_VERSION}";
+            EditorCommon.CreateVersionFile(txtPath, dirPath);
         }
 
         /// <summary>
         /// 创建资源文件对应的Bundle文件，用于资源加载时，查找资源对应的Bundle文件名
         /// </summary>
+        [MenuItem("AAMT/CreateManifestMapFile", false, 55)]
         private static void CreateManifestMapFile()
         {
-            var files = Directory.GetFiles(SettingManager.AssetSetting.GetBuildPath, "*.manifest",
+            var files = Directory.GetFiles(SettingManager.assetSetting.getBuildPath, "*.manifest",
                 SearchOption.AllDirectories);
-            var mapPath = $"{SettingManager.AssetSetting.GetBuildPath}/{assetsWidthBundleName}.txt";
+
+            var mapPath = Path.Combine(SettingManager.assetSetting.getBuildPath,
+                AAMTDefine.AAMT_ASSETS_WIDTH_BUNDLE_NAME);
             if (File.Exists(mapPath)) File.Delete(mapPath);
 
             FileStream fs = new FileStream(mapPath, FileMode.CreateNew, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
             var regex = new Regex(@"- Assets/([\w\/\.]+)");
-            var buildPath = SettingManager.AssetSetting.GetBuildPath + "/";
+            var buildPath = $"{SettingManager.assetSetting.getBuildPath}/";
             var i = 1;
             foreach (var file in files)
             {
@@ -127,44 +86,10 @@ namespace AAMT.Editor
             fs.Close();
         }
 
-        private static bool CheckFile(string file)
-        {
-            return !(file.EndsWith(".meta") ||
-                     file.EndsWith(".apk") ||
-                     file.EndsWith(".manifest") ||
-                     file.EndsWith(".idea"));
-        }
-
-        /// <summary>
-        /// 计算文件的MD5值
-        /// </summary>
-        public static string Md5ByFile(string file)
-        {
-            try
-            {
-                FileStream fs = new FileStream(file, FileMode.Open);
-                var md5 = new MD5CryptoServiceProvider();
-                byte[] retVal = md5.ComputeHash(fs);
-                fs.Close();
-
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < retVal.Length; i++)
-                {
-                    sb.Append(retVal[i].ToString("x2"));
-                }
-
-                return sb.ToString();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("md5file() fail, error:" + ex.Message);
-            }
-        }
-
         [MenuItem("AAMT/Remove Bundle Cache", false, 52)]
         private static void RemoveBundleCache()
         {
-            var path = SettingManager.AssetSetting.GetBuildPath;
+            var path = SettingManager.assetSetting.getBuildPath;
             Debug.LogFormat("path={0}", path);
             if (Directory.Exists(path))
             {
@@ -174,6 +99,17 @@ namespace AAMT.Editor
             }
 
             AssetDatabase.Refresh();
+        }
+
+        [MenuItem("AAMT/Remove PersistentDataPath Cache", false, 53)]
+        private static void RemovePersistentDataPathCache()
+        {
+            var path = Application.persistentDataPath;
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path, true);
+                Debug.LogFormat("Remove PersistentDataPath at path:{0}", path);
+            }
         }
     }
 }

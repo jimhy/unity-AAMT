@@ -21,15 +21,25 @@ namespace AAMT
 
         internal AssetBundleRequest LoadAssetAsync<T>(string assetName) where T : Object
         {
-            ReferenceCount++;
-            Debug.LogFormat("增加引用计数,abName{0},当前引用计数:{1}", _assetBundle.name, ReferenceCount);
+            AddDependencyReference(_assetBundle.name);
             return _assetBundle.LoadAssetAsync<T>(assetName);
+        }
+
+        internal AssetBundleRequest LoadAllAssetAsync()
+        {
+            AddDependencyReference(_assetBundle.name);
+            return _assetBundle.LoadAllAssetsAsync();
+        }
+        
+        internal Object[] LoadAllAsset()
+        {
+            AddDependencyReference(_assetBundle.name);
+            return _assetBundle.LoadAllAssets();
         }
 
         internal AssetBundleRequest LoadAssetWithSubAssetsAsync<T>(string assetName) where T : Object
         {
-            ReferenceCount++;
-            Debug.LogFormat("增加引用计数SubAssets,abName:{0},当前引用计数:{1}", _assetBundle.name, ReferenceCount);
+            AddDependencyReference(_assetBundle.name);
             return _assetBundle.LoadAssetWithSubAssetsAsync<T>(assetName);
         }
 

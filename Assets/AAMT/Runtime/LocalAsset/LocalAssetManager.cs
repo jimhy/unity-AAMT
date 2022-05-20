@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -30,12 +31,37 @@ namespace AAMT
             assetsList.Add(path, o);
         }
 
-        public void GetAssets<T>(string path, Action<T> callBack) where T : Object
+        public void GetAssetsAsync<T>(string path, Action<T> callBack) where T : Object
         {
             if (typeof(T) == typeof(Sprite) || typeof(T) == typeof(AAMTSpriteAtlas))
-                _atlasManager.GetAssets(path, callBack);
+                _atlasManager.GetAssetsAsync(path, callBack);
             else
                 AAMTRuntime.Instance.StartCoroutine(StartGetAssets(path, callBack));
+        }
+
+        public void GetAllAssetsAsync(string path, Action<Object[]> callBack)
+        {
+            AAMTRuntime.Instance.StartCoroutine(StartGetAllAssetsAsync(path, callBack));
+        }
+
+        private Object[] GetAllAssets(string path)
+        {
+            var objs = new List<Object>();
+            var dirpath = path;
+            if (path.LastIndexOf(".") != -1)
+            {
+                dirpath = Path.GetDirectoryName(path);
+            }
+
+            foreach (var keyValuePair in assetsList)
+            {
+                if (keyValuePair.Key.StartsWith(dirpath))
+                {
+                    objs.Add(keyValuePair.Value);
+                }
+            }
+
+            return objs.ToArray();
         }
 
         public void ChangeScene(string path, Action callBack)
@@ -59,7 +85,7 @@ namespace AAMT
         /// <returns></returns>
         private IEnumerator StartGetAssets<T>(string path, Action<T> callBack) where T : Object
         {
-            yield return 0;
+            yield return 0; //这里是模拟真实ab包加载环境
 
             if (!assetsList.ContainsKey(path))
             {
@@ -68,6 +94,13 @@ namespace AAMT
             }
 
             callBack?.Invoke(assetsList[path] as T);
+        }
+
+        private IEnumerator StartGetAllAssetsAsync(string path, Action<Object[]> callBack)
+        {
+            yield return 0; //这里是模拟真实ab包加载环境
+            var objs = GetAllAssets(path);
+            callBack?.Invoke(objs);
         }
 
         public bool HasAssetsByPath(string path)

@@ -8,8 +8,9 @@ namespace AAMT
     interface IResourceManager
     {
         bool HasAssetsByPath(string path);
-        void GetAssets<T>(string path, Action<T> callBack) where T : Object;
-        void ChangeScene(string path,[CanBeNull] Action callBack);
+        void GetAssetsAsync<T>(string path, Action<T> callBack) where T : Object;
+        void GetAllAssetsAsync(string path, Action<Object[]> callBack);
+        void ChangeScene(string path, [CanBeNull] Action callBack);
         void Release(string path);
         void Destroy(string path);
     }

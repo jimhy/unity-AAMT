@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,15 +9,33 @@ namespace AAMT
     public class LoadLocalTask
     {
         private LocalAssetManager _manager;
-        private LoaderHandler _loaderHandler;
+        private AsyncHandler _asyncHandler;
         private List<string> _resPaths;
 
         private LoadLocalTask(string[] resPaths)
         {
             _manager = AAMTManager.Instance.resourceManager as LocalAssetManager;
             _resPaths = new List<string>();
+            var loadPath = $"{SettingManager.assetSetting.getLoadPath}/";
             foreach (var p in resPaths)
             {
+                if (p.LastIndexOf(".") == -1)
+                {
+                    var dir = $"{loadPath}{p}";
+                    if (Directory.Exists(dir))
+                    {
+                        var fs = Directory.GetFiles(dir);
+                        foreach (var s in fs)
+                        {
+                            if (s.EndsWith(".meta")) continue;
+                            var ss = s.ToLower().Replace(loadPath, "").Replace("\\", "/");
+                            _resPaths.Add(ss);
+                        }
+
+                        continue;
+                    }
+                }
+
                 var resPath = Tools.FilterSpriteUri(p).ToLower();
                 _resPaths.Add(resPath);
             }
@@ -29,13 +48,13 @@ namespace AAMT
 
         private void OnLoadComplete()
         {
-            _loaderHandler.OnComplete();
+            _asyncHandler.OnComplete();
         }
 
-        public LoaderHandler Run()
+        public AsyncHandler Run()
         {
-            _loaderHandler = new LoaderHandler();
-            _loaderHandler.totalCount = _resPaths.Count;
+            _asyncHandler = new AsyncHandler();
+            _asyncHandler.totalCount = _resPaths.Count;
             if (_resPaths.Count > 0)
             {
                 AAMTRuntime.Instance.StartCoroutine(Load());
@@ -45,7 +64,7 @@ namespace AAMT
                 OnLoadComplete();
             }
 
-            return _loaderHandler;
+            return _asyncHandler;
         }
 
         IEnumerator Load()
@@ -56,11 +75,11 @@ namespace AAMT
                 var assetName = _resPaths[0];
                 if (!_manager.HasAssetsByPath(assetName))
                 {
-                    var assetPath = $"{SettingManager.AssetSetting.GetLoadPath}/{assetName}";
+                    var assetPath = $"{SettingManager.assetSetting.getLoadPath}/{assetName}";
                     var obj = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
                     if (obj == null)
                     {
-                        Debug.LogErrorFormat("加载资源失败,abName={0}", assetName);
+                        Debug.LogErrorFormat("加载资源失败,assetPath={0}", assetPath);
                     }
                     else
                     {
@@ -80,10 +99,10 @@ namespace AAMT
 
         private void OnLoadOneAssetComplete(string assetName)
         {
-            _loaderHandler.currentCount++;
-            if (_loaderHandler.currentCount > _loaderHandler.totalCount)
+            _asyncHandler.currentCount++;
+            if (_asyncHandler.currentCount > _asyncHandler.totalCount)
             {
-                _loaderHandler.currentCount = _loaderHandler.totalCount;
+                _asyncHandler.currentCount = _asyncHandler.totalCount;
                 Debug.LogErrorFormat("这里不可能出现这种问题,请检查逻辑.");
             }
 
@@ -95,11 +114,11 @@ namespace AAMT
 
             if (_resPaths.Count == 0)
             {
-                _loaderHandler.currentCount = 1;
+                _asyncHandler.currentCount = 1;
                 OnLoadComplete();
             }
 
-            _loaderHandler.OnProgress();
+            _asyncHandler.OnProgress();
         }
     }
 }

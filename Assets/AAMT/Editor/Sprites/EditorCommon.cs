@@ -2,12 +2,20 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using LitJsonAAMT;
 using UnityEditor;
+using UnityEngine;
 
 namespace AAMT
 {
     public class EditorCommon
     {
+        [MenuItem("AAMT/OpenPresistentFolders")]
+        private static void OpenPresistentFolders()
+        {
+            EditorUtility.RevealInFinder(Application.persistentDataPath);
+        }
+
         internal static void UpdateProgress(string title, int progress, int progressMax, string desc)
         {
             title = title + "...[" + progress + " - " + progressMax + "]";
@@ -41,6 +49,7 @@ namespace AAMT
                 return false;
             return true;
         }
+
         /// <summary>
         /// 计算文件的MD5值
         /// </summary>
@@ -65,6 +74,75 @@ namespace AAMT
             {
                 throw new Exception("md5file() fail, error:" + ex.Message);
             }
+        }
+
+        public static void CreateVersionFile(string filePath, string dirPath)
+        {
+            if (File.Exists(filePath)) File.Delete(filePath);
+
+            FileStream fs = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write);
+            StreamWriter sw = new StreamWriter(fs);
+
+            var files = Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories);
+            int i = 1;
+            var versionData = new VersionData();
+            foreach (var file in files)
+            {
+                if (!CheckFile(file) ||
+                    file.IndexOf(AAMTDefine.AAMT_ASSET_VERSION, StringComparison.Ordinal) != -1) continue;
+                EditorCommon.UpdateProgress("正在计算文件", i++, files.Length, file);
+                FileInfo fileInfo = new FileInfo(file);
+                var newPath = file.Replace(dirPath, "")
+                    .Replace("\\", "/");
+                newPath = newPath.Substring(1, newPath.Length - 1);
+                versionData.Add(newPath, Md5ByFile(file), (uint) fileInfo.Length);
+            }
+
+            var json = JsonMapper.ToJson(versionData);
+            sw.Write(json);
+            sw.Close();
+            fs.Close();
+
+            EditorUtility.ClearProgressBar();
+        }
+
+        private static bool CheckFile(string file)
+        {
+            return !(file.EndsWith(".meta") ||
+                     file.EndsWith(".apk") ||
+                     file.EndsWith(".manifest") ||
+                     file.EndsWith(".idea"));
+        }
+
+        internal static BuildTarget AamtToEditorTarget()
+        {
+            switch (SettingManager.assetSetting.getBuildTarget)
+            {
+                case AssetSetting.BuildTarget.windows:
+                    return BuildTarget.StandaloneWindows;
+                case AssetSetting.BuildTarget.android:
+                    return BuildTarget.Android;
+                case AssetSetting.BuildTarget.ios:
+                    return BuildTarget.iOS;
+            }
+
+            return EditorUserBuildSettings.activeBuildTarget;
+        }
+
+        internal static AssetSetting.BuildTarget EditorToAamtTarget()
+        {
+            switch (EditorUserBuildSettings.activeBuildTarget)
+            {
+                case BuildTarget.StandaloneWindows:
+                case BuildTarget.StandaloneWindows64:
+                    return AssetSetting.BuildTarget.windows;
+                case BuildTarget.Android:
+                    return AssetSetting.BuildTarget.android;
+                case BuildTarget.iOS:
+                    return AssetSetting.BuildTarget.ios;
+            }
+
+            return AssetSetting.BuildTarget.editor;
         }
     }
 }

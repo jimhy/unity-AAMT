@@ -29,7 +29,7 @@ namespace AAMT
         {
             var mainBundle =
                 AssetBundle.LoadFromFile(
-                    $"{SettingManager.AssetSetting.GetLoadPath}/{SettingManager.AssetSetting.GetBuildTargetToString}");
+                    $"{SettingManager.assetSetting.getLoadPath}/{SettingManager.assetSetting.getBuildTarget}");
             if (mainBundle != null)
                 assetBundleManifest = mainBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
             else
@@ -41,8 +41,7 @@ namespace AAMT
         private void InitBundleMap()
         {
             pathToBundle = new Dictionary<string, string>();
-            const string fileName = "assets-width-bundle";
-            var path = $"{SettingManager.AssetSetting.GetLoadPath}/{fileName}.txt";
+            var path = $"{SettingManager.assetSetting.getLoadPath}/{AAMTDefine.AAMT_ASSETS_WIDTH_BUNDLE_NAME}";
             Debug.LogFormat("Load assets-width-bundle file.path={0}", path);
             var content = Tools.ReadTextFileData(path);
             if (string.IsNullOrEmpty(content))
@@ -96,11 +95,35 @@ namespace AAMT
             return bundles.ContainsKey(abName);
         }
 
-        public void GetAssets<T>(string path, Action<T> callBack) where T : Object
+        public void GetAssetsAsync<T>(string path, Action<T> callBack) where T : Object
         {
             if (typeof(T) == typeof(Sprite) || typeof(T) == typeof(AAMTSpriteAtlas))
-                _atlasManager.GetAssets(path, callBack);
+                _atlasManager.GetAssetsAsync(path, callBack);
             else AAMTRuntime.Instance.StartCoroutine(StartGetAssets(path, callBack));
+        }
+
+        public void GetAllAssetsAsync(string path, Action<Object[]> callBack)
+        {
+            AAMTRuntime.Instance.StartCoroutine(StartGetAllAssets(path, callBack));
+        }
+
+        public Object[] GetAllAssets(string path)
+        {
+            Tools.ParsingLoadUri(path, out var abName, out var itemName, out _);
+            if (abName == null || itemName == null)
+            {
+                Debug.LogErrorFormat("加载资源失败,abName:{0},itemName:{1}", abName, itemName);
+                return null;
+            }
+
+            if (!bundles.ContainsKey(abName))
+            {
+                return null;
+            }
+
+            var objects = bundles[abName].LoadAllAsset();
+
+            return objects;
         }
 
         public void ChangeScene(string path, Action callBack)
@@ -148,6 +171,34 @@ namespace AAMT
             }
 
             callBack?.Invoke(request.asset as T);
+        }
+
+        private IEnumerator<AssetBundleRequest> StartGetAllAssets(string path, Action<Object[]> callBack)
+        {
+            Tools.ParsingLoadUri(path, out var abName, out var itemName, out _);
+            if (abName == null || itemName == null)
+            {
+                Debug.LogErrorFormat("加载资源失败,abName:{0},itemName:{1}", abName, itemName);
+                callBack?.Invoke(default);
+                yield break;
+            }
+
+            if (!bundles.ContainsKey(abName))
+            {
+                callBack?.Invoke(default);
+                yield break;
+            }
+
+            var request = bundles[abName].LoadAllAssetAsync();
+            yield return request;
+            if (request.allAssets == null)
+            {
+                Debug.LogErrorFormat("加载资源失败,abName:{0},itemName:{1}", abName, itemName);
+                callBack?.Invoke(default);
+                yield break;
+            }
+
+            callBack?.Invoke(request.allAssets);
         }
 
         public void Release(string path)

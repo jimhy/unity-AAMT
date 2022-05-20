@@ -21,14 +21,14 @@ namespace AAMT
             _loadingAssets = new List<string>();
         }
 
-        internal virtual void GetAssets<T>([NotNull] string path, [NotNull] Action<T> callBack) where T : Object
+        internal virtual void GetAssetsAsync<T>([NotNull] string path, [NotNull] Action<T> callBack) where T : Object
         {
             if (typeof(T) == typeof(Sprite))
                 StartGetAssetsSprite(path, callBack);
             else if (typeof(T) == typeof(AAMTSpriteAtlas))
                 AAMTRuntime.Instance.StartCoroutine(StartGetAssetsAtlas(path, callBack));
         }
-
+        
         protected virtual IEnumerator StartGetAssetsAtlas<T>([NotNull] string path, [NotNull] Action<T> callBack)
             where T : Object
         {

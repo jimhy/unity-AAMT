@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -35,14 +34,10 @@ namespace AAMT
         private void Init()
         {
             AddRuntime();
-#if UNITY_EDITOR
-            if (SettingManager.AssetSetting.GetLoadType == AssetSetting.LoadType.LocalAssets)
+            if (SettingManager.assetSetting.getBuildTarget == AssetSetting.BuildTarget.editor)
                 resourceManager = new LocalAssetManager();
             else
                 resourceManager = new BundleManager();
-#else
-            resourceManager = new BundleManager();
-#endif
             _loaderManager = new LoaderManager();
         }
 
@@ -59,56 +54,91 @@ namespace AAMT
             }
         }
 
-        public static void MoveBundles()
+        public static AsyncHandler MoveBundles()
         {
             AddRuntime();
-            var _moveBundleManager = new MoveBundleManager();
-            _moveBundleManager.MoveAssets();
+            if (SettingManager.assetSetting.getLoadType == AssetSetting.LoadType.Local)
+            {
+                Debug.LogErrorFormat("加载类型为Local,不能移动Bundles.");
+                return null;
+            }
+
+            var moveBundleManager = new MoveBundleManager();
+            moveBundleManager.MoveAssets();
+            return moveBundleManager.handler;
         }
 
-        public static void UpdateAssets()
+        public static AsyncHandler UpdateAssets()
         {
             AddRuntime();
-            var _downloadManager = new AAMTDownloadManager();
-            _downloadManager.UpdateAssets();
+            if (SettingManager.assetSetting.getLoadType == AssetSetting.LoadType.Local)
+            {
+                Debug.LogErrorFormat("加载类型为Local,不能更新资源.");
+                return null;
+            }
+
+            var downloadManager = new BundleDowndloadManager();
+            downloadManager.Start();
+            return downloadManager.handler;
         }
 
-        public static LoaderHandler LoadAssets(string[] assetsPath)
+        public static AsyncHandler LoadAssetsAsync(string[] assetsPath)
         {
-            return Instance._loaderManager.Load(assetsPath);
+            return Instance._loaderManager.LoadAsync(assetsPath);
         }
 
-        public static LoaderHandler LoadAssets(string assetsPath)
+        public static AsyncHandler LoadAssetsAsync(string assetsPath)
         {
-            return Instance._loaderManager.Load(new[] {assetsPath});
+            return Instance._loaderManager.LoadAsync(new[] {assetsPath});
         }
 
-        public static void GetAssets<T>(string path, Action<T> callBack) where T : Object
+        public static void GetAssetsAsync<T>(string path, Action<T> callBack) where T : Object
         {
             path = path.ToLower();
             if (Instance.resourceManager.HasAssetsByPath(path))
             {
-                Instance.resourceManager.GetAssets(path, callBack);
+                Instance.resourceManager.GetAssetsAsync(path, callBack);
             }
             else
             {
-                var handler = Instance._loaderManager.Load(new[] {path});
+                var handler = Instance._loaderManager.LoadAsync(new[] {path});
                 handler.customData = new List<object>() {path, callBack};
                 handler.onComplete = loaderHandler =>
                 {
                     if (loaderHandler.customData is not List<object> list) return;
                     var currentPath = list[0] as string;
                     var cb = list[1] as Action<T>;
-                    Instance.resourceManager.GetAssets(currentPath, cb);
+                    Instance.resourceManager.GetAssetsAsync(currentPath, cb);
                 };
             }
         }
 
-        public static void GetAssets<T>(IEnumerable<string> paths, Action<T> callBack) where T : Object
+        public static void GetAllAssetsAsync(string path, Action<Object[]> callBack)
+        {
+            path = path.ToLower();
+            if (Instance.resourceManager.HasAssetsByPath(path))
+            {
+                Instance.resourceManager.GetAllAssetsAsync(path, callBack);
+            }
+            else
+            {
+                var handler = Instance._loaderManager.LoadAsync(new[] {path});
+                handler.customData = new List<object>() {path, callBack};
+                handler.onComplete = loaderHandler =>
+                {
+                    if (loaderHandler.customData is not List<object> list) return;
+                    var currentPath = list[0] as string;
+                    var cb = list[1] as Action<Object[]>;
+                    Instance.resourceManager.GetAllAssetsAsync(currentPath, cb);
+                };
+            }
+        }
+
+        public static void GetAssetsAsync<T>(IEnumerable<string> paths, Action<T> callBack) where T : Object
         {
             foreach (var path in paths)
             {
-                GetAssets(path, callBack);
+                GetAssetsAsync(path, callBack);
             }
         }
 
@@ -119,7 +149,7 @@ namespace AAMT
 
         public static void LoadScene(string path, LoadSceneMode mode, [CanBeNull] Action callBack)
         {
-            var h = Instance._loaderManager.Load(new[] {path.ToLower()});
+            var h = Instance._loaderManager.LoadAsync(new[] {path.ToLower()});
             h.onComplete = _ => { Instance.resourceManager.ChangeScene(path, callBack); };
         }
 

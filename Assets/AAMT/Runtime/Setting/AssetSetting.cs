@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -9,65 +10,74 @@ namespace AAMT
     public class AssetSetting : ScriptableObject
     {
         [Serializable]
-        public enum LoadType
-        {
-            LocalAssets,
-            LocalBundle,
-            Remote
-        }
-
-        [Serializable]
         public enum BuildTarget
         {
+            editor,
             windows,
             android,
             ios,
         }
 
+        [Serializable]
+        public enum LoadType
+        {
+            Local,
+            Remote
+        }
+
         [SerializeField] private BuildTarget buildTarget;
-        [SerializeField] private string buildPath = "{UnityEngine.Application.streamingAssetsPath}";
-        [SerializeField] private string loadPath = "{UnityEngine.Application.streamingAssetsPath}";
-        [SerializeField] private string remotePath = "http://localhot:88";
-        [SerializeField] private LoadType loadType;
-        [SerializeField] private bool moveAssetToPersistentDataPath = false;
-        [SerializeField] private string[] streamingAssetsPaths;
+        [SerializeField] private string buildPath = "{UnityEngine.Application.dataPath}/../Build/";
+        [SerializeField] private string remotePath = "http://localhost:80";
+        [SerializeField] private string[] moveToStreamingAssetsPathResList;
+        [SerializeField] private LoadType loadType = LoadType.Local;
+
 
         private string _realBuildPath;
-        private string _realLoadPath;
-        private static AssetSetting _assetSetting;
+        private static AssetSetting assetSetting;
 
         internal void Init()
         {
-            _realLoadPath = AAMTRuntimeProperties.EvaluateString(loadPath);
 #if UNITY_EDITOR
             _realBuildPath = AAMTRuntimeProperties.EvaluateString(buildPath);
-            if (loadType == LoadType.LocalAssets)
-                _realLoadPath = _realLoadPath.Replace(Application.dataPath, "Assets");
+            getLoadPath = "assets";
+            if (buildTarget != BuildTarget.editor)
+            {
+                if (loadType == LoadType.Local)
+                    getLoadPath = $"{_realBuildPath}/getBuildTarget";
+                else
+                    getLoadPath = $"{Application.persistentDataPath}{getBuildTarget}";
+            }
+
+            getLoadPath = getLoadPath.ToLower();
 #else
-            loadType = (loadType == LoadType.LocalAssets) ? LoadType.Remote : loadType;
+            InitBuildTarget();
+            if (loadType == LoadType.Local)
+                getLoadPath = $"{Application.streamingAssetsPath}/{getBuildTarget}";
+            else
+                getLoadPath = $"{Application.persistentDataPath}/{getBuildTarget}";
 #endif
-            if (loadType == LoadType.Remote)
-            {
-                _realLoadPath = Application.persistentDataPath;
-            }
-
-            Debug.LogFormat("Current load path:{0}", _realLoadPath);
+            Debug.LogFormat("LoadType:{0}", getLoadType);
+            Debug.LogFormat("BuildTarget:{0}", getBuildTarget);
+            Debug.LogFormat("Current load path:{0}", getLoadPath);
         }
 
-        public string GetBuildPath => $"{_realBuildPath}/{buildTarget}";
-        public string GetBuildTargetToString => buildTarget.ToString();
-        public string[] GetStreamingAssetsPaths => streamingAssetsPaths;
-        public BuildTarget GetBuildTarget => buildTarget;
+        public string getBuildPath => $"{_realBuildPath}/{getBuildTarget}";
+        public string[] getMoveToStreamingAssetsPathResList => moveToStreamingAssetsPathResList;
+        public string getRemotePath => remotePath;
+        public BuildTarget getBuildTarget => buildTarget;
+        public string getLoadPath { get; private set; }
+        public LoadType getLoadType => loadType;
 
-        public string GetLoadPath
+        private void InitBuildTarget()
         {
-            get
-            {
-                if (loadType == LoadType.LocalAssets) return _realLoadPath;
-                return $"{_realLoadPath}/{buildTarget}";
-            }
+            buildTarget = Tools.PlatformToBuildTarget();
         }
 
-        public LoadType GetLoadType => loadType;
+#if UNITY_EDITOR
+        public void SetBuildTargetForBulidPlayer(BuildTarget target)
+        {
+            buildTarget = target;
+        }
+#endif
     }
 }
