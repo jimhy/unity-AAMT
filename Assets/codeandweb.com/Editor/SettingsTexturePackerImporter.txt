@@ -1,11 +1,11 @@
 version: 2
 tpsheetFileNames:
+- Assets/AAMT/Sample/Res/UI/UserInfo/userInfoPanel.tpsheet
 - Assets/codeandweb.com/Example/SpriteSheet/sprites.tpsheet
-- Assets/Res/UI/UserInfo/userInfoPanel.tpsheet
 textureFileNames:
+- Assets/AAMT/Sample/Res/UI/UserInfo/userInfoPanel.png
 - Assets/codeandweb.com/Example/SpriteSheet/sprites.png
-- Assets/Res/UI/UserInfo/userInfoPanel.png
 normalmapFileNames:
-- Assets/codeandweb.com/Example/SpriteSheet/sprites_n.png
 - 
+- Assets/codeandweb.com/Example/SpriteSheet/sprites_n.png
 enableDebugOutput: 0
