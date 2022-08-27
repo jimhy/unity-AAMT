@@ -6,7 +6,7 @@ using UnityEngine;
 namespace AAMT
 {
     [CustomEditor(typeof(AssetSetting))]
-    public class AssetSettingCustomEditor : Editor
+    public class AssetSettingCustomEditor : UnityEditor.Editor
     {
         private SerializedProperty _buildTarget;
         private SerializedProperty _buildPath;

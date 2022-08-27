@@ -59,7 +59,7 @@ namespace AAMT
                 SearchOption.AllDirectories);
 
             var mapPath = Path.Combine(SettingManager.assetSetting.getBuildPath,
-                AAMTDefine.AAMT_ASSETS_WIDTH_BUNDLE_NAME);
+                AAMTDefine.AAMT_ASSETS_WITH_BUNDLE_NAME);
             if (File.Exists(mapPath)) File.Delete(mapPath);
 
             FileStream fs = new FileStream(mapPath, FileMode.CreateNew, FileAccess.Write);

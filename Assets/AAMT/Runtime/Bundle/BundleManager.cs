@@ -12,14 +12,14 @@ namespace AAMT
 {
     public class BundleManager : IResourceManager
     {
-        internal AssetBundleManifest assetBundleManifest { get; private set; }
-        internal Dictionary<string, string> pathToBundle { get; private set; }
-        internal Dictionary<string, BundleHandle> bundles { get; }
-        private readonly SpriteAtlasManager _atlasManager;
+        internal         AssetBundleManifest              assetBundleManifest { get; private set; }
+        internal         Dictionary<string, string>       pathToBundle        { get; private set; }
+        internal         Dictionary<string, BundleHandle> bundles             { get; }
+        private readonly SpriteAtlasManager               _atlasManager;
 
         internal BundleManager()
         {
-            bundles = new Dictionary<string, BundleHandle>();
+            bundles       = new Dictionary<string, BundleHandle>();
             _atlasManager = new SpriteAtlasManager(this);
             InitManifest();
             InitBundleMap();
@@ -27,9 +27,8 @@ namespace AAMT
 
         private void InitManifest()
         {
-            var mainBundle =
-                AssetBundle.LoadFromFile(
-                    $"{SettingManager.assetSetting.getLoadPath}/{SettingManager.assetSetting.getBuildTarget}");
+            var path       = $"{SettingManager.assetSetting.getLoadPath}/{SettingManager.assetSetting.getBuildTarget}";
+            var mainBundle = Tools.LoadBundle(path);
             if (mainBundle != null)
                 assetBundleManifest = mainBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
             else
@@ -41,12 +40,12 @@ namespace AAMT
         private void InitBundleMap()
         {
             pathToBundle = new Dictionary<string, string>();
-            var path = $"{SettingManager.assetSetting.getLoadPath}/{AAMTDefine.AAMT_ASSETS_WIDTH_BUNDLE_NAME}";
-            Debug.LogFormat("Load assets-width-bundle file.path={0}", path);
+            var path = $"{SettingManager.assetSetting.getLoadPath}/{AAMTDefine.AAMT_ASSETS_WITH_BUNDLE_NAME}";
+            Debug.LogFormat("Load assets-with-bundle file.path={0}", path);
             var content = Tools.ReadTextFileData(path);
             if (string.IsNullOrEmpty(content))
             {
-                Debug.LogError("assets-width-bundle 资源加载错误");
+                Debug.LogError("assets-with-bundle 资源加载错误");
                 return;
             }
 
@@ -77,6 +76,18 @@ namespace AAMT
             if (bundles.ContainsKey(abName))
             {
                 return bundles[abName];
+            }
+
+            return null;
+        }
+
+        internal BundleHandle RemoveBundleByBundleName(string abName)
+        {
+            if (bundles.ContainsKey(abName))
+            {
+                var b = bundles[abName];
+                bundles.Remove(abName);
+                return b;
             }
 
             return null;
@@ -204,13 +215,22 @@ namespace AAMT
         public void Release(string path)
         {
             var abName = CheckAndGetAbName(path);
-            if (!string.IsNullOrEmpty(abName)) bundles[abName].Release();
+            if (!string.IsNullOrEmpty(abName))
+            {
+                var ab = bundles[abName];
+                ab.Release();
+                if (ab.ReferenceCount <= 0) RemoveBundleByBundleName(abName);
+            }
         }
 
         public void Destroy(string path)
         {
             var abName = CheckAndGetAbName(path);
-            if (!string.IsNullOrEmpty(abName)) bundles[abName].Destroy();
+            if (!string.IsNullOrEmpty(abName))
+            {
+                bundles[abName].Destroy();
+                RemoveBundleByBundleName(abName);
+            }
         }
 
         private string CheckAndGetAbName(string path)

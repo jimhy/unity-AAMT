@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AAMT
 {
     [CustomEditor(typeof(SettingManager))]
-    public class SettingManagerCustomEditor : Editor
+    public class SettingManagerCustomEditor : UnityEditor.Editor
     {
         private SerializedProperty _buildTarget;
 

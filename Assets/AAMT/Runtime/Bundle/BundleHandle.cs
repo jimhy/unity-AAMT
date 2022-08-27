@@ -6,16 +6,16 @@ namespace AAMT
 {
     public class BundleHandle
     {
-        internal int ReferenceCount { get; private set; }
-        private AssetBundle _assetBundle;
-        private BundleManager _bundleManager;
-        private List<string> _waitingDependency;
+        internal int           ReferenceCount { get; private set; }
+        private  AssetBundle   _assetBundle;
+        private  BundleManager _bundleManager;
+        private  List<string>  _waitingDependency;
 
         internal BundleHandle(AssetBundle assetBundle)
         {
             _waitingDependency = new List<string>();
-            _assetBundle = assetBundle;
-            _bundleManager = AAMTManager.Instance.resourceManager as BundleManager;
+            _assetBundle       = assetBundle;
+            _bundleManager     = AAMTManager.Instance.resourceManager as BundleManager;
             CalculationReferenceDependency(true);
         }
 
@@ -30,7 +30,7 @@ namespace AAMT
             AddDependencyReference(_assetBundle.name);
             return _assetBundle.LoadAllAssetsAsync();
         }
-        
+
         internal Object[] LoadAllAsset()
         {
             AddDependencyReference(_assetBundle.name);
@@ -52,7 +52,10 @@ namespace AAMT
                 if (bundle != null)
                 {
                     if (isAdd) bundle.AddDependencyReference(_assetBundle.name);
-                    else bundle.RemoveDependencyReference(_assetBundle.name);
+                    else if (bundle.RemoveDependencyReference(_assetBundle.name))
+                    {
+                        _bundleManager.RemoveBundleByBundleName(dep);
+                    }
                 }
                 else
                 {
@@ -101,14 +104,20 @@ namespace AAMT
         {
             ReferenceCount++;
             Debug.LogFormat("增加依赖引用计数,依赖者ab名称:{0},当前被依赖者:名称{1},引用计数:{2}", rootAbName, _assetBundle.name,
-                ReferenceCount);
+                            ReferenceCount);
         }
 
-        private void RemoveDependencyReference(string rootAbName)
+        /// <summary>
+        /// 减少引用计数
+        /// </summary>
+        /// <param name="rootAbName"></param>
+        /// <returns>返回是否已经销毁,true:已经销毁,false:没有销毁</returns>
+        private bool RemoveDependencyReference(string rootAbName)
         {
-            Release();
             Debug.LogFormat("减少依赖引用计数,依赖者ab名称:{0},当前被依赖者:名称{1},引用计数:{2}", rootAbName, _assetBundle.name,
-                ReferenceCount);
+                            ReferenceCount - 1);
+            Release();
+            return ReferenceCount <= 0;
         }
 
         internal void Release()
@@ -121,11 +130,11 @@ namespace AAMT
         internal void Destroy()
         {
             if (_assetBundle == null) return;
-            Debug.LogFormat("释放Bundle资源,abName{0}", _assetBundle.name);
+            Debug.LogFormat("释放Bundle资源,abName:{0}", _assetBundle.name);
             CalculationReferenceDependency(false);
-            _assetBundle.UnloadAsync(true);
-            _assetBundle = null;
-            _bundleManager = null;
+            _assetBundle.Unload(true);
+            _assetBundle       = null;
+            _bundleManager     = null;
             _waitingDependency = null;
         }
     }

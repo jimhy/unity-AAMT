@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace AAMT
@@ -17,6 +18,12 @@ namespace AAMT
 
         internal AsyncHandler LoadAsync(string[] path)
         {
+#if UNITY_EDITOR
+            foreach (var s in path)
+            {
+                Debug.LogFormat("Start to load-->{0}", s);
+            }
+#endif
             if (_loader != null) return _loader.LoadAsync(path);
             return default;
         }

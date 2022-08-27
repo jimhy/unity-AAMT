@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace AAMT
 {
     public class LoadBundleTask
     {
         private readonly BundleManager _bundleManager;
-        private AsyncHandler _asyncHandler;
+        private          AsyncHandler  _asyncHandler;
 
         private static readonly Dictionary<string, bool> CommonLoadingAbNames = new();
 
@@ -16,9 +17,9 @@ namespace AAMT
 
         private LoadBundleTask(string[] resPaths)
         {
-            _loadingAbNames = new List<string>();
+            _loadingAbNames        = new List<string>();
             _alreadyLoadingAbNames = new List<string>();
-            _bundleManager = AAMTManager.Instance.resourceManager as BundleManager;
+            _bundleManager         = AAMTManager.Instance.resourceManager as BundleManager;
             Init(resPaths);
         }
 
@@ -49,7 +50,7 @@ namespace AAMT
             if (!_bundleManager.pathToBundle.ContainsKey(resPath))
             {
                 Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}/{1}", SettingManager.assetSetting.getLoadPath,
-                    resPath);
+                                     resPath);
                 OnLoadComplete();
                 return;
             }
@@ -89,7 +90,7 @@ namespace AAMT
             {
                 foreach (var loadingAbName in _loadingAbNames)
                 {
-                    AAMTRuntime.Instance.StartCoroutine(Load(loadingAbName));
+                    Load(loadingAbName);
                 }
             }
             else
@@ -100,20 +101,22 @@ namespace AAMT
             return _asyncHandler;
         }
 
-        private IEnumerator Load(string abName)
+        private void Load(string abName)
         {
             var abPath = $"{SettingManager.assetSetting.getLoadPath}/{abName}";
-            var request = AssetBundle.LoadFromFileAsync(abPath);
-            yield return request;
-            if (request.assetBundle == null)
+            Debug.LogFormat("loading bundle:{0}", abPath);
+            Tools.LoadBundleAsync(abPath,OnLoadBundleComplete);
+        }
+
+        private void OnLoadBundleComplete(AssetBundle bundle)
+        {
+            if (bundle == null)
             {
-                Debug.LogErrorFormat("加载资源失败,abName={0}", abName);
+                Debug.LogErrorFormat("Load bundle faile!!");
+                return;
             }
-            else
-            {
-                _bundleManager.AddBundle(request.assetBundle);
-                OnLoadOneAbComplete(abName);
-            }
+            _bundleManager.AddBundle(bundle);
+            OnLoadOneAbComplete(bundle.name);
         }
 
         private void OnLoadOneAbComplete(string abName)
