@@ -5,10 +5,8 @@ using UnityEngine.Networking;
 
 namespace AAMT
 {
-    [CreateAssetMenu(fileName = "SettingManager", menuName = "AAMT/SettingManager", order = 0)]
     public class SettingManager : ScriptableObject
     {
-        public AssetSetting             editorAssetSetting;
         public AssetSetting             windowsAssetSetting;
         public AssetSetting             androidAssetSetting;
         public AssetSetting             iosAssetSetting;
@@ -46,7 +44,7 @@ namespace AAMT
                 switch (_instance.buildTarget)
                 {
                     case AssetSetting.BuildTarget.editor:
-                        _instance._currentAssetSetting = _instance.editorAssetSetting;
+                        _instance._currentAssetSetting = new AssetSetting();
                         break;
                     case AssetSetting.BuildTarget.windows:
                         _instance._currentAssetSetting = _instance.windowsAssetSetting;

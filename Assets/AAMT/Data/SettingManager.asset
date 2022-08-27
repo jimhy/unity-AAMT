@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5adae14af0d47b0826c75e0d38d10cc, type: 3}
   m_Name: SettingManager
   m_EditorClassIdentifier: 
-  editorAssetSetting: {fileID: 11400000, guid: d1dc95d0cbb2c284ba564c084ad60c34, type: 2}
   windowsAssetSetting: {fileID: 11400000, guid: 6143ecc80a5824d49af874c8229d1fb2, type: 2}
   androidAssetSetting: {fileID: 11400000, guid: 8d277c619757cd149b48f6ae221373f1, type: 2}
-  iosAssetSetting: {fileID: 0}
+  iosAssetSetting: {fileID: 11400000, guid: dc98dbab288b49f43a41f91b2730a6df, type: 2}
   buildTarget: 0

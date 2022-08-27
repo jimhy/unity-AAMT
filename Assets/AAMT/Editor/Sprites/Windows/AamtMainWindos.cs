@@ -17,9 +17,11 @@ namespace AAMT.Windos
 {
     public class AamtMainWindos : OdinMenuEditorWindow
     {
-        private static string dataPath            = "Assets/AAMT/Data";
-        private static string platformSettingPath = $"{dataPath}/Platforms";
-        private        Regex  _httpRegex          = new Regex(@"http(s)?://.+");
+        private static string                   dataPath            = "Assets/AAMT/Data";
+        private static string                   platformSettingPath = $"{dataPath}/Platforms";
+        private        Regex                    _httpRegex          = new Regex(@"http(s)?://.+");
+        private        SettingManager           _settingManager;
+        private        AssetBundleSettingWindow _abWindow;
 
         [MenuItem("AAMT/Settings")]
         private static void OpenWindow()
@@ -36,13 +38,38 @@ namespace AAMT.Windos
             OdinMenuTree tree = new OdinMenuTree()
             {
                 {"平台设置", null, EditorIcons.SmartPhone},
+                {"打包设置", _settingManager, EditorIcons.SettingsCog},
+                {"AB资源设置", _abWindow, EditorIcons.HamburgerMenu},
             };
+
+            initSettingManager();
+            initAssetBundlerPanel();
 
             tree.AddAllAssetsAtPath("平台设置", platformSettingPath, typeof(AssetSetting));
             tree.Add("平台设置/创建新平台", new CreateSettings());
-            tree.SortMenuItemsByName();
+            // tree.Add("AB资源设置", _abWindow);
 
             return tree;
+        }
+
+        private void initAssetBundlerPanel()
+        {
+            if (_abWindow == null) _abWindow = GetWindow<AssetBundleSettingWindow>();
+        }
+
+        private void initSettingManager()
+        {
+            if (_settingManager == null)
+            {
+                var path = $"{dataPath}/SettingManager.asset";
+                _settingManager = AssetDatabase.LoadAssetAtPath<SettingManager>(path);
+                if (_settingManager == null)
+                {
+                    _settingManager = new SettingManager();
+                    AssetDatabase.CreateAsset(_settingManager, path);
+                    AssetDatabase.SaveAssets();
+                }
+            }
         }
 
         protected override void OnBeginDrawEditors()

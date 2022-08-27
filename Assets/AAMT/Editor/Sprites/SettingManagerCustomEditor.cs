@@ -21,7 +21,7 @@ namespace AAMT
             var buildTarget = (AssetSetting.BuildTarget) _buildTarget.enumValueIndex;
             if (buildTarget != AssetSetting.BuildTarget.editor)
             {
-                if (GUILayout.Button("Build Bundles"))
+                if (GUILayout.Button("Build Asset Bundles"))
                 {
                     AssetsBundleBuilder.BuildAssetsBundles();
                 }

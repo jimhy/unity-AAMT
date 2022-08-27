@@ -7,7 +7,6 @@ using UnityEngine.Serialization;
 
 namespace AAMT
 {
-    [CreateAssetMenu(fileName = "BuildSetting", menuName = "AAMT/BuildSetting", order = 1)]
     public partial class AssetSetting : ScriptableObject
     {
         [Serializable]
