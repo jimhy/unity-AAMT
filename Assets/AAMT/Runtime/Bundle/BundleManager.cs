@@ -27,7 +27,7 @@ namespace AAMT
 
         private void InitManifest()
         {
-            var path       = $"{SettingManager.assetSetting.getLoadPath}/{SettingManager.assetSetting.getBuildTarget}";
+            var path       = $"{SettingManager.assetSetting.getLoadPath}/{SettingManager.assetSetting.GetBuildPlatform}";
             var mainBundle = Tools.LoadBundle(path);
             if (mainBundle != null)
                 assetBundleManifest = mainBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");

@@ -48,6 +48,7 @@
      <Compile Include="Assets\AAMT\Editor\Sprites\AssetSettingCustomEditor.cs" />
      <Compile Include="Assets\AAMT\Plugins\Sirenix\Demos\Editor Windows\Scripts\Editor\SomeData.cs" />
      <Compile Include="Assets\AAMT\Editor\Sprites\OnPreprocessHandler.cs" />
+     <Compile Include="Assets\AAMT\Editor\Sprites\Windows\AamtMainWindos.cs" />
      <Compile Include="Assets\AAMT\Editor\Sprites\AutoSetAssetsBundelName.cs" />
      <Compile Include="Assets\AAMT\Plugins\Sirenix\Demos\Editor Windows\Scripts\Editor\OverrideGetTargetsExampleWindow.cs" />
      <Compile Include="Assets\AAMT\Plugins\Sirenix\Demos\Editor Windows\Scripts\Editor\SomeTextureToolWindow.cs" />
@@ -55,7 +56,6 @@
      <Compile Include="Assets\AAMT\Plugins\Sirenix\Demos\Editor Windows\Scripts\Editor\BasicOdinEditorExampleWindow.cs" />
      <Compile Include="Assets\AAMT\Editor\Sprites\SettingManagerCustomEditor.cs" />
      <Compile Include="Assets\AAMT\Plugins\Sirenix\Demos\Editor Windows\Scripts\Editor\QuicklyInspectObjects.cs" />
-     <Compile Include="Assets\AAMT\Editor\Sprites\Windows\AamtMainWindos.cs" />
      <Reference Include="UnityEngine">
      <HintPath>D:\Program Files\Unity 2021.3.1f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
      </Reference>

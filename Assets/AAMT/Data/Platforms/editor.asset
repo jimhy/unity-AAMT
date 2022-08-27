@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: editor
   m_EditorClassIdentifier: 
   name: editor
-  buildTarget: 0
+  buildPlatform: 0
   buildPath: '{UnityEngine.Application.dataPath}/../Build/'
   remotePath: http://localhot:881
-  moveToStreamingAssetsPathResList: []
+  moveToStreamingAssetsPathList: []
   loadType: 1

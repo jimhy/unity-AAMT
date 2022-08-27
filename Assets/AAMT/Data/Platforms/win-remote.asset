@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: win-remote
   m_EditorClassIdentifier: 
   name: win-remote
-  buildTarget: 1
+  buildPlatform: 1
   buildPath: '{UnityEngine.Application.dataPath}/../Build/Remote/'
   remotePath: http://192.168.3.104/Build/remote/windows/
-  moveToStreamingAssetsPathResList: []
+  moveToStreamingAssetsPathList: []
   loadType: 1

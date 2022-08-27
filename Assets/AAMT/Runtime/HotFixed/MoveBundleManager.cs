@@ -19,7 +19,7 @@ namespace AAMT
 
         internal void MoveAssets()
         {
-            var buildTarget = SettingManager.assetSetting.getBuildTarget;
+            var buildTarget = SettingManager.assetSetting.GetBuildPlatform;
             var path =
                 $"{Application.streamingAssetsPath}/{buildTarget}/{AAMTDefine.AAMT_BUNDLE_FILES_DICTIONARY}";
             var value = Tools.ReadTextFileData(path);

@@ -15,7 +15,7 @@ namespace AAMT
         private static void testBuild()
         {
             var settting = SettingManager.assetSetting;
-            if (settting.getBuildTarget == AssetSetting.BuildTarget.editor)
+            if (settting.GetBuildPlatform == AssetSetting.BuildTarget.editor)
             {
                 EditorUtility.DisplayDialog("温馨提示", "当前选择的BuildTarget为Editor,会自动设置为默认选择的平台。", "继续");
             }
@@ -44,7 +44,7 @@ namespace AAMT
         public void OnPreprocessBuild(BuildReport report)
         {
             var settting = SettingManager.assetSetting;
-            if (settting.getBuildTarget == AssetSetting.BuildTarget.editor)
+            if (settting.GetBuildPlatform == AssetSetting.BuildTarget.editor)
             {
                 EditorUtility.DisplayDialog("温馨提示", "当前选择的BuildTarget为Editor,会自动设置为默认选择的平台。", "继续");
             }
@@ -96,7 +96,7 @@ namespace AAMT
             {
                 $"{AAMTDefine.AAMT_BUNDLE_NAME}", $"{AAMTDefine.AAMT_BUNDLE_NAME}.manifest"
             };
-            var targetPahtPre = $"{Application.streamingAssetsPath}/{SettingManager.assetSetting.getBuildTarget}"
+            var targetPahtPre = $"{Application.streamingAssetsPath}/{SettingManager.assetSetting.GetBuildPlatform}"
                 .ToLower();
             if (!Directory.Exists(targetPahtPre))
                 Directory.CreateDirectory(targetPahtPre);
@@ -109,7 +109,7 @@ namespace AAMT
                 File.Copy(buildPath, targetPath);
             }
 
-            var list = SettingManager.assetSetting.getMoveToStreamingAssetsPathResList;
+            var list = SettingManager.assetSetting.GetMoveToStreamingAssetsPathList;
             var i = 0;
             foreach (var s in list)
             {
@@ -127,7 +127,7 @@ namespace AAMT
         public static void MoveAllBundleToStreamingAssets()
         {
             var sourcePath = $"{SettingManager.assetSetting.getBuildPath}".ToLower();
-            var targetPath = $"{Application.streamingAssetsPath}/{SettingManager.assetSetting.getBuildTarget}"
+            var targetPath = $"{Application.streamingAssetsPath}/{SettingManager.assetSetting.GetBuildPlatform}"
                 .ToLower();
             if (Directory.Exists(targetPath)) Directory.Delete(targetPath, true);
             CopyDirectory(sourcePath, targetPath, true);
@@ -142,7 +142,7 @@ namespace AAMT
                 return;
             }
 
-            var prePath = $"{Application.streamingAssetsPath}/{SettingManager.assetSetting.getBuildTarget}";
+            var prePath = $"{Application.streamingAssetsPath}/{SettingManager.assetSetting.GetBuildPlatform}";
             var dicPath = $"{prePath}/{AAMTDefine.AAMT_BUNDLE_FILES_DICTIONARY}";
             var files = Directory.GetFiles(prePath, "*", SearchOption.AllDirectories);
             if (File.Exists(dicPath)) File.Delete(dicPath);
@@ -168,8 +168,8 @@ namespace AAMT
         public static void CreateStreamingAssetsVersionData()
         {
             var filePath =
-                $"{Application.streamingAssetsPath}/{SettingManager.assetSetting.getBuildTarget}/{AAMTDefine.AAMT_ASSET_VERSION}";
-            var dirPath = $"{Application.streamingAssetsPath}/{SettingManager.assetSetting.getBuildTarget}";
+                $"{Application.streamingAssetsPath}/{SettingManager.assetSetting.GetBuildPlatform}/{AAMTDefine.AAMT_ASSET_VERSION}";
+            var dirPath = $"{Application.streamingAssetsPath}/{SettingManager.assetSetting.GetBuildPlatform}";
             EditorCommon.CreateVersionFile(filePath, dirPath);
         }
 

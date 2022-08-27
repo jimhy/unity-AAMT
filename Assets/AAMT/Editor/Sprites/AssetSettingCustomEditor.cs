@@ -5,20 +5,20 @@ using UnityEngine;
 
 namespace AAMT
 {
-    [CustomEditor(typeof(AssetSetting))]
+    // [CustomEditor(typeof(AssetSetting))]
     public class AssetSettingCustomEditor : UnityEditor.Editor
     {
-        private SerializedProperty _nameLabel;
-        private string _lastNameLabel;
-        private SerializedProperty _buildTarget;
-        private SerializedProperty _buildPath;
-        private SerializedProperty _loadType;
-        private SerializedProperty _remotePath;
-        private SerializedProperty _moveToStreamingAssetsPathResList;
-        private Regex _httpRegex;
+        private SerializedProperty    _nameLabel;
+        private string                _lastNameLabel;
+        private SerializedProperty    _buildTarget;
+        private SerializedProperty    _buildPath;
+        private SerializedProperty    _loadType;
+        private SerializedProperty    _remotePath;
+        private SerializedProperty    _moveToStreamingAssetsPathResList;
         private AssetSetting.LoadType _lastLoadType;
-        private GUIContent moveSpecifiedAbContent;
-        private GUIContent moveAllAbContent;
+        private Regex                 _httpRegex;
+        private GUIContent            moveSpecifiedAbContent;
+        private GUIContent            moveAllAbContent;
 
         private const string DialogText1 =
             "远程模式需要把一些指定的资源拷贝到StreamingAssets文件夹下，" +
@@ -39,20 +39,20 @@ namespace AAMT
                 serializedObject.ApplyModifiedProperties();
             }
            
-            _lastNameLabel = _nameLabel.stringValue;
-            _buildTarget = serializedObject.FindProperty("buildTarget");
-            _buildPath = serializedObject.FindProperty("buildPath");
-            _loadType = serializedObject.FindProperty("loadType");
-            _remotePath = serializedObject.FindProperty("remotePath");
+            _lastNameLabel                    = _nameLabel.stringValue;
+            _buildTarget                      = serializedObject.FindProperty("buildTarget");
+            _buildPath                        = serializedObject.FindProperty("buildPath");
+            _loadType                         = serializedObject.FindProperty("loadType");
+            _remotePath                       = serializedObject.FindProperty("remotePath");
             _moveToStreamingAssetsPathResList = serializedObject.FindProperty("moveToStreamingAssetsPathResList");
-            _httpRegex = new Regex(@"http(s)?://.+");
-            _lastLoadType = (AssetSetting.LoadType) _loadType.enumValueIndex;
-            moveSpecifiedAbContent = new GUIContent();
-            moveSpecifiedAbContent.text = "Move AB To SA";
-            moveSpecifiedAbContent.tooltip = "Move the specified bundles to the StreamingAssets folder.";
-            moveAllAbContent = new GUIContent();
-            moveAllAbContent.text = "Move ALL AB To SA";
-            moveAllAbContent.tooltip = "Move all the bundles to the StreamingAssets folder.";
+            _lastLoadType                     = (AssetSetting.LoadType) _loadType.enumValueIndex;
+            _httpRegex                        = new Regex(@"http(s)?://.+");
+            moveSpecifiedAbContent            = new GUIContent();
+            moveSpecifiedAbContent.text       = "Move AB To SA";
+            moveSpecifiedAbContent.tooltip    = "Move the specified bundles to the StreamingAssets folder.";
+            moveAllAbContent                  = new GUIContent();
+            moveAllAbContent.text             = "Move ALL AB To SA";
+            moveAllAbContent.tooltip          = "Move all the bundles to the StreamingAssets folder.";
         }
 
         public override void OnInspectorGUI()

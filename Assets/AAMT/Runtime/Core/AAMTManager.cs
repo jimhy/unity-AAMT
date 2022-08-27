@@ -34,7 +34,7 @@ namespace AAMT
         private void Init()
         {
             AddRuntime();
-            if (SettingManager.assetSetting.getBuildTarget == AssetSetting.BuildTarget.editor)
+            if (SettingManager.assetSetting.GetBuildPlatform == AssetSetting.BuildTarget.editor)
                 resourceManager = new LocalAssetManager();
             else
                 resourceManager = new BundleManager();

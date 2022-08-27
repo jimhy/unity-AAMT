@@ -20,7 +20,7 @@ namespace AAMT
             handler = new AsyncHandler();
             loadFiles = new Queue<string>();
             persistentVersionPath =
-                $"{Application.persistentDataPath}/{SettingManager.assetSetting.getBuildTarget}/{AAMTDefine.AAMT_ASSET_VERSION}";
+                $"{Application.persistentDataPath}/{SettingManager.assetSetting.GetBuildPlatform}/{AAMTDefine.AAMT_ASSET_VERSION}";
         }
 
         public async void Start()
@@ -44,7 +44,7 @@ namespace AAMT
             var loadFile = loadFiles.Dequeue();
             var url = $"{SettingManager.assetSetting.getRemotePath}/{loadFile}";
             var targetPath =
-                $"{Application.persistentDataPath}/{SettingManager.assetSetting.getBuildTarget}/{loadFile}"
+                $"{Application.persistentDataPath}/{SettingManager.assetSetting.GetBuildPlatform}/{loadFile}"
                     .ToLower();
             var uwr = UnityWebRequest.Get(url);
             if (File.Exists(targetPath)) File.Delete(targetPath);

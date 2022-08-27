@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: android
   m_EditorClassIdentifier: 
   name: android
-  buildTarget: 2
+  buildPlatform: 1
   buildPath: '{UnityEngine.Application.dataPath}/../Build/'
   remotePath: http://localhost:80
-  moveToStreamingAssetsPathResList: []
-  loadType: 1
+  moveToStreamingAssetsPathList: []
+  loadType: 0

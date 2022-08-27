@@ -116,7 +116,7 @@ namespace AAMT
 
         internal static BuildTarget AamtToEditorTarget()
         {
-            switch (SettingManager.assetSetting.getBuildTarget)
+            switch (SettingManager.assetSetting.GetBuildPlatform)
             {
                 case AssetSetting.BuildTarget.windows:
                     return BuildTarget.StandaloneWindows;
