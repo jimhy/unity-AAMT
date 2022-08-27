@@ -8,6 +8,8 @@ namespace AAMT
     [CustomEditor(typeof(AssetSetting))]
     public class AssetSettingCustomEditor : UnityEditor.Editor
     {
+        private SerializedProperty _nameLabel;
+        private string _lastNameLabel;
         private SerializedProperty _buildTarget;
         private SerializedProperty _buildPath;
         private SerializedProperty _loadType;
@@ -30,6 +32,14 @@ namespace AAMT
 
         private void OnEnable()
         {
+            _nameLabel = serializedObject.FindProperty("name");
+            if (!string.IsNullOrEmpty(serializedObject.targetObject.name))
+            {
+                _nameLabel.stringValue = serializedObject.targetObject.name;
+                serializedObject.ApplyModifiedProperties();
+            }
+           
+            _lastNameLabel = _nameLabel.stringValue;
             _buildTarget = serializedObject.FindProperty("buildTarget");
             _buildPath = serializedObject.FindProperty("buildPath");
             _loadType = serializedObject.FindProperty("loadType");
@@ -48,6 +58,7 @@ namespace AAMT
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+            EditorGUILayout.PropertyField(_nameLabel);
             EditorGUILayout.PropertyField(_buildTarget);
             var target = (AssetSetting.BuildTarget) _buildTarget.enumValueIndex;
             var loadType = (AssetSetting.LoadType) _loadType.enumValueIndex;
@@ -102,6 +113,16 @@ namespace AAMT
                 EditorGUILayout.PropertyField(_remotePath);
                 if (loadType == AssetSetting.LoadType.Remote)
                     EditorGUILayout.PropertyField(_moveToStreamingAssetsPathResList);
+            }
+            
+            if (_lastNameLabel != _nameLabel.stringValue)
+            {
+                var path = AssetDatabase.GetAssetPath(serializedObject.targetObject);
+                var asset = AssetDatabase.RenameAsset(path, _nameLabel.stringValue);
+                serializedObject.ApplyModifiedProperties();
+                AssetDatabase.SaveAssets();
+                _lastNameLabel = _nameLabel.stringValue;
+                Debug.Log(path);
             }
 
             serializedObject.ApplyModifiedProperties();

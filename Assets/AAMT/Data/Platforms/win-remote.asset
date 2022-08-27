@@ -12,11 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff64a0c21f5a48b68e7ac2220c90fe70, type: 3}
   m_Name: win-remote
   m_EditorClassIdentifier: 
-  buildTarget: 0
+  name: win-remote
+  buildTarget: 1
   buildPath: '{UnityEngine.Application.dataPath}/../Build/Remote/'
-  loadPath: '{UnityEngine.Application.dataPath}/../Build/'
   remotePath: http://192.168.3.104/Build/remote/windows/
-  loadType: 2
-  moveAssetToPersistentDataPath: 1
-  streamingAssetsPaths:
-  - Res/Test/
+  moveToStreamingAssetsPathResList: []
+  loadType: 1

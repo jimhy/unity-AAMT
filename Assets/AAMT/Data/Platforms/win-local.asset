@@ -10,12 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff64a0c21f5a48b68e7ac2220c90fe70, type: 3}
-  m_Name: editor
+  m_Name: win-local
   m_EditorClassIdentifier: 
-  buildTarget: 0
+  name: win-local
+  buildTarget: 1
   buildPath: '{UnityEngine.Application.dataPath}/../Build/'
-  loadPath: '{UnityEngine.Application.dataPath}'
-  remotePath: http://localhot:881
-  loadType: 1
-  moveAssetToPersistentDataPath: 0
-  streamingAssetsPaths: []
+  remotePath: http://192.168.3.104/Build/remote/windows/
+  moveToStreamingAssetsPathResList: []
+  loadType: 0

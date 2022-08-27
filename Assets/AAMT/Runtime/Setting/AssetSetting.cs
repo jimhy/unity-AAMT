@@ -24,6 +24,8 @@ namespace AAMT
             Local,
             Remote
         }
+        
+        public string name;
 
         [SerializeField]
         private BuildTarget buildTarget;
