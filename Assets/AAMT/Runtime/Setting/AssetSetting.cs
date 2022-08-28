@@ -46,18 +46,17 @@ namespace AAMT
         [HideIf("buildPlatform", BuildTarget.editor)]
         private string remotePath = "http://localhost:80";
 
-        [FormerlySerializedAs("moveToStreamingAssetsPathResList")]
-        [LabelText("需要移动到StreamingAssets的资源文件夹")]
-        [PropertyTooltip("在打包时,把需要打进apk包的资源拷贝到StreamingAssets目录")]
-        [SerializeField]
-        [HideIf("buildPlatform", BuildTarget.editor)]
-        private string[] moveToStreamingAssetsPathList;
-
         [LabelText("资源加载类型")]
         [SerializeField]
         [HideIf("buildPlatform", BuildTarget.editor)]
         private LoadType loadType = LoadType.Local;
 
+        [LabelText("AB包文件夹")]
+        [InfoBox("在打包时,把需要打进apk包的资源拷贝到StreamingAssets目录")]
+        [SerializeField]
+        [HideIf("@this.buildPlatform==BuildTarget.editor || this.loadType==LoadType.Local")]
+        [FolderPath]
+        private string[] moveToStreamingAssetsPathList;
 
         private string _realBuildPath;
 

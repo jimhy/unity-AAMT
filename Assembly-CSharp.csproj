@@ -889,6 +889,10 @@
      </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{86e1c57c-4dc4-b75d-ac16-e9bd7bee19c1}</Project>
+      <Name>Assembly-CSharp-firstpass</Name>
+    </ProjectReference>
     <ProjectReference Include="Sirenix.OdinInspector.CompatibilityLayer.csproj">
       <Project>{7c637f88-2871-0487-2898-3ab8bd9362f9}</Project>
       <Name>Sirenix.OdinInspector.CompatibilityLayer</Name>

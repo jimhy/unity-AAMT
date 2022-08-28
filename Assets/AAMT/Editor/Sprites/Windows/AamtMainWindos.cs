@@ -17,11 +17,8 @@ namespace AAMT.Windos
 {
     public class AamtMainWindos : OdinMenuEditorWindow
     {
-        private static string                   dataPath            = "Assets/AAMT/Data";
-        private static string                   platformSettingPath = $"{dataPath}/Platforms";
-        private        Regex                    _httpRegex          = new Regex(@"http(s)?://.+");
-        private        SettingManager           _settingManager;
-        private        AssetBundleSettingWindow _abWindow;
+        private SettingManagerWindow     _settingManager;
+        private AssetBundleSettingWindow _abWindow;
 
         [MenuItem("AAMT/Settings")]
         private static void OpenWindow()
@@ -29,12 +26,16 @@ namespace AAMT.Windos
             var window = GetWindow<AamtMainWindos>();
             window.position          = GUIHelper.GetEditorWindowRect().AlignCenter(800, 600);
             window.titleContent.text = "AAMT Settings";
+            var platformSettingPath = WindowDefine.platformSettingPath;
             if (!Directory.Exists(platformSettingPath)) Directory.CreateDirectory(platformSettingPath);
             AssetDatabase.Refresh();
         }
 
         protected override OdinMenuTree BuildMenuTree()
         {
+            initSettingManager();
+            initAssetBundlerPanel();
+
             OdinMenuTree tree = new OdinMenuTree()
             {
                 {"平台设置", null, EditorIcons.SmartPhone},
@@ -42,34 +43,20 @@ namespace AAMT.Windos
                 {"AB资源设置", _abWindow, EditorIcons.HamburgerMenu},
             };
 
-            initSettingManager();
-            initAssetBundlerPanel();
-
-            tree.AddAllAssetsAtPath("平台设置", platformSettingPath, typeof(AssetSetting));
+            tree.AddAllAssetsAtPath("平台设置", WindowDefine.platformSettingPath, typeof(AssetSetting));
             tree.Add("平台设置/创建新平台", new CreateSettings());
-            // tree.Add("AB资源设置", _abWindow);
 
             return tree;
         }
 
         private void initAssetBundlerPanel()
         {
-            if (_abWindow == null) _abWindow = GetWindow<AssetBundleSettingWindow>();
+            if (_abWindow == null) _abWindow = new AssetBundleSettingWindow();
         }
 
         private void initSettingManager()
         {
-            if (_settingManager == null)
-            {
-                var path = $"{dataPath}/SettingManager.asset";
-                _settingManager = AssetDatabase.LoadAssetAtPath<SettingManager>(path);
-                if (_settingManager == null)
-                {
-                    _settingManager = new SettingManager();
-                    AssetDatabase.CreateAsset(_settingManager, path);
-                    AssetDatabase.SaveAssets();
-                }
-            }
+            if (_settingManager == null) _settingManager = new SettingManagerWindow();
         }
 
         protected override void OnBeginDrawEditors()
@@ -105,7 +92,7 @@ namespace AAMT.Windos
             var buildPath = AAMTRuntimeProperties.EvaluateString(assetSetting.WindowGetSourceBuildPath);
             if (assetSetting.getLoadType == AssetSetting.LoadType.Remote)
             {
-                if (!_httpRegex.IsMatch(assetSetting.getRemotePath))
+                if (!WindowDefine.httpRegex.IsMatch(assetSetting.getRemotePath))
                 {
                     EditorGUILayout.HelpBox("远程加载必须要填写远程服务器路径地址,需要带http(s)://", MessageType.Error);
                 }
@@ -114,6 +101,7 @@ namespace AAMT.Windos
 
         private void OnLostFocus()
         {
+            if (MenuTree == null) return;
             var selected = MenuTree.Selection;
             if (!(selected.SelectedValue is AssetSetting)) return;
             var assetSetting = selected.SelectedValue as AssetSetting;
@@ -156,7 +144,8 @@ namespace AAMT.Windos
             [Button("创建")]
             private void Create()
             {
-                AssetDatabase.CreateAsset(assetSetting, $"{platformSettingPath}/{assetSetting.name}.asset");
+                AssetDatabase.CreateAsset(assetSetting,
+                    $"{WindowDefine.platformSettingPath}/{assetSetting.name}.asset");
                 AssetDatabase.SaveAssets();
             }
         }

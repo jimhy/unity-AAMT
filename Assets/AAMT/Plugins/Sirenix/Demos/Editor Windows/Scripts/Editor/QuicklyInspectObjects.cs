@@ -53,11 +53,11 @@ namespace Sirenix.OdinInspector.Demos
         {
             var window = OdinEditorWindow.InspectObject(this.someObject);
 
-            window.position = GUIHelper.GetEditorWindowRect().AlignCenter(270, 200);
-            window.titleContent = new GUIContent("Custom title", EditorIcons.RulerRect.Active);
-            window.OnClose += () => Debug.Log("Window Closed");
-            window.OnBeginGUI += () => GUILayout.Label("-----------");
-            window.OnEndGUI += () => GUILayout.Label("-----------");
+            window.position     =  GUIHelper.GetEditorWindowRect().AlignCenter(270, 200);
+            window.titleContent =  new GUIContent("Custom title", EditorIcons.RulerRect.Active);
+            window.OnClose      += () => Debug.Log("Window Closed");
+            window.OnBeginGUI   += () => GUILayout.Label("-----------");
+            window.OnEndGUI     += () => GUILayout.Label("-----------");
         }
     }
 }

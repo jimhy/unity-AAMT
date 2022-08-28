@@ -16,5 +16,5 @@ MonoBehaviour:
   buildPlatform: 1
   buildPath: '{UnityEngine.Application.dataPath}/../Build/'
   remotePath: http://192.168.3.104/Build/remote/windows/
-  moveToStreamingAssetsPathList: []
   loadType: 0
+  moveToStreamingAssetsPathList: []

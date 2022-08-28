@@ -45,6 +45,7 @@
      <Compile Include="Assets\AAMT\Plugins\Sirenix\Demos\Editor Windows\Scripts\Editor\OdinMenuEditorWindowExample.cs" />
      <Compile Include="Assets\AAMT\Editor\Sprites\EditorCommon.cs" />
      <Compile Include="Assets\AAMT\Editor\Sprites\RemoveMissingScripts.cs" />
+     <Compile Include="Assets\AAMT\Editor\Sprites\Windows\AssetBundleSettingWindow.cs" />
      <Compile Include="Assets\AAMT\Plugins\Sirenix\Demos\Editor Windows\Scripts\Editor\SomeData.cs" />
      <Compile Include="Assets\AAMT\Editor\Sprites\OnPreprocessHandler.cs" />
      <Compile Include="Assets\AAMT\Editor\Sprites\Windows\AamtMainWindos.cs" />
@@ -53,9 +54,10 @@
      <Compile Include="Assets\AAMT\Plugins\Sirenix\Demos\Editor Windows\Scripts\Editor\SomeTextureToolWindow.cs" />
      <Compile Include="Assets\AAMT\Editor\Sprites\AssetsBundleBuilder.cs" />
      <Compile Include="Assets\AAMT\Plugins\Sirenix\Demos\Editor Windows\Scripts\Editor\BasicOdinEditorExampleWindow.cs" />
-     <Compile Include="Assets\AAMT\Editor\Sprites\SettingManagerCustomEditor.cs" />
      <Compile Include="Assets\AAMT\Plugins\Sirenix\Demos\Editor Windows\Scripts\Editor\QuicklyInspectObjects.cs" />
-     <Compile Include="Assets\AAMT\Editor\Sprites\Windows\AssetBundleSettingWindow.cs" />
+     <Compile Include="Assets\AAMT\Editor\Sprites\Windows\SettingManagerWindow.cs" />
+     <Compile Include="Assets\AAMT\Editor\Sprites\WindowDefine.cs" />
+     <Compile Include="Assets\AAMT\Editor\Sprites\AssetBundleSetting.cs" />
      <Reference Include="UnityEngine">
      <HintPath>D:\Program Files\Unity 2021.3.1f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
      </Reference>
@@ -1102,9 +1104,17 @@
      </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{86e1c57c-4dc4-b75d-ac16-e9bd7bee19c1}</Project>
+      <Name>Assembly-CSharp-firstpass</Name>
+    </ProjectReference>
     <ProjectReference Include="Assembly-CSharp.csproj">
       <Project>{ac54ac97-fb53-4751-b0e7-9e1a17b9e7b9}</Project>
       <Name>Assembly-CSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="Assembly-CSharp-Editor-firstpass.csproj">
+      <Project>{e19adee2-8850-428a-cbd9-6ec295eb99bb}</Project>
+      <Name>Assembly-CSharp-Editor-firstpass</Name>
     </ProjectReference>
     <ProjectReference Include="Sirenix.OdinInspector.CompatibilityLayer.csproj">
       <Project>{7c637f88-2871-0487-2898-3ab8bd9362f9}</Project>
