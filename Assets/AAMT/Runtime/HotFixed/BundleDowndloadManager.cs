@@ -17,10 +17,9 @@ namespace AAMT
 
         public BundleDowndloadManager()
         {
-            handler = new AsyncHandler();
-            loadFiles = new Queue<string>();
-            persistentVersionPath =
-                $"{Application.persistentDataPath}/{SettingManager.assetSetting.GetBuildPlatform}/{AAMTDefine.AAMT_ASSET_VERSION}";
+            handler               = new AsyncHandler();
+            loadFiles             = new Queue<string>();
+            persistentVersionPath = AAMTDefine.AAMT_PERSISTENT_VERSION_PATH;
         }
 
         public async void Start()
@@ -31,22 +30,27 @@ namespace AAMT
 
         private void StartDownload()
         {
-            for (int i = 0; i < loadFiles.Count; i++)
+            if (loadFiles.Count > 0)
             {
-                if (downloadThreadCount != -1 && i >= downloadThreadCount) return;
-                OnLoad();
+                for (int i = 0; i < loadFiles.Count; i++)
+                {
+                    if (downloadThreadCount != -1 && i >= downloadThreadCount) return;
+                    OnLoad();
+                }
+            }
+            else
+            {
+                OnAllDownloadComplete();
             }
         }
 
         private void OnLoad()
         {
             if (loadFiles.Count <= 0) return;
-            var loadFile = loadFiles.Dequeue();
-            var url = $"{SettingManager.assetSetting.getRemotePath}/{loadFile}";
-            var targetPath =
-                $"{Application.persistentDataPath}/{SettingManager.assetSetting.GetBuildPlatform}/{loadFile}"
-                    .ToLower();
-            var uwr = UnityWebRequest.Get(url);
+            var loadFile   = loadFiles.Dequeue();
+            var url        = $"{SettingManager.assetSetting.getRemotePath}/{loadFile}";
+            var targetPath = $"{Application.persistentDataPath}/{SettingManager.assetSetting.GetBuildPlatform}/{loadFile}".ToLower();
+            var uwr        = UnityWebRequest.Get(url);
             if (File.Exists(targetPath)) File.Delete(targetPath);
             Debug.LogFormat("downloading-->url{0},targetPath:{1}", url, targetPath);
             uwr.downloadHandler = new DownloadHandlerFile(targetPath);
@@ -59,7 +63,7 @@ namespace AAMT
             if (o is UnityWebRequestAsyncOperation operation)
             {
                 if (handler == null) return;
-                handler.currentBytes += (uint) operation.webRequest.downloadedBytes;
+                handler.currentBytes += (uint)operation.webRequest.downloadedBytes;
                 handler.currentCount++;
                 if (handler.currentCount >= handler.totalCount)
                 {
@@ -68,6 +72,7 @@ namespace AAMT
                     OnAllDownloadComplete();
                     return;
                 }
+
                 OnLoad();
                 handler.OnProgress();
             }
@@ -93,12 +98,36 @@ namespace AAMT
         }
 
         /// <summary>
+        /// 加载远程资源版本文件
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<string> GetRemoteVersionFiles()
+        {
+            var path = Path.Combine(SettingManager.assetSetting.getRemotePath, AAMTDefine.AAMT_ASSET_VERSION);
+            Debug.LogFormat("load path:{0}", path);
+            var uwr = UnityWebRequest.Get(path);
+            uwr.SendWebRequest();
+            while (!uwr.isDone)
+            {
+                await Task.Delay(100);
+            }
+
+            if (uwr.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogErrorFormat("文件下载失败,result:{0}", uwr.result);
+                return "";
+            }
+
+            return uwr.downloadHandler.text;
+        }
+
+        /// <summary>
         /// 加载本地资源版本文件
         /// </summary>
         /// <returns></returns>
         private async Task<string> GetLocalVersionFiles()
         {
-            var path = persistentVersionPath;
+            var path  = persistentVersionPath;
             var path1 = $"{Application.streamingAssetsPath}/{AAMTDefine.AAMT_ASSET_VERSION}";
 
             if (File.Exists(path))
@@ -122,39 +151,16 @@ namespace AAMT
             return req.downloadHandler.text;
         }
 
-        /// <summary>
-        /// 加载远程资源版本文件
-        /// </summary>
-        /// <returns></returns>
-        private async Task<string> GetRemoteVersionFiles()
-        {
-            var path = Path.Combine(SettingManager.assetSetting.getRemotePath, AAMTDefine.AAMT_ASSET_VERSION);
-            Debug.LogFormat("load path:{0}", path);
-            var uwr = UnityWebRequest.Get(path);
-            uwr.SendWebRequest();
-            while (!uwr.isDone)
-            {
-                await Task.Delay(100);
-            }
-
-            if (uwr.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogErrorFormat("文件下载失败,result:{0}", uwr.result);
-                return "";
-            }
-
-            return uwr.downloadHandler.text;
-        }
 
         private void CompareVersionFiles(string localText, string removeText)
         {
-            VersionData localData = null;
+            VersionData localData                           = null;
             if (!string.IsNullOrEmpty(localText)) localData = JsonMapper.ToObject<VersionData>(localText);
-            var remoteData = JsonMapper.ToObject<VersionData>(removeText);
+            var remoteData                                  = JsonMapper.ToObject<VersionData>(removeText);
             foreach (var k in remoteData.fileDatas)
             {
-                var remoteFile = k.Value;
-                VersionFileData localFile = null;
+                var             remoteFile       = k.Value;
+                VersionFileData localFile        = null;
                 if (localData != null) localFile = localData.Get(remoteFile.fileName);
                 if (localFile == null || localFile.md5 != remoteFile.md5)
                 {

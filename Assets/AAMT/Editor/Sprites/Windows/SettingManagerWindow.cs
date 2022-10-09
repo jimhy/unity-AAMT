@@ -68,5 +68,25 @@ namespace AAMT.Windos
         {
             AssetsBundleBuilder.BuildAssetsBundles();
         }
+
+        [HideIf("buildTarget", AssetSetting.BuildTarget.editor)]
+        [Button("移动所需资源到Streaming Assets 文件夹")]
+        private void MoveBundleToStreamingAssets()
+        {
+            SettingManager.ReloadAssetSetting(EditorCommon.EditorToAamtTarget());
+            OnPreprocessHandler.MoveBundleToStreamingAssets();
+            OnPreprocessHandler.CreateStreamingAssetsVersionData();
+            OnPreprocessHandler.CreateBundleFilesDictionary();
+            AssetDatabase.Refresh();
+        }
+
+        [HideIf("buildTarget", AssetSetting.BuildTarget.editor)]
+        [Button("移动所有资源到Streaming Assets 文件夹")]
+        private void MoveAllBundleToStreamingAssets()
+        {
+            SettingManager.ReloadAssetSetting(EditorCommon.EditorToAamtTarget());
+            OnPreprocessHandler.MoveAllBundleToStreamingAssets();
+            AssetDatabase.Refresh();
+        }
     }
 }

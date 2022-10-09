@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: win-remote
   buildPlatform: 1
-  buildPath: '{UnityEngine.Application.dataPath}/../Build/Remote/'
-  remotePath: http://192.168.3.104/Build/remote/windows/
-  moveToStreamingAssetsPathList: []
+  buildPath: F:\hybridclr_study\Build\download\
+  remotePath: http://192.168.3.88:81/Windows
   loadType: 1
+  moveToStreamingAssetsPathList:
+  - Assets/AAMT/Sample/Res/Config
+  - Assets/AAMT/Sample/Res/Prefabs

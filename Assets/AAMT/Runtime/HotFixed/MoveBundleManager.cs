@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
+using LitJsonAAMT;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -17,12 +18,17 @@ namespace AAMT
             handler = new AsyncHandler();
         }
 
-        internal void MoveAssets()
+        internal async void MoveAssets()
         {
+            if (AAMTDefine.IsMoveFilesToPersistentComplete())
+            {
+                AAMTRuntime.Instance.CallOnNextFrame(OnAllFileComplete);
+                return;
+            }
+
             var buildTarget = SettingManager.assetSetting.GetBuildPlatform;
-            var path =
-                $"{Application.streamingAssetsPath}/{buildTarget}/{AAMTDefine.AAMT_BUNDLE_FILES_DICTIONARY}";
-            var value = Tools.ReadTextFileData(path);
+            var path        = $"{Application.streamingAssetsPath}/{buildTarget}/{AAMTDefine.AAMT_BUNDLE_FILES_DICTIONARY}";
+            var value       = Tools.ReadTextFileData(path);
             if (string.IsNullOrEmpty(value))
             {
                 return;
@@ -34,7 +40,7 @@ namespace AAMT
             foreach (var file in files)
             {
                 var sourcePath = $"{Application.streamingAssetsPath}/{buildTarget}/{file}".ToLower();
-                var newPath = $"{Application.persistentDataPath}/{buildTarget}/{file}".ToLower();
+                var newPath    = $"{Application.persistentDataPath}/{buildTarget}/{file}".ToLower();
                 AAMTRuntime.Instance.StartCoroutine(MoveFile(newPath, sourcePath));
             }
         }
@@ -57,8 +63,7 @@ namespace AAMT
         private async void WriteFile(string path, byte[] data)
         {
             var dirName = Path.GetDirectoryName(path);
-            if (dirName != null && !Directory.Exists(dirName))
-                Directory.CreateDirectory(dirName);
+            if (dirName != null && !Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
             await OnWriteFile(path, data);
             OnOneFileComplete(path, true);
         }
@@ -72,8 +77,12 @@ namespace AAMT
 
         private void OnOneFileComplete(string path, bool isSuccess)
         {
-            if (isSuccess) Debug.LogFormat("移动文件成功:{0}", path);
+            if (isSuccess)
+            {
+                Debug.LogFormat("移动文件成功:{0}", path);
+            }
             else Debug.LogErrorFormat("移动文件失败:{0}", path);
+
             if (handler == null) return;
             handler.currentCount++;
 
@@ -83,9 +92,15 @@ namespace AAMT
 
             if (handler.currentCount >= handler.totalCount)
             {
-                handler.OnComplete();
-                handler = null;
+                OnAllFileComplete();
             }
+        }
+
+        private void OnAllFileComplete()
+        {
+            AAMTDefine.SetMoveFilesToPersistentComplete(true);
+            handler.OnComplete();
+            handler = null;
         }
     }
 }

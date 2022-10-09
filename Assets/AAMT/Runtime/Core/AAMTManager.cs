@@ -53,13 +53,13 @@ namespace AAMT
                 Object.DontDestroyOnLoad(runtimeGameObject);
             }
         }
-
+        
         public static AsyncHandler MoveBundles()
         {
             AddRuntime();
             if (SettingManager.assetSetting.getLoadType == AssetSetting.LoadType.Local)
             {
-                Debug.LogErrorFormat("加载类型为Local,不能移动Bundles.");
+                Debug.LogWarning("加载类型为Local,不能移动Bundles.");
                 return null;
             }
 
@@ -73,7 +73,7 @@ namespace AAMT
             AddRuntime();
             if (SettingManager.assetSetting.getLoadType == AssetSetting.LoadType.Local)
             {
-                Debug.LogErrorFormat("加载类型为Local,不能更新资源.");
+                Debug.LogWarning("加载类型为Local,不能更新资源.");
                 return null;
             }
 

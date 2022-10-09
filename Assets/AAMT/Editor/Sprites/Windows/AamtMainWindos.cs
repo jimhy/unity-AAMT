@@ -35,13 +35,13 @@ namespace AAMT.Windos
         {
             initSettingManager();
             initAssetBundlerPanel();
-
             OdinMenuTree tree = new OdinMenuTree()
             {
-                {"平台设置", null, EditorIcons.SmartPhone},
                 {"打包设置", _settingManager, EditorIcons.SettingsCog},
+                {"平台设置", null, EditorIcons.SmartPhone},
                 {"AB资源设置", _abWindow, EditorIcons.HamburgerMenu},
             };
+
 
             tree.AddAllAssetsAtPath("平台设置", WindowDefine.platformSettingPath, typeof(AssetSetting));
             tree.Add("平台设置/创建新平台", new CreateSettings());
@@ -112,22 +112,6 @@ namespace AAMT.Windos
                 AssetDatabase.RenameAsset(path, assetSetting.name);
                 AssetDatabase.SaveAssets();
             }
-        }
-
-        private void MoveAb(AssetSetting.BuildTarget target)
-        {
-            SettingManager.ReloadAssetSetting(target);
-            OnPreprocessHandler.MoveBundleToStreamingAssets();
-            OnPreprocessHandler.CreateBundleFilesDictionary();
-            OnPreprocessHandler.CreateStreamingAssetsVersionData();
-            AssetDatabase.Refresh();
-        }
-
-        private void MoveAllAb(AssetSetting.BuildTarget target)
-        {
-            SettingManager.ReloadAssetSetting(target);
-            OnPreprocessHandler.MoveAllBundleToStreamingAssets();
-            AssetDatabase.Refresh();
         }
 
         public class CreateSettings
