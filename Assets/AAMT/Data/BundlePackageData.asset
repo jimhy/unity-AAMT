@@ -9,12 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff64a0c21f5a48b68e7ac2220c90fe70, type: 3}
-  m_Name: editor
+  m_Script: {fileID: 11500000, guid: 97cbad94b755419882b53d5071b1c29e, type: 3}
+  m_Name: BundlePackageData
   m_EditorClassIdentifier: 
-  fileName: editor
-  buildPlatform: 0
-  buildPath: '{UnityEngine.Application.dataPath}/../Build/'
-  remotePath: http://localhot:881
-  loadType: 1
-  moveToStreamingAssetsPathList: []
+  _guids: []

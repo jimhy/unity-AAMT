@@ -44,7 +44,7 @@ namespace AAMT
                 switch (_instance.buildTarget)
                 {
                     case AssetSetting.BuildTarget.editor:
-                        _instance._currentAssetSetting = new AssetSetting();
+                        _instance._currentAssetSetting = ScriptableObject.CreateInstance<AssetSetting>();
                         break;
                     case AssetSetting.BuildTarget.windows:
                         _instance._currentAssetSetting = _instance.windowsAssetSetting;

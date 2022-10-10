@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
@@ -10,14 +12,14 @@ namespace AAMT
         [MenuItem("AAMT/Build Asset Bundles", false, 51)]
         public static void BuildAssetsBundles()
         {
+            GetAbList();
+            return;
             EditorCommon.ClearConsole();
-            SetSettingManagerAbName();
             var path = SettingManager.assetSetting.getBuildPath.ToLower();
             Debug.LogFormat("Start build assets bundles to path:{0}", path);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
-            BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.ChunkBasedCompression,
-                EditorCommon.AamtToEditorTarget());
+            BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.ChunkBasedCompression, EditorCommon.AamtToEditorTarget());
 
             CreateManifestMapFile();
             CreateVersionFile();
@@ -25,16 +27,97 @@ namespace AAMT
             Debug.Log("Assets bundle build complete!!");
         }
 
-        private static void SetSettingManagerAbName()
+        private static List<AssetBundleBuild> GetAbList()
         {
-            var filePath = $"{Application.dataPath}/AAMT/Data";
-            var files = Directory.GetFiles(filePath, "*asset", SearchOption.AllDirectories);
+            var path = SettingManager.assetSetting.getBuildPath.ToLower();
+            var abs  = new List<AssetBundleBuild>();
+            abs.Add(GetSettingManagerAbName());
+            GetAssetBundleBuilds(abs);
+            BuildPipeline.BuildAssetBundles(path, abs.ToArray(), BuildAssetBundleOptions.ChunkBasedCompression, EditorCommon.AamtToEditorTarget());
+            return abs;
+        }
+
+        private static AssetBundlePackageData _assetBundlePackageData;
+
+        private static void GetAssetBundleBuilds(List<AssetBundleBuild> abs)
+        {
+            var sprite = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(AAMTDefine.AAMT_BUNDLE_PACKAGE_DATA);
+            if (sprite == null) return;
+            _assetBundlePackageData = ScriptableObject.Instantiate(sprite) as AssetBundlePackageData;
+            foreach (var pd in _assetBundlePackageData._guids)
+            {
+                if (pd.AbType == WindowDefine.ABType.PACKAGE)
+                {
+                    var builds = GetDicFiles(pd.Path);
+                    if (builds != null && builds.Count != 0)
+                    {
+                        var abb = new AssetBundleBuild();
+                        abb.assetBundleName = pd.Path.ToLower().Replace("assets/", "") + ".ab";
+                        abb.assetNames      = builds.ToArray();
+                        abs.Add(abb);
+                    }
+                }
+                else if (pd.AbType == WindowDefine.ABType.SINGLE)
+                {
+                    var builds = GetDicFiles(pd.Path);
+                    if (builds != null && builds.Count != 0)
+                    {
+                        foreach (var build in builds)
+                        {
+                            var abb = new AssetBundleBuild();
+                            abb.assetBundleName = build.Replace("assets/", "") + ".ab";
+                            abb.assetNames      = new[] { build };
+                            abs.Add(abb);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static List<string> GetDicFiles(string pdPath)
+        {
+            var extension = Path.GetExtension(pdPath);
+            if (!string.IsNullOrEmpty(extension)) return null;
+            var list        = new List<string>();
+            var files       = Directory.GetFiles(pdPath, "*", SearchOption.TopDirectoryOnly);
+            var directories = Directory.GetDirectories(pdPath, "*", SearchOption.TopDirectoryOnly);
+            foreach (var f in files)
+            {
+                var file = f.ToLower();
+                if (!EditorCommon.CheckPath(file)) continue;
+                list.Add(file);
+            }
+
+            foreach (var d in directories)
+            {
+                var directory = d.ToLower();
+                var guidData  = _assetBundlePackageData.GetData(directory);
+                if (guidData == null || guidData.AbType != WindowDefine.ABType.PARENT) continue;
+                var abbs = GetDicFiles(directory);
+                if (abbs != null || abbs.Count != null) list.AddRange(abbs);
+            }
+
+            return list;
+        }
+
+        private static AssetBundleBuild GetSettingManagerAbName()
+        {
+            var abb = new AssetBundleBuild();
+            abb.assetBundleName = AAMTDefine.AAMT_BUNDLE_NAME;
+
+            var filePath         = $"{Application.dataPath}/AAMT/Data";
+            var files            = Directory.GetFiles(filePath, "*asset", SearchOption.AllDirectories);
+            var assetBundleNames = new List<string>();
+            var pn               = AAMTDefine.AAMT_BUNDLE_PACKAGE_DATA.ToLower();
             foreach (var path in files)
             {
-                var p = path.Replace(Application.dataPath, "assets");
-                AssetImporter item = AssetImporter.GetAtPath(p);
-                item.assetBundleName = AAMTDefine.AAMT_BUNDLE_NAME;
+                var p = path.Replace(Application.dataPath, "assets").Replace("\\", "/").ToLower();
+                if (p == pn) continue;
+                assetBundleNames.Add(p);
             }
+
+            abb.assetNames = assetBundleNames.ToArray();
+            return abb;
         }
 
 
@@ -55,24 +138,22 @@ namespace AAMT
         [MenuItem("AAMT/CreateManifestMapFile", false, 55)]
         private static void CreateManifestMapFile()
         {
-            var files = Directory.GetFiles(SettingManager.assetSetting.getBuildPath, "*.manifest",
-                SearchOption.AllDirectories);
+            var files = Directory.GetFiles(SettingManager.assetSetting.getBuildPath, "*.manifest", SearchOption.AllDirectories);
 
-            var mapPath = Path.Combine(SettingManager.assetSetting.getBuildPath,
-                AAMTDefine.AAMT_ASSETS_WITH_BUNDLE_NAME);
+            var mapPath = Path.Combine(SettingManager.assetSetting.getBuildPath, AAMTDefine.AAMT_ASSETS_WITH_BUNDLE_NAME);
             if (File.Exists(mapPath)) File.Delete(mapPath);
 
-            FileStream fs = new FileStream(mapPath, FileMode.CreateNew, FileAccess.Write);
-            StreamWriter sw = new StreamWriter(fs);
-            var regex = new Regex(@"- Assets/([\w\/\.]+)");
-            var buildPath = $"{SettingManager.assetSetting.getBuildPath}/";
-            var i = 1;
+            FileStream   fs        = new FileStream(mapPath, FileMode.CreateNew, FileAccess.Write);
+            StreamWriter sw        = new StreamWriter(fs);
+            var          regex     = new Regex(@"- Assets/([\w\/\.]+)");
+            var          buildPath = $"{SettingManager.assetSetting.getBuildPath}/";
+            var          i         = 1;
             foreach (var file in files)
             {
                 EditorCommon.UpdateProgress("正在计算文件", i++, files.Length, file);
-                var f = file.Replace("\\", "/");
+                var f      = file.Replace("\\", "/");
                 var source = File.ReadAllText(f);
-                var ary = regex.Matches(source);
+                var ary    = regex.Matches(source);
                 var abName = f.Replace(buildPath, "").Replace(".manifest", "");
                 foreach (Match o in ary)
                 {

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff64a0c21f5a48b68e7ac2220c90fe70, type: 3}
   m_Name: win-remote
   m_EditorClassIdentifier: 
-  name: win-remote
+  fileName: win-remote
   buildPlatform: 1
   buildPath: F:\hybridclr_study\Build\download\
   remotePath: http://192.168.3.88:81/Windows

@@ -29,7 +29,7 @@ namespace AAMT
         }
 
         [LabelText("名字")]
-        public string name;
+        public string fileName;
 
         [FormerlySerializedAs("buildTarget")]
         [LabelText("目标平台")]

@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff64a0c21f5a48b68e7ac2220c90fe70, type: 3}
   m_Name: ios
   m_EditorClassIdentifier: 
-  name: ios
+  fileName: ios
   buildPlatform: 3
   buildPath: '{UnityEngine.Application.dataPath}/../Build/'
   remotePath: http://localhost:80
-  moveToStreamingAssetsPathList: []
   loadType: 0
+  moveToStreamingAssetsPathList: []

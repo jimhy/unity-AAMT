@@ -17,7 +17,7 @@ namespace AAMT.Windos
 {
     public class AamtMainWindos : OdinMenuEditorWindow
     {
-        private SettingManagerWindow     _settingManager;
+        private SettingManagerWindow _settingManager;
         private AssetBundleSettingWindow _abWindow;
 
         [MenuItem("AAMT/Settings")]
@@ -37,9 +37,7 @@ namespace AAMT.Windos
             initAssetBundlerPanel();
             OdinMenuTree tree = new OdinMenuTree()
             {
-                {"打包设置", _settingManager, EditorIcons.SettingsCog},
-                {"平台设置", null, EditorIcons.SmartPhone},
-                {"AB资源设置", _abWindow, EditorIcons.HamburgerMenu},
+                { "打包设置", _settingManager, EditorIcons.SettingsCog }, { "平台设置", null, EditorIcons.SmartPhone }, { "AB资源设置", _abWindow, EditorIcons.HamburgerMenu },
             };
 
 
@@ -62,6 +60,7 @@ namespace AAMT.Windos
         protected override void OnBeginDrawEditors()
         {
             base.OnBeginDrawEditors();
+            if (MenuTree == null) return;
             var selected = MenuTree.Selection;
             if (!(selected.SelectedValue is AssetSetting)) return;
             SirenixEditorGUI.BeginHorizontalToolbar();
@@ -70,7 +69,7 @@ namespace AAMT.Windos
                 if (SirenixEditorGUI.ToolbarButton("删除"))
                 {
                     var data = selected.SelectedValue as AssetSetting;
-                    var b    = EditorUtility.DisplayDialog("温馨提示", $"是否删除{data.name}", "确定", "取消");
+                    var b    = EditorUtility.DisplayDialog("温馨提示", $"是否删除{data.fileName}", "确定", "取消");
                     if (b)
                     {
                         var path = AssetDatabase.GetAssetPath(data);
@@ -85,11 +84,11 @@ namespace AAMT.Windos
         protected override void OnEndDrawEditors()
         {
             base.OnEndDrawEditors();
+            if (MenuTree == null) return;
             var selected = MenuTree.Selection;
             if (!(selected.SelectedValue is AssetSetting)) return;
             var assetSetting = selected.SelectedValue as AssetSetting;
             if (assetSetting.GetBuildPlatform == AssetSetting.BuildTarget.editor) return;
-            var buildPath = AAMTRuntimeProperties.EvaluateString(assetSetting.WindowGetSourceBuildPath);
             if (assetSetting.getLoadType == AssetSetting.LoadType.Remote)
             {
                 if (!WindowDefine.httpRegex.IsMatch(assetSetting.getRemotePath))
@@ -107,9 +106,9 @@ namespace AAMT.Windos
             var assetSetting = selected.SelectedValue as AssetSetting;
             var path         = AssetDatabase.GetAssetPath(assetSetting);
             var fileName     = Path.GetFileName(path);
-            if (fileName != assetSetting.name)
+            if (fileName != assetSetting.fileName)
             {
-                AssetDatabase.RenameAsset(path, assetSetting.name);
+                AssetDatabase.RenameAsset(path, assetSetting.fileName);
                 AssetDatabase.SaveAssets();
             }
         }
@@ -121,15 +120,14 @@ namespace AAMT.Windos
 
             public CreateSettings()
             {
-                assetSetting      = new AssetSetting();
-                assetSetting.name = "New Platform";
+                assetSetting          = ScriptableObject.CreateInstance<AssetSetting>();
+                assetSetting.fileName = "New Platform";
             }
 
             [Button("创建")]
             private void Create()
             {
-                AssetDatabase.CreateAsset(assetSetting,
-                    $"{WindowDefine.platformSettingPath}/{assetSetting.name}.asset");
+                AssetDatabase.CreateAsset(assetSetting, $"{WindowDefine.platformSettingPath}/{assetSetting.fileName}.asset");
                 AssetDatabase.SaveAssets();
             }
         }
