@@ -1,0 +1,37 @@
+[
+  {
+    "Guid": "fafc0b3eda3cd734ba4ca16ed1a373d3",
+    "Path": "Assets/Sample/Res/UI",
+    "AbType": 0
+  },
+  {
+    "Guid": "2290cee50ec325b4981af9fbaf3b0a21",
+    "Path": "Assets/Sample/Res/UI/UserInfo",
+    "AbType": 2
+  },
+  {
+    "Guid": "cdc82f16152648446a2be1046cc3903f",
+    "Path": "Assets/Sample/Res/Test/P1",
+    "AbType": 0
+  },
+  {
+    "Guid": "3b111facb2b33304fab24128e5ed50be",
+    "Path": "Assets/Sample/Res/Test/P2",
+    "AbType": 0
+  },
+  {
+    "Guid": "cad0e018fecde9f428bddf3a471bc7ac",
+    "Path": "Assets/Sample/Res/Test/P3",
+    "AbType": 0
+  },
+  {
+    "Guid": "b0b9afc3f6685ae40870bef3469b2763",
+    "Path": "Assets/Sample/Res/Prefabs",
+    "AbType": 1
+  },
+  {
+    "Guid": "beca97e9cdc61e340bad432a90cab68f",
+    "Path": "Assets/Sample/Res/Config",
+    "AbType": 0
+  }
+]

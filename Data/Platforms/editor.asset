@@ -15,6 +15,6 @@ MonoBehaviour:
   fileName: editor
   buildPlatform: 0
   buildPath: '{UnityEngine.Application.dataPath}/../Build/'
-  remotePath: http://localhot:881
-  loadType: 1
+  loadType: 0
+  remotePath: http://localhost:80
   moveToStreamingAssetsPathList: []

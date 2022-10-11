@@ -1,0 +1,20 @@
+{
+  "name": "com.jimhy.aamt",
+  "version": "0.5.1",
+  "displayName": "AAMT",
+  "description": "Unity package for unity-AAMT. It includes editor and runtime scripts and assets for unity-AAMT",
+  "category": "Runtime",
+  "documentationUrl": "https://github.com/jimhy/unity-AAMT.git/index",
+  "changelogUrl": "https://github.com/jimhy/unity-AAMT.git/commits/main",
+  "licensesUrl": "https://github.com/jimhy/unity-AAMT/blob/main/LICENSE",
+  "keywords": [
+    "aamt",
+    "hotupdate",
+    "hotfix"
+  ],
+  "author": {
+    "name": "\u6d77\u98ce",
+    "email": "jimhy@qq.com",
+    "url": "https://github.com/jimhy"
+  }
+}

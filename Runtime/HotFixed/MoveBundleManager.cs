@@ -18,7 +18,7 @@ namespace AAMT
             handler = new AsyncHandler();
         }
 
-        internal async void MoveAssets()
+        internal void MoveAssets()
         {
             if (AAMTDefine.IsMoveFilesToPersistentComplete())
             {

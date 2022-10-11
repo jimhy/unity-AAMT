@@ -41,16 +41,16 @@ namespace AAMT
         [HideIf("buildPlatform", BuildTarget.editor)]
         private string buildPath = "{UnityEngine.Application.dataPath}/../Build/";
 
-        [LabelText("远程资源地址")]
-        [SerializeField]
-        [HideIf("buildPlatform", BuildTarget.editor)]
-        private string remotePath = "http://localhost:80";
-
         [LabelText("资源加载类型")]
         [SerializeField]
         [HideIf("buildPlatform", BuildTarget.editor)]
         private LoadType loadType = LoadType.Local;
 
+        [LabelText("远程资源地址")]
+        [SerializeField]
+        [ShowIf("loadType", LoadType.Remote)]
+        private string remotePath = "http://localhost:80";
+        
         [LabelText("AB包文件夹")]
         [InfoBox("在打包时,把需要打进apk包的资源拷贝到StreamingAssets目录")]
         [SerializeField]

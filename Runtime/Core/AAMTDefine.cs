@@ -9,11 +9,12 @@ namespace AAMT
     {
         public const string AAMT_BUNDLE_FILES_DICTIONARY = "bundle-files-dictionary.txt";
         public const string AAMT_ASSETS_WITH_BUNDLE_NAME = "assets-with-bundle.txt";
+        public const string AAMT_SETTING_MANAGER = "Assets/AAMT/Data/SettingManager.asset";
         public const string AAMT_BUNDLE_NAME = "aamt.ab";
         public const string AAMT_ASSET_VERSION = "version.json";
         public const string AAMT_MOVE_FILES_TO_PERSISTENT_COMPLETE_KEY = "moveFilesToPersistentCompleteKey";
         public static string AAMT_PERSISTENT_VERSION_PATH = $"{Application.persistentDataPath}/{SettingManager.assetSetting.GetBuildPlatform}/{AAMTDefine.AAMT_ASSET_VERSION}";
-        public static string AAMT_BUNDLE_PACKAGE_DATA   = "Assets/AAMT/Data/BundlePackageData.asset";
+        public static string AAMT_BUNDLE_PACKAGE_DATA   = "Assets/AAMT/Data/BundlePackageData.json";
         public static bool IsMoveFilesToPersistentComplete()
         {
             return PlayerPrefs.HasKey(AAMT_MOVE_FILES_TO_PERSISTENT_COMPLETE_KEY);

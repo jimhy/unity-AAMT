@@ -1,4 +1,5 @@
-﻿using Sirenix.OdinInspector;
+﻿using System.IO;
+using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -36,8 +37,23 @@ namespace AAMT
         private static void LoadAssetSetting(AssetSetting.BuildTarget? buildTarget = null)
         {
 #if UNITY_EDITOR
-            var sprite = AssetDatabase.LoadAssetAtPath<Object>("Assets/AAMT/Data/SettingManager.asset");
-            _instance = Instantiate(sprite) as SettingManager;
+            
+            var sprite = AssetDatabase.LoadAssetAtPath<Object>(AAMTDefine.AAMT_SETTING_MANAGER);
+            if (sprite == null)
+            {
+                var sm   = CreateInstance<SettingManager>();
+                var path = Path.GetDirectoryName(AAMTDefine.AAMT_SETTING_MANAGER);
+                if (!Directory.Exists(path) && !string.IsNullOrEmpty(path)) Directory.CreateDirectory(path);
+                AssetDatabase.CreateAsset(sm,AAMTDefine.AAMT_SETTING_MANAGER);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+                _instance = sm;
+            }
+            else
+            {
+                _instance = Instantiate(sprite) as SettingManager;
+
+            }
             if (buildTarget != null) _instance.buildTarget = buildTarget.Value;
             if (_instance != null)
             {
