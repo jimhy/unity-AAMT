@@ -16,5 +16,7 @@
     "name": "\u6d77\u98ce",
     "email": "jimhy@qq.com",
     "url": "https://github.com/jimhy"
-  }
+  },
+  "type": "library",
+  "unity": "2019.1"
 }

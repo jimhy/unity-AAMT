@@ -11,7 +11,6 @@ namespace AAMT.Editor.Windows
     public class AamtMainWindos : OdinMenuEditorWindow
     {
         private SettingManagerWindow _settingManager;
-        private AssetBundleSettingWindow _abWindow;
 
         [MenuItem("AAMT/Settings")]
         private static void OpenWindow()
@@ -27,21 +26,15 @@ namespace AAMT.Editor.Windows
         protected override OdinMenuTree BuildMenuTree()
         {
             initSettingManager();
-            initAssetBundlerPanel();
             OdinMenuTree tree = new OdinMenuTree()
             {
-                { "打包设置", _settingManager, EditorIcons.SettingsCog }, { "平台设置", null, EditorIcons.SmartPhone }, { "AB资源设置", _abWindow, EditorIcons.HamburgerMenu },
+                { "打包设置", _settingManager, EditorIcons.SettingsCog }, { "平台设置", null, EditorIcons.SmartPhone }
             };
 
             tree.AddAllAssetsAtPath("平台设置", WindowDefine.platformSettingPath, typeof(AssetSetting));
             tree.Add("平台设置/创建新平台", new CreateSettings());
 
             return tree;
-        }
-
-        private void initAssetBundlerPanel()
-        {
-            if (_abWindow == null) _abWindow = ScriptableObject.CreateInstance<AssetBundleSettingWindow>();
         }
 
         private void initSettingManager()
