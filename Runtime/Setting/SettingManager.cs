@@ -8,9 +8,9 @@ namespace AAMT
 {
     public class SettingManager : ScriptableObject
     {
-        public AssetSetting             windowsAssetSetting;
-        public AssetSetting             androidAssetSetting;
-        public AssetSetting             iosAssetSetting;
+        public AssetSetting windowsAssetSetting;
+        public AssetSetting androidAssetSetting;
+        public AssetSetting iosAssetSetting;
         public AssetSetting.BuildTarget buildTarget = AssetSetting.BuildTarget.editor;
 
         private AssetSetting _currentAssetSetting;
@@ -37,14 +37,14 @@ namespace AAMT
         private static void LoadAssetSetting(AssetSetting.BuildTarget? buildTarget = null)
         {
 #if UNITY_EDITOR
-            
+
             var sprite = AssetDatabase.LoadAssetAtPath<Object>(AAMTDefine.AAMT_SETTING_MANAGER);
             if (sprite == null)
             {
                 var sm   = CreateInstance<SettingManager>();
                 var path = Path.GetDirectoryName(AAMTDefine.AAMT_SETTING_MANAGER);
                 if (!Directory.Exists(path) && !string.IsNullOrEmpty(path)) Directory.CreateDirectory(path);
-                AssetDatabase.CreateAsset(sm,AAMTDefine.AAMT_SETTING_MANAGER);
+                AssetDatabase.CreateAsset(sm, AAMTDefine.AAMT_SETTING_MANAGER);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
                 _instance = sm;
@@ -52,11 +52,12 @@ namespace AAMT
             else
             {
                 _instance = Instantiate(sprite) as SettingManager;
-
             }
-            if (buildTarget != null) _instance.buildTarget = buildTarget.Value;
+
             if (_instance != null)
             {
+                if (buildTarget != null) _instance.buildTarget = buildTarget.Value;
+
                 switch (_instance.buildTarget)
                 {
                     case AssetSetting.BuildTarget.editor:

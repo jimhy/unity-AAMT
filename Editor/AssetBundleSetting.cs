@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace AAMT
 {
@@ -25,7 +27,8 @@ namespace AAMT
 
             base.OnHeaderGUI();
             string path = AssetDatabase.GetAssetPath(Selection.activeObject);
-
+            if (path.IndexOf("Assets/", StringComparison.Ordinal) == -1) return;
+            
             if (_selected != Selection.activeObject)
             {
                 _selected    = Selection.activeObject;
