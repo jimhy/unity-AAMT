@@ -49,8 +49,7 @@ namespace AAMT
 
             if (!_bundleManager.pathToBundle.ContainsKey(resPath))
             {
-                Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}/{1}", SettingManager.assetSetting.getLoadPath,
-                                     resPath);
+                Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}/{1}", SettingManager.assetSetting.getLoadPath, resPath);
                 OnLoadComplete();
                 return;
             }
@@ -62,6 +61,10 @@ namespace AAMT
             DetDependenciesAbNames(abName);
         }
 
+        /// <summary>
+        /// 依赖性
+        /// </summary>
+        /// <param name="sourceAbName"></param>
         private void DetDependenciesAbNames(string sourceAbName)
         {
             var abPaths = _bundleManager.assetBundleManifest.GetAllDependencies(sourceAbName);
@@ -82,15 +85,12 @@ namespace AAMT
 
         public AsyncHandler RunAsync()
         {
-            _asyncHandler = new AsyncHandler
-            {
-                totalCount = _loadingAbNames.Count
-            };
+            _asyncHandler = new AsyncHandler { totalCount = _loadingAbNames.Count };
             if (_loadingAbNames.Count > 0)
             {
-                foreach (var loadingAbName in _loadingAbNames)
+                for (int i = _loadingAbNames.Count - 1; i >= 0; i--)
                 {
-                    Load(loadingAbName);
+                    Load(_loadingAbNames[i]);
                 }
             }
             else
@@ -105,7 +105,15 @@ namespace AAMT
         {
             var abPath = $"{SettingManager.assetSetting.getLoadPath}/{abName}";
             Debug.LogFormat("loading bundle:{0}", abPath);
-            Tools.LoadBundleAsync(abPath,OnLoadBundleComplete);
+            if (_bundleManager.HasBundleByBundleName(abName))
+            {
+                Debug.Log($"已经存在 {abName}");
+                OnLoadOneAbComplete(abName);
+            }
+            else
+            {
+                Tools.LoadBundleAsync(abPath, OnLoadBundleComplete);
+            }
         }
 
         private void OnLoadBundleComplete(AssetBundle bundle)

@@ -1,5 +1,4 @@
 using System.IO;
-using HybridCLR.Editor.Installer;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities;
@@ -31,13 +30,9 @@ namespace AAMT.Editor.Windows
             {
                 { "打包设置", _settingManager, EditorIcons.SettingsCog },
                 { "平台设置", new CreateSettings(), EditorIcons.SmartPhone },
-#if USE_HYBRIDCLR
-                { "HybridCLR", new HybridCLRWindow(), EditorIcons.Download }
-#endif
             };
 
             tree.AddAllAssetsAtPath("平台设置", WindowDefine.platformSettingPath, typeof(AssetSetting));
-            tree.Add("HybridCLR/安装", ScriptableObject.CreateInstance<InstallerWindow>());
             return tree;
         }
 

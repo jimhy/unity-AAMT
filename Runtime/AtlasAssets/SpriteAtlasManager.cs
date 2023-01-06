@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using JetBrains.Annotations;
-using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -16,8 +16,8 @@ namespace AAMT
 
         internal SpriteAtlasManager(BundleManager manager)
         {
-            this.manager = manager;
-            atlasMap = new Dictionary<string, AAMTSpriteAtlas>();
+            this.manager   = manager;
+            atlasMap       = new Dictionary<string, AAMTSpriteAtlas>();
             _loadingAssets = new List<string>();
         }
 
@@ -28,9 +28,8 @@ namespace AAMT
             else if (typeof(T) == typeof(AAMTSpriteAtlas))
                 AAMTRuntime.Instance.StartCoroutine(StartGetAssetsAtlas(path, callBack));
         }
-        
-        protected virtual IEnumerator StartGetAssetsAtlas<T>([NotNull] string path, [NotNull] Action<T> callBack)
-            where T : Object
+
+        protected virtual IEnumerator StartGetAssetsAtlas<T>([NotNull] string path, [NotNull] Action<T> callBack) where T : Object
         {
             Tools.ParsingLoadUri(path, out var abName, out var atlasName, out _);
             if (string.IsNullOrEmpty(abName) || string.IsNullOrEmpty(atlasName))
@@ -64,7 +63,7 @@ namespace AAMT
                 yield break;
             }
 
-            atl = new AAMTSpriteAtlas();
+            atl = new AAMTSpriteAtlas(atlasName);
             atlasMap.Add(atlasName, atl);
             atl.Add(request);
             callBack.Invoke(atl as T);
@@ -88,16 +87,21 @@ namespace AAMT
         /// <param name="callBack">加载完成回调</param>
         /// <typeparam name="T">加载的类型，必须要Sprite类型</typeparam>
         /// <returns></returns>
-        protected virtual void StartGetAssetsSprite<T>([NotNull] string path, [NotNull] Action<T> callBack)
-            where T : Object
+        protected virtual void StartGetAssetsSprite<T>([NotNull] string path, [NotNull] Action<T> callBack) where T : Object
         {
             Tools.ParsingLoadUri(path, out var abName, out var atlasName, out string spriteName);
-            if (string.IsNullOrEmpty(abName) || string.IsNullOrEmpty(atlasName) || string.IsNullOrEmpty(spriteName))
+            if (string.IsNullOrEmpty(abName) || string.IsNullOrEmpty(atlasName))
             {
-                Debug.LogErrorFormat("加载资源失败,参数错误,abName:{0},atlasName:{1},spriteName:{2}", abName, atlasName,
-                    spriteName);
+                Debug.LogErrorFormat("加载资源失败,参数错误,abName:{0},atlasName:{1},spriteName:{2}", abName, atlasName, spriteName);
                 callBack.Invoke(default);
                 return;
+            }
+
+            if (string.IsNullOrEmpty(spriteName))
+            {
+                spriteName = atlasName;
+                var n                   = atlasName.LastIndexOf('.');
+                if (n != -1) spriteName = spriteName.Remove(n);
             }
 
             AAMTRuntime.Instance.StartCoroutine(StartGetAssetsAtlas<AAMTSpriteAtlas>(path, (atl) =>

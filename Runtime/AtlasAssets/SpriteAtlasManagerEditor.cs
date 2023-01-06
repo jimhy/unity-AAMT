@@ -35,9 +35,9 @@ namespace AAMT
                 yield break;
             }
 
-            atl = new AAMTSpriteAtlas();
+            atl                 = new AAMTSpriteAtlas(atlasName);
             atlasMap[atlasName] = atl;
-            uri = $"{SettingManager.assetSetting.getLoadPath}/{uri}";
+            uri                 = $"{SettingManager.assetSetting.getLoadPath}/{uri}";
             var sprites = AssetDatabase.LoadAllAssetsAtPath(uri);
             if (sprites == null)
             {
@@ -57,11 +57,17 @@ namespace AAMT
         protected override void StartGetAssetsSprite<T>(string path, Action<T> callBack)
         {
             Tools.ParsingLoadUri(path, out var uri, out var _, out var atlasName, out string spriteName);
-            if (string.IsNullOrEmpty(atlasName) || string.IsNullOrEmpty(spriteName))
+            if (string.IsNullOrEmpty(atlasName))
             {
                 Debug.LogErrorFormat("加载资源失败,参数错误,abName:{0},spriteName:{1}", atlasName, spriteName);
                 callBack?.Invoke(default);
                 return;
+            }
+
+            if (string.IsNullOrEmpty(spriteName))
+            {
+                var index = atlasName.LastIndexOf(".", StringComparison.Ordinal);
+                spriteName = atlasName.Substring(0, index);
             }
 
             AAMTRuntime.Instance.StartCoroutine(StartGetAssetsAtlas<AAMTSpriteAtlas>(path, (atl) =>

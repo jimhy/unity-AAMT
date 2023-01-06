@@ -6,10 +6,10 @@ namespace AAMT
 {
     public class BundleHandle
     {
-        internal int           ReferenceCount { get; private set; }
-        private  AssetBundle   _assetBundle;
-        private  BundleManager _bundleManager;
-        private  List<string>  _waitingDependency;
+        internal int ReferenceCount { get; private set; }
+        private AssetBundle _assetBundle;
+        private BundleManager _bundleManager;
+        private List<string> _waitingDependency;
 
         internal BundleHandle(AssetBundle assetBundle)
         {
@@ -43,6 +43,10 @@ namespace AAMT
             return _assetBundle.LoadAssetWithSubAssetsAsync<T>(assetName);
         }
 
+        /// <summary>
+        /// 计算引用的依赖性
+        /// </summary>
+        /// <param name="isAdd"></param>
         private void CalculationReferenceDependency(bool isAdd)
         {
             var deps = _bundleManager.assetBundleManifest.GetDirectDependencies(_assetBundle.name);
@@ -103,8 +107,7 @@ namespace AAMT
         private void AddDependencyReference(string rootAbName)
         {
             ReferenceCount++;
-            Debug.LogFormat("增加依赖引用计数,依赖者ab名称:{0},当前被依赖者:名称{1},引用计数:{2}", rootAbName, _assetBundle.name,
-                            ReferenceCount);
+            Debug.LogFormat("增加依赖引用计数,依赖者ab名称:{0},当前被依赖者:名称{1},引用计数:{2}", rootAbName, _assetBundle.name, ReferenceCount);
         }
 
         /// <summary>
@@ -114,8 +117,7 @@ namespace AAMT
         /// <returns>返回是否已经销毁,true:已经销毁,false:没有销毁</returns>
         private bool RemoveDependencyReference(string rootAbName)
         {
-            Debug.LogFormat("减少依赖引用计数,依赖者ab名称:{0},当前被依赖者:名称{1},引用计数:{2}", rootAbName, _assetBundle.name,
-                            ReferenceCount - 1);
+            Debug.LogFormat("减少依赖引用计数,依赖者ab名称:{0},当前被依赖者:名称{1},引用计数:{2}", rootAbName, _assetBundle.name, ReferenceCount - 1);
             Release();
             return ReferenceCount <= 0;
         }
@@ -130,8 +132,8 @@ namespace AAMT
         internal void Destroy()
         {
             if (_assetBundle == null) return;
-            Debug.LogFormat("释放Bundle资源,abName:{0}", _assetBundle.name);
             CalculationReferenceDependency(false);
+            Debug.LogFormat("释放Bundle资源,abName:{0}", _assetBundle.name);
             _assetBundle.Unload(true);
             _assetBundle       = null;
             _bundleManager     = null;

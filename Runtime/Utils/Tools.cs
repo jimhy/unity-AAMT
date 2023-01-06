@@ -141,7 +141,7 @@ namespace AAMT
 
         public static AssetBundle LoadBundle(string path)
         {
-            if (path.ToLower().IndexOf("streamingassets") != -1)
+            if (path.ToLower().IndexOf("streamingassets", StringComparison.Ordinal) != -1)
                 return LoadBundleByWebRequest(path);
             else
                 return AssetBundle.LoadFromFile(path);
@@ -149,7 +149,7 @@ namespace AAMT
 
         public static void LoadBundleAsync(string path, Action<AssetBundle> cb)
         {
-            if (path.ToLower().IndexOf("streamingassets") != -1)
+            if (path.ToLower().IndexOf("streamingassets", StringComparison.Ordinal) != -1)
                 AAMTRuntime.Instance.StartCoroutine(LoadBundleByWebRequestAsync(path, cb));
             else
                 AAMTRuntime.Instance.StartCoroutine(LoadBundleFromeFile(path, cb));
