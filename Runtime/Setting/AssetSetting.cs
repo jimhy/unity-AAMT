@@ -1,13 +1,11 @@
 ﻿using System;
-using System.IO;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace AAMT
 {
-    public partial class AssetSetting : ScriptableObject
+    public class AssetSetting : ScriptableObject
     {
         [Serializable]
         public enum BuildTarget

@@ -74,6 +74,12 @@ namespace AAMT
                         break;
                 }
 
+                if (_instance._currentAssetSetting == null)
+                {
+                    _instance._currentAssetSetting = ScriptableObject.CreateInstance<AssetSetting>();
+                    Debug.LogError("当前平台没有设置配置文件，请在AAMT->Settings->打包设置->配置当前平台对应的平台资源配置，如果还没有创建平台设置，请在平台设置->创建新平台，进行创建相应的平台配置。");
+                }
+
                 _instance._currentAssetSetting.Init();
             }
 #else

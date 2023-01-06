@@ -27,7 +27,7 @@ namespace AAMT
 
             base.OnHeaderGUI();
             string path = AssetDatabase.GetAssetPath(Selection.activeObject);
-            if (path.IndexOf("Assets/", StringComparison.Ordinal) == -1) return;
+            if (path.IndexOf("Assets/", StringComparison.Ordinal) == -1 || !Directory.Exists(path)) return;
             
             if (_selected != Selection.activeObject)
             {
@@ -115,30 +115,4 @@ namespace AAMT
             }
         }
     }
-
-    // public partial class AutoSetAssetsBundelName : AssetPostprocessor
-    // {
-    //     public static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
-    //     {
-    //         foreach (var str in importedAssets)
-    //         {
-    //             Debug.Log($"importedAssets:{str}");
-    //         }
-    //
-    //         foreach (var str in movedAssets)
-    //         {
-    //             Debug.Log($"movedAssets:{str}");
-    //         }
-    //
-    //         foreach (var str in deletedAssets)
-    //         {
-    //             Debug.Log($"deletedAssets:{str}");
-    //         }
-    //
-    //         foreach (var str in movedFromAssetPaths)
-    //         {
-    //             Debug.Log($"movedFromAssetPaths:{str}");
-    //         }
-    //     }
-    // }
 }

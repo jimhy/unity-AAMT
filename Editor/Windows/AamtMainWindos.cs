@@ -1,4 +1,5 @@
 using System.IO;
+using HybridCLR.Editor.Installer;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities;
@@ -13,7 +14,7 @@ namespace AAMT.Editor.Windows
         private SettingManagerWindow _settingManager;
 
         [MenuItem("AAMT/Settings")]
-        private static void OpenWindow()
+        public static void OpenWindow()
         {
             var window = GetWindow<AamtMainWindos>();
             window.position          = GUIHelper.GetEditorWindowRect().AlignCenter(800, 600);
@@ -28,12 +29,15 @@ namespace AAMT.Editor.Windows
             initSettingManager();
             OdinMenuTree tree = new OdinMenuTree()
             {
-                { "打包设置", _settingManager, EditorIcons.SettingsCog }, { "平台设置", null, EditorIcons.SmartPhone }
+                { "打包设置", _settingManager, EditorIcons.SettingsCog },
+                { "平台设置", new CreateSettings(), EditorIcons.SmartPhone },
+#if USE_HYBRIDCLR
+                { "HybridCLR", new HybridCLRWindow(), EditorIcons.Download }
+#endif
             };
 
             tree.AddAllAssetsAtPath("平台设置", WindowDefine.platformSettingPath, typeof(AssetSetting));
-            tree.Add("平台设置/创建新平台", new CreateSettings());
-
+            tree.Add("HybridCLR/安装", ScriptableObject.CreateInstance<InstallerWindow>());
             return tree;
         }
 
@@ -54,12 +58,15 @@ namespace AAMT.Editor.Windows
                 if (SirenixEditorGUI.ToolbarButton("删除"))
                 {
                     var data = selected.SelectedValue as AssetSetting;
-                    var b    = EditorUtility.DisplayDialog("温馨提示", $"是否删除{data.fileName}", "确定", "取消");
-                    if (b)
+                    if (data != null)
                     {
-                        var path = AssetDatabase.GetAssetPath(data);
-                        AssetDatabase.DeleteAsset(path);
-                        AssetDatabase.SaveAssets();
+                        var b = EditorUtility.DisplayDialog("温馨提示", $"是否删除{data.fileName}", "确定", "取消");
+                        if (b)
+                        {
+                            var path = AssetDatabase.GetAssetPath(data);
+                            AssetDatabase.DeleteAsset(path);
+                            AssetDatabase.SaveAssets();
+                        }
                     }
                 }
             }
@@ -73,7 +80,7 @@ namespace AAMT.Editor.Windows
             var selected = MenuTree.Selection;
             if (!(selected.SelectedValue is AssetSetting)) return;
             var assetSetting = selected.SelectedValue as AssetSetting;
-            if (assetSetting.GetBuildPlatform == AssetSetting.BuildTarget.editor) return;
+            if (assetSetting == null || assetSetting.GetBuildPlatform == AssetSetting.BuildTarget.editor) return;
             if (assetSetting.getLoadType == AssetSetting.LoadType.Remote)
             {
                 if (!WindowDefine.httpRegex.IsMatch(assetSetting.getRemotePath))
@@ -89,8 +96,9 @@ namespace AAMT.Editor.Windows
             var selected = MenuTree.Selection;
             if (!(selected.SelectedValue is AssetSetting)) return;
             var assetSetting = selected.SelectedValue as AssetSetting;
-            var path         = AssetDatabase.GetAssetPath(assetSetting);
-            var fileName     = Path.GetFileName(path);
+            if (assetSetting == null) return;
+            var path     = AssetDatabase.GetAssetPath(assetSetting);
+            var fileName = Path.GetFileName(path);
             if (fileName != assetSetting.fileName)
             {
                 AssetDatabase.RenameAsset(path, assetSetting.fileName);
@@ -114,6 +122,15 @@ namespace AAMT.Editor.Windows
             {
                 AssetDatabase.CreateAsset(assetSetting, $"{WindowDefine.platformSettingPath}/{assetSetting.fileName}.asset");
                 AssetDatabase.SaveAssets();
+            }
+        }
+
+        public class HybridCLRWindow
+        {
+            [Button("创建")]
+            private void Create()
+            {
+                Debug.Log("HybridCLRWindow");
             }
         }
     }

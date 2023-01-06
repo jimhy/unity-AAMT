@@ -58,6 +58,7 @@ namespace AAMT.Editor.Windows
             _settingManager.androidAssetSetting = androidAssetSetting;
             _settingManager.iosAssetSetting     = iosAssetSetting;
             _settingManager.windowsAssetSetting = windowsAssetSetting;
+            SettingManager.ReloadAssetSetting(buildTarget);
         }
 
         [HideIf("buildTarget", AssetSetting.BuildTarget.editor)]

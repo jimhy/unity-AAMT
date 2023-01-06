@@ -2,7 +2,8 @@
     "name": "aamt.editor",
     "rootNamespace": "",
     "references": [
-        "GUID:6f6e54393706cd44191af8a3124a976a"
+        "GUID:6f6e54393706cd44191af8a3124a976a",
+        "GUID:2373f786d14518f44b0f475db77ba4de"
     ],
     "includePlatforms": [
         "Editor"
