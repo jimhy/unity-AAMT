@@ -1,0 +1,22 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="true">
+    <Style src="project://database/Packages/com.jimhy.aamt/Editor/Components/MenuTree/MenuTree.uss?fileID=7433441132597879392&amp;guid=f851d810adbf8ea48a765ac3d87593e0&amp;type=3#MenuTree" />
+    <ui:VisualElement style="flex-grow: 1; flex-direction: column;">
+        <ui:VisualElement name="Root" style="flex-direction: row; flex-grow: 1;">
+            <ui:VisualElement name="LeftContainer">
+                <ui:VisualElement name="MenuTreeItem" class="menu-tree-item">
+                    <ui:VisualElement name="TopItem" class="top-item item-border itemHover">
+                        <ui:VisualElement name="Icon" style="width: 20px; height: 20px; background-image: url(&apos;project://database/Packages/com.unity.collab-proxy/Editor/PlasticSCM/Assets/Images/d_iconplasticview@2x.png?fileID=21300000&amp;guid=3168140d6f409d0448447f18568d9482&amp;type=3#d_iconplasticview@2x&apos;); -unity-background-scale-mode: scale-to-fit; margin-right: 10px;" />
+                        <ui:Label name="NameLabel" text="label" display-tooltip-when-elided="true" style="-unity-text-align: middle-left; flex-grow: 1;" />
+                        <ui:VisualElement name="Arrow" style="width: 20px; height: 20px; background-image: url(&apos;project://database/Packages/com.jimhy.aamt/Editor/Images/Icons/dropDownArrow.png?fileID=2800000&amp;guid=b6e53c3f9338e0c4e8ab5cafa496af8b&amp;type=3#dropDownArrow&apos;); -unity-background-scale-mode: stretch-to-fill; margin-right: 0; margin-left: 10px; rotate: 0; transform-origin: center;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="MenuTreeList">
+                        <ui:VisualElement name="MenuTreeListItem" class="itemHover list-item">
+                            <ui:Label text="label" display-tooltip-when-elided="true" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="RightContainer" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

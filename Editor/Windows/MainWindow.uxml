@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.jimhy.aamt/Editor/Components/MenuTree/MenuTree.uss?fileID=7433441132597879392&amp;guid=f851d810adbf8ea48a765ac3d87593e0&amp;type=3#MenuTree" />
+    <AAMT.Editor.Components.MenuTree name="MenuTree" style="flex-grow: 1; flex-direction: column;" />
+</ui:UXML>
