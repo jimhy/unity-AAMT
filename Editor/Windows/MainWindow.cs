@@ -1,3 +1,4 @@
+using AAMT;
 using AAMT.Editor.Components;
 using UnityEditor;
 using UnityEngine;
@@ -30,6 +31,11 @@ namespace Editor.Windows
 
             var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(PathManager.MainPanelPath);
             visualTree.CloneTree(root);
+
+            var menuTree = root.Q<MenuTree>("MenuTree");
+            menuTree.AddItem("平台设置", null, Icons.HOME).AddAllAssetsAtPath(WindowDefine.platformSettingPath,new PlatformSettingPanel(), typeof(AssetSetting));
+            menuTree.AddItem("bb", null, Icons.PHONE, true).AddItem("bb-aa");
+            menuTree.AddItem("cc", null, Icons.SETTING);
         }
     }
 }

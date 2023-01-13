@@ -1,9 +1,12 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Reflection;
 using UnityEngine;
 
 namespace AAMT.Editor.Components
 {
-    public static class ColorUtils
+    public static class MiscUtils
     {
         public static Color HexToColor(string hex)
         {
@@ -19,6 +22,30 @@ namespace AAMT.Editor.Components
             }
 
             return new Color32(r, g, b, a);
+        }
+
+        public static List<string> EnumToStringList(Type t)
+        {
+            var list   = new List<string>();
+            var fields = t.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Public);
+            foreach (var info in fields)
+            {
+                list.Add(info.Name);
+            }
+
+            return list;
+        }
+
+        public static int StringToEnum<T>(string enumString)
+        {
+            var t      = typeof(T);
+            var fields = t.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Public);
+            for (var i = 0; i < fields.Length; i++)
+            {
+                if (fields[i].Name == enumString) return i;
+            }
+
+            return -1;
         }
     }
 }

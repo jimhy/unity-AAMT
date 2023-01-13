@@ -4,7 +4,7 @@
 }
 
 #LeftContainer {
-    width: 200px;
+    width: 210px;
     border-right-width: 1px;
     border-right-color: rgb(34, 34, 34);
 }
@@ -15,14 +15,12 @@
 
 .menu-tree-item {
     flex-direction: column;
-    padding-left: 10px;
-    padding-right: 10px;
     -unity-slice-bottom: 1;
     border-left-color: rgb(26, 26, 26);
     border-right-color: rgb(26, 26, 26);
     border-top-color: rgb(26, 26, 26);
     border-bottom-color: rgb(41, 41, 41);
-    width: 200px;
+    flex-grow: 1;
 }
 
 .item-border {
