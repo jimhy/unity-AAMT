@@ -1,8 +1,6 @@
 ﻿using System.IO;
-using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace AAMT
 {

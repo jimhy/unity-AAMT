@@ -8,14 +8,15 @@ namespace AAMT.Editor
 {
     public class PlatformSettingPanel : ContentNode
     {
-        protected ToolbarButton _deleteBtn;
-        protected TextField     _nameLabel;
-        protected DropdownField _platform;
-        protected TextField     _buildPath;
-        protected DropdownField _loadType;
-        protected TextField     _remoteUrl;
-        protected VisualElement _bottom;
-        protected AssetSetting  _data;
+        protected ToolbarButton   _deleteBtn;
+        protected TextField       _nameLabel;
+        protected DropdownField   _platform;
+        protected TextField       _buildPath;
+        protected DropdownField   _loadType;
+        protected TextField       _remoteUrl;
+        protected VisualElement   _bottom;
+        protected AssetSetting    _data;
+        protected FolderFieldList _assetsFolders;
 
         public PlatformSettingPanel()
         {
@@ -28,13 +29,14 @@ namespace AAMT.Editor
 
         protected virtual void initElements()
         {
-            _deleteBtn = this.Q<ToolbarButton>("DeleteBtn");
-            _nameLabel = this.Q<TextField>("NameLabel");
-            _platform  = this.Q<DropdownField>("Platform");
-            _buildPath = this.Q<TextField>("BuildPath");
-            _loadType  = this.Q<DropdownField>("LoadType");
-            _remoteUrl = this.Q<TextField>("RemoteUrl");
-            _bottom    = this.Q<VisualElement>("Bottom");
+            _deleteBtn     = this.Q<ToolbarButton>("DeleteBtn");
+            _nameLabel     = this.Q<TextField>("NameLabel");
+            _platform      = this.Q<DropdownField>("Platform");
+            _buildPath     = this.Q<TextField>("BuildPath");
+            _loadType      = this.Q<DropdownField>("LoadType");
+            _remoteUrl     = this.Q<TextField>("RemoteUrl");
+            _bottom        = this.Q<VisualElement>("Bottom");
+            _assetsFolders = this.Q<FolderFieldList>("AssetsFolders");
 
             _nameLabel.userData = "fileName";
             _buildPath.userData = "buildPath";
@@ -45,12 +47,12 @@ namespace AAMT.Editor
 
         protected virtual void initElementData()
         {
-            _platform.choices = MiscUtils.EnumToStringList(typeof(AssetSetting.BuildTarget));
-            _platform.index   = 0;
-            _buildPath.value  = "{UnityEngine.Application.dataPath}/../Build/";
-            _remoteUrl.value  = "http://localhost:80";
-            _loadType.choices = MiscUtils.EnumToStringList(typeof(AssetSetting.LoadType));
-            _loadType.index   = 0;
+            _platform.choices   = MiscUtils.EnumToStringList(typeof(AssetSetting.BuildTarget));
+            _platform.index     = 0;
+            _buildPath.value    = "{UnityEngine.Application.dataPath}/../Build/";
+            _remoteUrl.value    = "http://localhost:80";
+            _loadType.choices   = MiscUtils.EnumToStringList(typeof(AssetSetting.LoadType));
+            _loadType.index     = 0;
         }
 
         protected virtual void AddEvents()
@@ -61,6 +63,12 @@ namespace AAMT.Editor
             _nameLabel.RegisterValueChangedCallback(OnLabelChanged);
             _buildPath.RegisterValueChangedCallback(OnLabelChanged);
             _remoteUrl.RegisterValueChangedCallback(OnLabelChanged);
+            _assetsFolders.OnValueChanged = OnFoldersChanged;
+        }
+
+        private void OnFoldersChanged()
+        {
+            FileSaveUtils.SetDataProperty(_data, "moveToStreamingAssetsPathList", _assetsFolders.Data);
         }
 
         protected virtual void OnLabelChanged(ChangeEvent<string> evt)
@@ -100,7 +108,8 @@ namespace AAMT.Editor
         public override void SetData(object o)
         {
             if (!(o is AssetSetting)) return;
-            _data = o as AssetSetting;
+            _data               = o as AssetSetting;
+            _assetsFolders.Data = _data.GetMoveToStreamingAssetsPathList;
             updateUI();
         }
 

@@ -8,11 +8,9 @@
     <ui:DropdownField label="资源加载类型" index="-1" choices="System.Collections.Generic.List`1[System.String]" name="LoadType" />
     <ui:VisualElement name="Bottom">
         <ui:TextField picking-mode="Ignore" label="远程资源地址" value="filler text" name="RemoteUrl" />
-        <ui:HelpBox message-type="Info" text="在打包时,把需要打进apk包的资源拷贝到StreamingAssets目录" />
-        <ui:VisualElement name="DragList" style="flex-direction: row; border-left-color: rgb(34, 34, 34); border-right-color: rgb(34, 34, 34); border-top-color: rgb(34, 34, 34); border-bottom-color: rgb(34, 34, 34); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; border-top-left-radius: 3px; border-bottom-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; margin-left: 3px; margin-right: 3px; margin-top: 3px; margin-bottom: 3px;">
-            <ui:VisualElement name="arrow" style="width: 20px; height: 20px; background-image: url(&apos;project://database/Packages/com.jimhy.aamt/Editor/Resource/Icons/dropDownArrow.png?fileID=2800000&amp;guid=b6e53c3f9338e0c4e8ab5cafa496af8b&amp;type=3#dropDownArrow&apos;);" />
-            <ui:Label text="Label" display-tooltip-when-elided="true" style="flex-shrink: 1; flex-grow: 1; -unity-text-align: middle-left;" />
-            <ui:Button text="+" display-tooltip-when-elided="true" />
+        <ui:VisualElement style="border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; border-top-left-radius: 3px; border-bottom-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-left-color: rgba(34, 34, 34, 255); border-right-color: rgba(34, 34, 34, 255); border-top-color: rgba(34, 34, 34, 255); border-bottom-color: rgba(34, 34, 34, 255); margin-top: 10px;">
+            <ui:HelpBox message-type="Info" text="在打包时,把需要打进apk包的资源拷贝到StreamingAssets目录" style="margin-top: 2px; margin-bottom: 2px; margin-left: 0; margin-right: 0; border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0;" />
+            <AAMT.Editor.FolderFieldList text="资源目录" name="AssetsFolders" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

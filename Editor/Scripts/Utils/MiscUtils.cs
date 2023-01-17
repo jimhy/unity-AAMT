@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace AAMT.Editor
 {
@@ -47,5 +48,12 @@ namespace AAMT.Editor
 
             return -1;
         }
+
+        public static void setActive(this VisualElement el, bool visibal)
+        {
+            el.style.display = visibal ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        public static bool selfActive(this VisualElement el) => el.style.display == DisplayStyle.Flex;
     }
 }

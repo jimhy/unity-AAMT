@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using Sirenix.OdinInspector;
 
 namespace AAMT.Editor
 {
@@ -11,14 +10,8 @@ namespace AAMT.Editor
 
         public enum ABType
         {
-            [LabelText("集合")]
             PACKAGE,
-
-
-            [LabelText("单个")]
             SINGLE,
-
-            [LabelText("父级")]
             PARENT,
         }
     }

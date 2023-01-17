@@ -171,7 +171,7 @@ namespace AAMT.Editor
             var angle = _showList ? 0 : -90;
             _arrow.style.rotate = new StyleRotate(new Rotate(angle));
             var display = _showList ? DisplayStyle.Flex : DisplayStyle.None;
-            _treeListContainer.style.display = new StyleEnum<DisplayStyle>(display);
+            _treeListContainer.style.display = display;
         }
 
         private void OnChildItemClick(ClickEvent evt)
