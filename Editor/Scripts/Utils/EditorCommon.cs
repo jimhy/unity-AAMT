@@ -12,6 +12,26 @@ namespace AAMT.Editor
     public class EditorCommon
     {
         public static EventDispatcher EventBus;
+        public static int _showFolderIcon = 0;
+
+        public static bool ShowFolderIcon
+        {
+            get
+            {
+                if (_showFolderIcon == 0)
+                {
+                    if (PlayerPrefs.HasKey("showFolderIcon")) _showFolderIcon = PlayerPrefs.GetInt("showFolderIcon");
+                    else _showFolderIcon                                      = 1;
+                }
+
+                return _showFolderIcon == 1;
+            }
+            set
+            {
+                _showFolderIcon = value ? 1 : 2;
+                PlayerPrefs.SetInt("showFolderIcon", _showFolderIcon);
+            }
+        }
 
         [MenuItem("AAMT/OpenPresistentFolders")]
         private static void OpenPresistentFolders()
@@ -22,7 +42,7 @@ namespace AAMT.Editor
         internal static void UpdateProgress(string title, int progress, int progressMax, string desc)
         {
             title = title + "...[" + progress + " - " + progressMax + "]";
-            float value = (float) progress / (float) progressMax;
+            float value = (float)progress / (float)progressMax;
             EditorUtility.DisplayProgressBar(title, desc, value);
         }
 
@@ -41,14 +61,8 @@ namespace AAMT.Editor
 
         internal static bool CheckPath(string path)
         {
-            if (!path.StartsWith("assets/")                           ||
-                path.LastIndexOf(".", StringComparison.Ordinal) == -1 ||
-                path.EndsWith(".meta")                                ||
-                path.EndsWith(".cs")                                  ||
-                path.EndsWith(".xml")                                 ||
-                path.EndsWith(".txt")                                 ||
-                path.EndsWith(".tpsheet")
-               )
+            if (!path.StartsWith("assets/") || path.LastIndexOf(".", StringComparison.Ordinal) == -1 || path.EndsWith(".meta") || path.EndsWith(".cs") || path.EndsWith(".xml") ||
+                path.EndsWith(".txt")       || path.EndsWith(".tpsheet"))
                 return false;
             return true;
         }
@@ -91,14 +105,12 @@ namespace AAMT.Editor
             var versionData = new VersionData();
             foreach (var file in files)
             {
-                if (!CheckFile(file) ||
-                    file.IndexOf(AAMTDefine.AAMT_ASSET_VERSION, StringComparison.Ordinal) != -1) continue;
+                if (!CheckFile(file) || file.IndexOf(AAMTDefine.AAMT_ASSET_VERSION, StringComparison.Ordinal) != -1) continue;
                 EditorCommon.UpdateProgress("正在计算文件", i++, files.Length, file);
                 FileInfo fileInfo = new FileInfo(file);
-                var newPath = file.Replace(dirPath, "")
-                    .Replace("\\", "/");
+                var      newPath  = file.Replace(dirPath, "").Replace("\\", "/");
                 newPath = newPath.Substring(1, newPath.Length - 1);
-                versionData.Add(newPath, Md5ByFile(file), (uint) fileInfo.Length);
+                versionData.Add(newPath, Md5ByFile(file), (uint)fileInfo.Length);
             }
 
             var json = JsonMapper.ToJson(versionData);
@@ -111,10 +123,7 @@ namespace AAMT.Editor
 
         private static bool CheckFile(string file)
         {
-            return !(file.EndsWith(".meta")     ||
-                     file.EndsWith(".apk")      ||
-                     file.EndsWith(".manifest") ||
-                     file.EndsWith(".idea"));
+            return !(file.EndsWith(".meta") || file.EndsWith(".apk") || file.EndsWith(".manifest") || file.EndsWith(".idea"));
         }
 
         internal static BuildTarget AamtToEditorTarget()

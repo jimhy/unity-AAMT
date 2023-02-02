@@ -27,9 +27,29 @@ namespace AAMT.Editor
         public static Icon FOLDER = new Icon("folder");
 
         /// <summary>
+        /// 播放
+        /// </summary>
+        public static Icon PLAY = new Icon("play");
+
+        /// <summary>
         /// 设置
         /// </summary>
         public static Icon SETTING = new Icon("setting");
+
+        /// <summary>
+        /// 打包
+        /// </summary>
+        public static Icon PACKAGE = new Icon("package");
+
+        /// <summary>
+        /// 打包
+        /// </summary>
+        public static Icon PARENT = new Icon("parent");
+
+        /// <summary>
+        /// 打包
+        /// </summary>
+        public static Icon SINGLE = new Icon("single");
     }
 
 

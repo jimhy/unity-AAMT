@@ -1,5 +1,6 @@
 using AAMT;
 using AAMT.Editor;
+using Editor.Scripts.Windows.SettingPanel;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -9,14 +10,14 @@ namespace Editor.Windows
 {
     public class MainWindow : EditorWindow
     {
-        private ListView      _menusContainer;
+        private ListView _menusContainer;
         private VisualElement _contentContainer;
 
         [MenuItem("AAMT/MainWindow")]
         public static void CreateMainWindow()
         {
             var wnd = GetWindow<MainWindow>();
-            wnd.titleContent      = new GUIContent("AAMT Settings");
+            wnd.titleContent = new GUIContent("AAMT Settings");
         }
 
         [MenuItem("AAMT/CloseMainWindow")]
@@ -36,9 +37,9 @@ namespace Editor.Windows
             visualTree.CloneTree(root);
 
             var menuTree = root.Q<MenuTree>("MenuTree");
-            menuTree.AddItem("打包设置", new BuildSettingPanel(), Icons.SETTING);
-            menuTree.AddItem("平台设置", new CreateSettingPanel(), Icons.PHONE)
-                .AddAllAssetsAtPath(WindowDefine.platformSettingPath, new PlatformSettingPanel(), typeof(AssetSetting));
+            menuTree.AddItem("运行", new BuildSettingPanel(), Icons.PLAY);
+            menuTree.AddItem("平台", new CreateSettingPanel(), Icons.PHONE).AddAllAssetsAtPath(WindowDefine.platformSettingPath, new PlatformSettingPanel(), typeof(AssetSetting));
+            menuTree.AddItem("设置", new SettingPanel(), Icons.SETTING);
         }
 
         private void OnDestroy()

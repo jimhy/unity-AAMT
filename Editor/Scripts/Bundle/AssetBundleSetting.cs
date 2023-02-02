@@ -28,7 +28,7 @@ namespace AAMT.Editor
             base.OnHeaderGUI();
             string path = AssetDatabase.GetAssetPath(Selection.activeObject);
             if (path.IndexOf("Assets/", StringComparison.Ordinal) == -1 || !Directory.Exists(path)) return;
-            
+
             if (_selected != Selection.activeObject)
             {
                 _selected    = Selection.activeObject;
@@ -113,6 +113,50 @@ namespace AAMT.Editor
                     _packageData.Set(directory, abType);
                 }
             }
+        }
+
+        [InitializeOnLoadMethod]
+        static void OnDrawFolderIcon()
+        {
+            EditorApplication.projectWindowItemOnGUI = delegate(string guid, Rect rect)
+            {
+                if (!EditorCommon.ShowFolderIcon) return;
+                if (_packageData == null) _packageData = new AssetBundlePackageData();
+
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                if (!AssetDatabase.IsValidFolder(path)) return;
+                var packageData = _packageData.getData(guid);
+                if (packageData == null) return;
+
+                var isSmall = IsIconSmall(rect);
+                rect        =  GetIconRect(rect, isSmall);
+                rect.width  *= .6f;
+                rect.height *= .6f;
+                rect.y      += rect.height * .8f;
+                rect.x      += rect.width;
+                Texture2D img = null;
+                if (packageData.AbType      == WindowDefine.ABType.PACKAGE) img = Icons.PACKAGE.Texture2D;
+                else if (packageData.AbType == WindowDefine.ABType.PARENT) img  = Icons.PARENT.Texture2D;
+                else if (packageData.AbType == WindowDefine.ABType.SINGLE) img  = Icons.SINGLE.Texture2D;
+
+                GUI.DrawTexture(rect, img);
+                EditorApplication.RepaintProjectWindow();
+            };
+        }
+
+        private static Rect GetIconRect(Rect rect, bool isSmall)
+        {
+            if (isSmall)
+                rect.width = rect.height;
+            else
+                rect.height = rect.width;
+
+            return rect;
+        }
+
+        private static bool IsIconSmall(Rect rect)
+        {
+            return rect.width > rect.height;
         }
     }
 }

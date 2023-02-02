@@ -54,7 +54,7 @@ namespace AAMT.Editor
             return getData(guid);
         }
 
-        private PackageData getData(string guid)
+        public PackageData getData(string guid)
         {
             foreach (var packageData in _guids)
             {
@@ -79,13 +79,12 @@ namespace AAMT.Editor
 
         public PackageData()
         {
-            
         }
 
         public PackageData(string guid, string path, WindowDefine.ABType abType)
         {
             Guid   = guid;
-            Path   = path.Replace("\\","/");
+            Path   = path.Replace("\\", "/");
             AbType = abType;
         }
     }

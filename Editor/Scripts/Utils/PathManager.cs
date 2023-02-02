@@ -11,6 +11,7 @@ namespace AAMT.Editor
         public const string MainPanelPath = WindowsDir            + "/MainWindow/MainWindow.uxml";
         public const string MenuTreeUssPath = ComponentDir        + "/MenuTree/MenuTree.uss";
         public const string PlatformSettingPanelPath = WindowsDir + "/PlatformSettingPanel/PlatformSettingPanel.uxml";
+        public const string SettingPanelPath = WindowsDir + "/SettingPanel/SettingPanel.uxml";
 
         public static string GetDirectoryName(string x) => x == null ? (string)null : Path.GetDirectoryName(x).Replace("\\", "/");
     }
