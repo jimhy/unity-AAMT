@@ -20,13 +20,6 @@ namespace Editor.Windows
             wnd.titleContent = new GUIContent("AAMT Settings");
         }
 
-        [MenuItem("AAMT/CloseMainWindow")]
-        public static void CloseMainWindow()
-        {
-            var wnd = GetWindow<MainWindow>();
-            wnd.Close();
-        }
-
         public void CreateGUI()
         {
             EditorCommon.EventBus = new EventDispatcher();
