@@ -12,32 +12,6 @@ namespace AAMT.Editor
     {
         public int callbackOrder { get; }
 
-        [MenuItem("AAMT/testBuild")]
-        private static void testBuild()
-        {
-            var settting = SettingManager.assetSetting;
-            if (settting.GetBuildPlatform == AssetSetting.BuildTarget.editor)
-            {
-                EditorUtility.DisplayDialog("温馨提示", "当前选择的BuildTarget为Editor,会自动设置为默认选择的平台。", "继续");
-            }
-
-            var ok = EditorUtility.DisplayDialog("温馨提示", "打包之前需要把指定的资源移动到StreamAssets文件夹下，是否需要移动。", "移动", "不需要");
-            if (!ok) return;
-            if (Directory.Exists(Application.streamingAssetsPath))
-                Directory.Delete(Application.streamingAssetsPath, true);
-            AssetDatabase.Refresh();
-            settting.SetBuildTargetForBulidPlayer(EditorCommon.EditorToAamtTarget());
-            if (settting.getLoadType == AssetSetting.LoadType.Local)
-            {
-                MoveAllBundleToStreamingAssets();
-                return;
-            }
-
-            MoveBundleToStreamingAssets();
-            CreateBundleFilesDictionary();
-            CreateStreamingAssetsVersionData();
-        }
-
         /// <summary>
         /// 打包前处理
         /// </summary>
@@ -88,7 +62,6 @@ namespace AAMT.Editor
             }
         }
 
-        [MenuItem("AAMT/MoveBundleToStreamingAssets")]
         public static void MoveBundleToStreamingAssets()
         {
             var fileNames     = new[] { $"{AAMTDefine.AAMT_BUNDLE_NAME}", $"{AAMTDefine.AAMT_BUNDLE_NAME}.manifest" };
@@ -143,7 +116,6 @@ namespace AAMT.Editor
             return abPath.ToArray();
         }
 
-        [MenuItem("AAMT/MoveAllBundleToStreamingAssets")]
         public static void MoveAllBundleToStreamingAssets()
         {
             var sourcePath = $"{SettingManager.assetSetting.getBuildPath}".ToLower();
@@ -152,7 +124,6 @@ namespace AAMT.Editor
             CopyDirectory(sourcePath, targetPath, true);
         }
 
-        [MenuItem("AAMT/CreateBundleFilesDictionary")]
         public static void CreateBundleFilesDictionary()
         {
             if (!Directory.Exists(Application.streamingAssetsPath))
@@ -182,7 +153,6 @@ namespace AAMT.Editor
             EditorCommon.ClearProgressBar();
         }
 
-        [MenuItem("AAMT/CreateStreamingAssetsVersionData")]
         public static void CreateStreamingAssetsVersionData()
         {
             var filePath = $"{Application.streamingAssetsPath}/{SettingManager.assetSetting.GetBuildPlatform}/{AAMTDefine.AAMT_ASSET_VERSION}";

@@ -33,12 +33,6 @@ namespace AAMT.Editor
             }
         }
 
-        [MenuItem("AAMT/OpenPresistentFolders")]
-        private static void OpenPresistentFolders()
-        {
-            EditorUtility.RevealInFinder(Application.persistentDataPath);
-        }
-
         internal static void UpdateProgress(string title, int progress, int progressMax, string desc)
         {
             title = title + "...[" + progress + " - " + progressMax + "]";

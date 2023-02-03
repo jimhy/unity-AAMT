@@ -8,7 +8,6 @@ namespace AAMT.Editor
 {
     public static class AssetsBundleBuilder
     {
-        [MenuItem("AAMT/Build Asset Bundles", false, 51)]
         public static void BuildAssetsBundles()
         {
             EditorCommon.ClearConsole();
@@ -112,7 +111,6 @@ namespace AAMT.Editor
         /// <summary>
         /// 创建资源列表文件,用于拷贝资源文件到Application.persistentDataPath文件夹里面
         /// </summary>
-        [MenuItem("AAMT/CreateVersionFile", false, 54)]
         public static void CreateVersionFile()
         {
             var dirPath = SettingManager.assetSetting.getBuildPath;
@@ -123,8 +121,7 @@ namespace AAMT.Editor
         /// <summary>
         /// 创建资源文件对应的Bundle文件，用于资源加载时，查找资源对应的Bundle文件名
         /// </summary>
-        [MenuItem("AAMT/CreateManifestMapFile", false, 55)]
-        private static void CreateManifestMapFile()
+        public static void CreateManifestMapFile()
         {
             var files = Directory.GetFiles(SettingManager.assetSetting.getBuildPath, "*.manifest", SearchOption.AllDirectories);
 
@@ -155,8 +152,7 @@ namespace AAMT.Editor
             fs.Close();
         }
 
-        [MenuItem("AAMT/Remove Bundle Cache", false, 52)]
-        private static void RemoveBundleCache()
+        public static void RemoveBundleCache()
         {
             var path = SettingManager.assetSetting.getBuildPath;
             Debug.LogFormat("path={0}", path);
@@ -170,8 +166,7 @@ namespace AAMT.Editor
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("AAMT/Remove PersistentDataPath Cache", false, 53)]
-        private static void RemovePersistentDataPathCache()
+        public static void RemovePersistentDataPathCache()
         {
             var path = Application.persistentDataPath;
             if (Directory.Exists(path))

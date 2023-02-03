@@ -13,7 +13,7 @@ namespace Editor.Windows
         private ListView _menusContainer;
         private VisualElement _contentContainer;
 
-        [MenuItem("AAMT/MainWindow")]
+        [MenuItem("Window/AAMT")]
         public static void CreateMainWindow()
         {
             var wnd = GetWindow<MainWindow>();
