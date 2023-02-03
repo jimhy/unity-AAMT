@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.IO;
+using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -8,13 +9,13 @@ namespace AAMT.Editor
     public class BuildSettingPanel : ContentNode
     {
         private SettingManager _settingManager;
-        private ObjectField    _windowsAssetSetting;
-        private ObjectField    _androidAssetSetting;
-        private ObjectField    _iosAssetSetting;
-        private VisualElement  _bottom;
-        private Button         _buildAssetsBtn;
-        private Button         _moveNeedAssetToStreamingAssetsFolderBtn;
-        private Button         _moveAllAssetToStreamingAssetsFolderBtn;
+        private ObjectField _windowsAssetSetting;
+        private ObjectField _androidAssetSetting;
+        private ObjectField _iosAssetSetting;
+        private VisualElement _bottom;
+        private Button _buildAssetsBtn;
+        private Button _moveNeedAssetToStreamingAssetsFolderBtn;
+        private Button _moveAllAssetToStreamingAssetsFolderBtn;
 
         private DropdownField _buildTarget;
 
@@ -30,6 +31,7 @@ namespace AAMT.Editor
             _settingManager = AssetDatabase.LoadAssetAtPath<SettingManager>(path);
             if (_settingManager == null)
             {
+                if (!Directory.Exists(WindowDefine.dataPath)) Directory.CreateDirectory(WindowDefine.dataPath);
                 _settingManager = ScriptableObject.CreateInstance<SettingManager>();
                 AssetDatabase.CreateAsset(_settingManager, path);
                 AssetDatabase.SaveAssets();
@@ -114,7 +116,7 @@ namespace AAMT.Editor
         private void OnBuildTargetChanged(ChangeEvent<string> evt)
         {
             _buildTarget.index          = MiscUtils.StringToEnum<AssetSetting.BuildTarget>(evt.newValue);
-            _settingManager.buildTarget = (AssetSetting.BuildTarget) _buildTarget.index;
+            _settingManager.buildTarget = (AssetSetting.BuildTarget)_buildTarget.index;
             UpdateBottomDisplay();
         }
 

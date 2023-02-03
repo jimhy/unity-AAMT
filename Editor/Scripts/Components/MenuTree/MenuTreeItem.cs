@@ -9,20 +9,20 @@ namespace AAMT.Editor
 {
     public class MenuTreeItem : VisualElement, IMenuItem
     {
-        private readonly string                _menuTreeItemclassName = "menu-tree-item";
-        private          Label                 _nameLabel;
-        private          Image                 _iconNode;
-        private          Image                 _arrow;
-        private          VisualElement         _treeListContainer;
-        private          bool                  _showList;
-        public           Action<VisualElement> OnSelected;
-        private          ContentNode           _contentNode;
-        private          Icon                  _icon;
-        private          VisualElement         _root;
-        private          string                _assetFolderPath;
-        private          ContentNode           _childContentNode;
-        private          Type                  _childAssetsType;
-        private          List<ChildNode>       _children = new List<ChildNode>();
+        private readonly string _menuTreeItemclassName = "menu-tree-item";
+        private Label _nameLabel;
+        private Image _iconNode;
+        private Image _arrow;
+        private VisualElement _treeListContainer;
+        private bool _showList;
+        public Action<VisualElement> OnSelected;
+        private ContentNode _contentNode;
+        private Icon _icon;
+        private VisualElement _root;
+        private string _assetFolderPath;
+        private ContentNode _childContentNode;
+        private Type _childAssetsType;
+        private List<ChildNode> _children = new List<ChildNode>();
 
 
         public MenuTreeItem(string name, ContentNode contentNode, Icon icon, bool defaultChildShow = false)
@@ -48,7 +48,7 @@ namespace AAMT.Editor
         {
             if (_childContentNode == null) return;
             if (!CheckAssetsPath(e.data as string[])) return;
-            _treeListContainer.Clear();
+            if (_treeListContainer != null) _treeListContainer.Clear();
             UpdateAllAssetsAtPath();
             OnSelected.Invoke(this);
         }
@@ -137,6 +137,7 @@ namespace AAMT.Editor
 
             var fullPath = Application.dataPath.Replace("Assets", "");
             assetFolderPath = $"{fullPath}{assetFolderPath}";
+            if (!Directory.Exists(assetFolderPath)) return;
             var paths = Directory.GetFiles(assetFolderPath, "*", SearchOption.AllDirectories);
             foreach (string str1 in paths)
             {
@@ -203,8 +204,8 @@ namespace AAMT.Editor
 
     public class ChildNode : VisualElement, IMenuItem
     {
-        public  ContentNode _contentNode { get; set; }
-        private object      _data;
+        public ContentNode _contentNode { get; set; }
+        private object _data;
 
         public ChildNode(string name, ContentNode contentNode, object data)
         {

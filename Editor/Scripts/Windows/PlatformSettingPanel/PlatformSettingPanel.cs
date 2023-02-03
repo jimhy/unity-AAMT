@@ -8,14 +8,14 @@ namespace AAMT.Editor
 {
     public class PlatformSettingPanel : ContentNode
     {
-        protected ToolbarButton   _deleteBtn;
-        protected TextField       _nameLabel;
-        protected DropdownField   _platform;
-        protected TextField       _buildPath;
-        protected DropdownField   _loadType;
-        protected TextField       _remoteUrl;
-        protected VisualElement   _bottom;
-        protected AssetSetting    _data;
+        protected ToolbarButton _deleteBtn;
+        protected TextField _nameLabel;
+        protected DropdownField _platform;
+        protected TextField _buildPath;
+        protected DropdownField _loadType;
+        protected TextField _remoteUrl;
+        protected VisualElement _bottom;
+        protected AssetSetting _data;
         protected FolderFieldList _assetsFolders;
 
         public PlatformSettingPanel()
@@ -47,12 +47,12 @@ namespace AAMT.Editor
 
         protected virtual void initElementData()
         {
-            _platform.choices   = MiscUtils.EnumToStringList(typeof(AssetSetting.BuildTarget));
-            _platform.index     = 0;
-            _buildPath.value    = "{UnityEngine.Application.dataPath}/../Build/";
-            _remoteUrl.value    = "http://localhost:80";
-            _loadType.choices   = MiscUtils.EnumToStringList(typeof(AssetSetting.LoadType));
-            _loadType.index     = 0;
+            _platform.choices = MiscUtils.EnumToStringList(typeof(AssetSetting.BuildTarget));
+            _platform.index   = 0;
+            _buildPath.value  = "{UnityEngine.Application.dataPath}/../Build/";
+            _remoteUrl.value  = "http://localhost:80";
+            _loadType.choices = MiscUtils.EnumToStringList(typeof(AssetSetting.LoadType));
+            _loadType.index   = 0;
         }
 
         protected virtual void AddEvents()
@@ -60,10 +60,21 @@ namespace AAMT.Editor
             _deleteBtn.clicked += OnDeleteClick;
             _platform.RegisterValueChangedCallback(OnPlatformChanged);
             _loadType.RegisterValueChangedCallback(OnLoadTypeChanged);
-            _nameLabel.RegisterValueChangedCallback(OnLabelChanged);
-            _buildPath.RegisterValueChangedCallback(OnLabelChanged);
-            _remoteUrl.RegisterValueChangedCallback(OnLabelChanged);
+            _nameLabel.RegisterCallback<FocusOutEvent>(OnLabelChanged);
+            _buildPath.RegisterCallback<FocusOutEvent>(OnLabelChanged);
+            _remoteUrl.RegisterCallback<FocusOutEvent>(OnLabelChanged);
             _assetsFolders.OnValueChanged = OnFoldersChanged;
+        }
+
+        protected virtual void OnLabelChanged(FocusOutEvent evt)
+        {
+            if (!(evt.target is TextField)) return;
+            var label    = evt.target as TextField;
+            var filePath = $"{WindowDefine.platformSettingPath}/{_data.fileName}.asset";
+            var newName  = $"{label.value}.asset";
+            AssetDatabase.RenameAsset(filePath, newName);
+
+            FileSaveUtils.SetDataProperty(_data, label.userData.ToString(), label.value);
         }
 
         private void OnFoldersChanged()
@@ -71,18 +82,11 @@ namespace AAMT.Editor
             FileSaveUtils.SetDataProperty(_data, "moveToStreamingAssetsPathList", _assetsFolders.Data);
         }
 
-        protected virtual void OnLabelChanged(ChangeEvent<string> evt)
-        {
-            if (!(evt.target is TextField)) return;
-            var label = evt.target as TextField;
-            FileSaveUtils.SetDataProperty(_data, label.userData.ToString(), evt.newValue);
-        }
-
         protected virtual void OnLoadTypeChanged(ChangeEvent<string> evt)
         {
             var i = MiscUtils.StringToEnum<AssetSetting.LoadType>(evt.newValue);
             if (i == -1) return;
-            var p = (AssetSetting.LoadType) i;
+            var p = (AssetSetting.LoadType)i;
             FileSaveUtils.SetDataProperty(_data, "loadType", p);
             updateUI();
         }
@@ -91,7 +95,7 @@ namespace AAMT.Editor
         {
             var i = MiscUtils.StringToEnum<AssetSetting.BuildTarget>(evt.newValue);
             if (i == -1) return;
-            var p = (AssetSetting.BuildTarget) i;
+            var p = (AssetSetting.BuildTarget)i;
             FileSaveUtils.SetDataProperty(_data, "buildPlatform", p);
             updateUI();
         }

@@ -6,10 +6,10 @@ namespace AAMT.Editor
 {
     public class FolderFieldList : Foldout
     {
-        private FolderDragHelper  _dragHelper;
+        private FolderDragHelper _dragHelper;
         private List<FolderField> _folderFields;
-        public  Action            OnValueChanged;
-        private List<string>      _limitRootPaths;
+        public Action OnValueChanged;
+        private List<string> _limitRootPaths;
 
         public FolderFieldList()
         {
@@ -61,6 +61,7 @@ namespace AAMT.Editor
 
         private void CreateFolders(string[] paths)
         {
+            if (paths == null || paths.Length == 0) return;
             foreach (var path in paths)
             {
                 if (!CheckSamePath(path))

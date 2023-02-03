@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.IO;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -39,11 +40,27 @@ namespace AAMT.Editor
 
         private void OnCreateData()
         {
-            AssetDatabase.CreateAsset(_data, $"{WindowDefine.platformSettingPath}/{_data.fileName}.asset");
+            if (!Directory.Exists(WindowDefine.platformSettingPath)) Directory.CreateDirectory(WindowDefine.platformSettingPath);
+            var path = GetFilePath();
+            AssetDatabase.CreateAsset(_data, path);
             AssetDatabase.SaveAssets();
             initPlatformData();
             initElementData();
             updateUI();
+        }
+
+        private string GetFilePath()
+        {
+            var path     = $"{WindowDefine.platformSettingPath}/{_data.fileName}.asset";
+            var i        = 1;
+            var fileName = _data.fileName;
+            while (File.Exists(path))
+            {
+                _data.fileName = $"{fileName}({i++})";
+                path           = $"{WindowDefine.platformSettingPath}/{_data.fileName}.asset";
+            }
+
+            return path;
         }
 
         public override void SetData(object o)
