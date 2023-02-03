@@ -15,7 +15,7 @@ namespace AAMT.Editor
         }
 
         private void LoadData()
-        {
+        { 
             if (!File.Exists(AAMTDefine.AAMT_BUNDLE_PACKAGE_DATA)) return;
             var text = File.ReadAllText(AAMTDefine.AAMT_BUNDLE_PACKAGE_DATA);
             var data = JsonMapper.ToObject<List<PackageData>>(text);

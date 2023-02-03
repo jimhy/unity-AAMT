@@ -27,27 +27,16 @@ namespace AAMT.Editor
 
         private void InitData()
         {
-            var path = $"{WindowDefine.dataPath}/SettingManager.asset";
-            _settingManager = AssetDatabase.LoadAssetAtPath<SettingManager>(path);
-            if (_settingManager == null)
-            {
-                if (!Directory.Exists(WindowDefine.dataPath)) Directory.CreateDirectory(WindowDefine.dataPath);
-                _settingManager = ScriptableObject.CreateInstance<SettingManager>();
-                AssetDatabase.CreateAsset(_settingManager, path);
-                AssetDatabase.SaveAssets();
-            }
-            else
-            {
-                _buildTarget.index         = MiscUtils.StringToEnum<AssetSetting.BuildTarget>(_settingManager.buildTarget.ToString());
-                _androidAssetSetting.value = _settingManager.androidAssetSetting;
-                _iosAssetSetting.value     = _settingManager.iosAssetSetting;
-                _windowsAssetSetting.value = _settingManager.windowsAssetSetting;
-            }
+            _settingManager            = SettingManager.Instance;
+            _buildTarget.index         = MiscUtils.StringToEnum<AssetSetting.BuildTarget>(_settingManager.buildTarget.ToString());
+            _androidAssetSetting.value = _settingManager.androidAssetSetting;
+            _iosAssetSetting.value     = _settingManager.iosAssetSetting;
+            _windowsAssetSetting.value = _settingManager.windowsAssetSetting;
 
             UpdateBottomDisplay();
         }
 
-        private void CreateElements()
+        private void CreateElements() 
         {
             _windowsAssetSetting = new ObjectField();
             _androidAssetSetting = new ObjectField();

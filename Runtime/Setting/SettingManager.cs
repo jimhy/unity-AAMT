@@ -15,7 +15,7 @@ namespace AAMT
 
         private static SettingManager _instance;
 
-        internal static SettingManager Instance
+        public static SettingManager Instance
         {
             get
             {
@@ -36,8 +36,8 @@ namespace AAMT
         {
 #if UNITY_EDITOR
 
-            var sprite = AssetDatabase.LoadAssetAtPath<Object>(AAMTDefine.AAMT_SETTING_MANAGER);
-            if (sprite == null)
+            _instance = AssetDatabase.LoadAssetAtPath<SettingManager>(AAMTDefine.AAMT_SETTING_MANAGER);
+            if (_instance == null)
             {
                 var sm   = CreateInstance<SettingManager>();
                 var path = Path.GetDirectoryName(AAMTDefine.AAMT_SETTING_MANAGER);
@@ -47,15 +47,11 @@ namespace AAMT
                 AssetDatabase.Refresh();
                 _instance = sm;
             }
-            else
-            {
-                _instance = Instantiate(sprite) as SettingManager;
-            }
 
             if (_instance != null)
             {
                 if (buildTarget != null) _instance.buildTarget = buildTarget.Value;
-
+ 
                 switch (_instance.buildTarget)
                 {
                     case AssetSetting.BuildTarget.editor:
@@ -70,7 +66,7 @@ namespace AAMT
                     case AssetSetting.BuildTarget.ios:
                         _instance._currentAssetSetting = _instance.iosAssetSetting;
                         break;
-                }
+                } 
 
                 if (_instance._currentAssetSetting == null)
                 {
