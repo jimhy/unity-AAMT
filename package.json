@@ -1,5 +1,5 @@
 {
-  "name": "com.aamt.unity",
+  "name": "com.jimhy.aamt",
   "version": "0.6.0",
   "displayName": "AAMT",
   "description": "Unity package for unity-AAMT. It includes editor and runtime scripts and assets for unity-AAMT",
@@ -18,5 +18,5 @@
     "url": "https://github.com/jimhy"
   },
   "type": "library",
-  "unity": "2021.3.1"
+  "unity": "2021.1"
 }
