@@ -12,10 +12,10 @@ namespace AAMT
 {
     public class BundleManager : IResourceManager
     {
-        internal         AssetBundleManifest              assetBundleManifest { get; private set; }
-        internal         Dictionary<string, string>       pathToBundle        { get; private set; }
-        internal         Dictionary<string, BundleHandle> bundles             { get; }
-        private readonly SpriteAtlasManager               _atlasManager;
+        internal AssetBundleManifest assetBundleManifest { get; private set; }
+        internal Dictionary<string, string> pathToBundle { get; private set; }
+        internal Dictionary<string, BundleHandle> bundles { get; }
+        private readonly SpriteAtlasManager _atlasManager;
 
         internal BundleManager()
         {
@@ -95,14 +95,23 @@ namespace AAMT
 
         public bool HasAssetsByPath(string assetPath)
         {
-            assetPath = Tools.FilterSpriteUri(assetPath);
-            if (!pathToBundle.ContainsKey(assetPath))
+            var abName = string.Empty;
+            if (assetPath.LastIndexOf(".ab", StringComparison.Ordinal) != -1)
             {
-                Debug.LogFormat("找不到对应的ab包。assetPath:{0}", assetPath);
-                return false;
+                abName = assetPath;
+            }
+            else
+            {
+                assetPath = Tools.FilterSpriteUri(assetPath);
+                if (!pathToBundle.ContainsKey(assetPath))
+                {
+                    Debug.LogFormat("找不到对应的ab包。assetPath:{0}", assetPath);
+                    return false;
+                }
+
+                abName = pathToBundle[assetPath];
             }
 
-            var abName = pathToBundle[assetPath];
             return bundles.ContainsKey(abName);
         }
 
@@ -186,10 +195,10 @@ namespace AAMT
 
         private IEnumerator<AssetBundleRequest> StartGetAllAssets(string path, Action<Object[]> callBack)
         {
-            Tools.ParsingLoadUri(path, out var abName, out var itemName, out _);
-            if (abName == null || itemName == null)
+            Tools.ParsingLoadUri(path, out var abName, out _, out _);
+            if (abName == null)
             {
-                Debug.LogErrorFormat("加载资源失败,abName:{0},itemName:{1}", abName, itemName);
+                Debug.LogErrorFormat("加载资源失败,abName:{0}", abName);
                 callBack?.Invoke(default);
                 yield break;
             }
@@ -204,7 +213,7 @@ namespace AAMT
             yield return request;
             if (request.allAssets == null)
             {
-                Debug.LogErrorFormat("加载资源失败,abName:{0},itemName:{1}", abName, itemName);
+                Debug.LogErrorFormat("加载资源失败,abName:{0}", abName);
                 callBack?.Invoke(default);
                 yield break;
             }

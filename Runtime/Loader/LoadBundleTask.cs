@@ -8,7 +8,7 @@ namespace AAMT
     public class LoadBundleTask
     {
         private readonly BundleManager _bundleManager;
-        private          AsyncHandler  _asyncHandler;
+        private AsyncHandler _asyncHandler;
 
         private static readonly Dictionary<string, bool> CommonLoadingAbNames = new();
 
@@ -47,14 +47,24 @@ namespace AAMT
                 return;
             }
 
-            if (!_bundleManager.pathToBundle.ContainsKey(resPath))
+            string abName = string.Empty;
+
+            if (resPath.LastIndexOf(".ab") != -1) //这里是直接加载指定ab包
             {
-                Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}/{1}", SettingManager.assetSetting.getLoadPath, resPath);
-                OnLoadComplete();
-                return;
+                abName = resPath;
+            }
+            else
+            {
+                if (!_bundleManager.pathToBundle.ContainsKey(resPath))
+                {
+                    Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}/{1}", SettingManager.assetSetting.getLoadPath, resPath);
+                    OnLoadComplete();
+                    return;
+                }
+
+                abName = _bundleManager.pathToBundle[resPath];
             }
 
-            var abName = _bundleManager.pathToBundle[resPath];
 
             if (!AddToAbNameList(abName)) return;
             _loadingAbNames.Add(abName);
@@ -123,6 +133,7 @@ namespace AAMT
                 Debug.LogErrorFormat("Load bundle faile!!");
                 return;
             }
+
             _bundleManager.AddBundle(bundle);
             OnLoadOneAbComplete(bundle.name);
         }

@@ -1,6 +1,6 @@
 {
   "name": "com.aamt.unity",
-  "version": "0.6.9",
+  "version": "0.6.10",
   "displayName": "AAMT",
   "description": "Unity package for unity-AAMT. It includes editor and runtime scripts and assets for unity-AAMT",
   "category": "Runtime",

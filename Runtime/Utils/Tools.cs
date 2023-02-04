@@ -34,21 +34,15 @@ namespace AAMT
             ParsingLoadUri(input, out _, out abName, out itemName, out spriteName);
         }
 
-        internal static void ParsingLoadUri(string     input, out string uri, out string abName, out string itemName,
-                                            out string spriteName)
+        internal static void ParsingLoadUri(string input, out string uri, out string abName, out string itemName, out string spriteName)
         {
             if (AAMTManager.Instance.resourceManager is LocalAssetManager)
-            {
                 ForEditor(input, out uri, out abName, out itemName, out spriteName);
-            }
             else
-            {
                 ForBundle(input, out uri, out abName, out itemName, out spriteName);
-            }
         }
 
-        private static void ForBundle(string     input, out string uri, out string abName, out string itemName,
-                                      out string spriteName)
+        private static void ForBundle(string input, out string uri, out string abName, out string itemName, out string spriteName)
         {
             var bundleManager = AAMTManager.Instance.resourceManager as BundleManager;
             input      = input.ToLower();
@@ -57,6 +51,12 @@ namespace AAMT
             spriteName = null;
             itemName   = null;
             if (bundleManager == null) return;
+            if (input.LastIndexOf(".ab", StringComparison.Ordinal) != -1)
+            {
+                abName = input;
+                return;
+            }
+
             var n = input.LastIndexOf("?", StringComparison.Ordinal);
             if (n != -1)
             {
@@ -78,8 +78,7 @@ namespace AAMT
             }
         }
 
-        private static void ForEditor(string     input, out string uri, out string abName, out string itemName,
-                                      out string spriteName)
+        private static void ForEditor(string input, out string uri, out string abName, out string itemName, out string spriteName)
         {
             input      = input.ToLower();
             uri        = input;
@@ -103,8 +102,7 @@ namespace AAMT
 
         public static string ReadTextFileData(string path)
         {
-            if (Application.platform                               == RuntimePlatform.Android &&
-                path.IndexOf("file:///", StringComparison.Ordinal) == -1)
+            if (Application.platform == RuntimePlatform.Android && path.IndexOf("file:///", StringComparison.Ordinal) == -1)
             {
                 path = $"file:///{path}";
             }
