@@ -107,6 +107,7 @@ namespace AAMT.Editor
             _buildTarget.index          = MiscUtils.StringToEnum<AssetSetting.BuildTarget>(evt.newValue);
             _settingManager.buildTarget = (AssetSetting.BuildTarget)_buildTarget.index;
             UpdateBottomDisplay();
+            SettingManager.ReloadAssetSetting();
         }
 
         private void UpdateBottomDisplay()
