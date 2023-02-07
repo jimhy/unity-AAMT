@@ -23,19 +23,19 @@ namespace AAMT
             if (OnUpdate != null) OnUpdate();
         }
 
-        public void CallOnNextFrame(Action cb, uint delayFrames = 1)
+        public void CallOnNextFrame(Action<object> cb, uint delayFrames = 1, object data = null)
         {
-            StartCoroutine(OnCall(cb, delayFrames));
+            StartCoroutine(OnCall(cb, delayFrames, data));
         }
 
-        private IEnumerator OnCall(Action cb, uint delayFrames)
+        private IEnumerator OnCall(Action<object> cb, uint delayFrames, object data = null)
         {
             for (int i = 0; i < delayFrames; i++)
             {
                 yield return 0;
             }
 
-            cb.Invoke();
+            cb.Invoke(data);
         }
     }
 }

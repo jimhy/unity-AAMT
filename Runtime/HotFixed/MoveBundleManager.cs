@@ -96,7 +96,7 @@ namespace AAMT
             }
         }
 
-        private void OnAllFileComplete()
+        private void OnAllFileComplete(object data = null)
         {
             AAMTDefine.SetMoveFilesToPersistentComplete(true);
             handler.OnComplete();

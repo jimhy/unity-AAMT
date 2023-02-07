@@ -74,9 +74,9 @@ namespace AAMT
                 return null;
             }
 
-            var downloadManager = new BundleDowndloadManager();
+            var downloadManager = new BundleDownloadManager();
             downloadManager.Start();
-            return downloadManager.handler;
+            return downloadManager.Handler;
         }
 
         public static AsyncHandler LoadAssetsAsync(string[] assetsPath)

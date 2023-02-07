@@ -7,19 +7,22 @@ using UnityEngine.Networking;
 
 namespace AAMT
 {
-    public class BundleDowndloadManager
+    public class BundleDownloadManager
     {
-        internal AsyncHandler handler;
-        private Queue<string> loadFiles;
-        private string remoteVersionFile;
-        private string persistentVersionPath;
-        private int downloadThreadCount = 25;
+        internal AsyncHandler Handler;
+        private readonly Queue<string> _loadFiles;
+        private string _remoteVersionFile;
+        private readonly string _persistentVersionPath;
+        private readonly int _downloadThreadCount = 25;
+        private readonly int _errorTimes = 5;
+        private readonly Dictionary<string, int> _errorLoadTimesList;
 
-        public BundleDowndloadManager()
+        public BundleDownloadManager()
         {
-            handler               = new AsyncHandler();
-            loadFiles             = new Queue<string>();
-            persistentVersionPath = AAMTDefine.AAMT_PERSISTENT_VERSION_PATH;
+            Handler                = new AsyncHandler();
+            _loadFiles             = new Queue<string>();
+            _persistentVersionPath = AAMTDefine.AAMT_PERSISTENT_VERSION_PATH;
+            _errorLoadTimesList    = new Dictionary<string, int>();
         }
 
         public async void Start()
@@ -30,11 +33,11 @@ namespace AAMT
 
         private void StartDownload()
         {
-            if (loadFiles.Count > 0)
+            if (_loadFiles.Count > 0)
             {
-                for (int i = 0; i < loadFiles.Count; i++)
+                for (int i = 0; i < _loadFiles.Count; i++)
                 {
-                    if (downloadThreadCount != -1 && i >= downloadThreadCount) return;
+                    if (_downloadThreadCount != -1 && i >= _downloadThreadCount) return;
                     OnLoad();
                 }
             }
@@ -46,12 +49,17 @@ namespace AAMT
 
         private void OnLoad()
         {
-            if (loadFiles.Count <= 0) return;
-            var loadFile   = loadFiles.Dequeue();
-            var url        = $"{SettingManager.assetSetting.getRemotePath}/{loadFile}";
+            if (_loadFiles.Count <= 0) return;
+            var loadFile = _loadFiles.Dequeue();
+            StartRequestHttp(loadFile);
+        }
+
+        private void StartRequestHttp(string loadFile)
+        {
+            var url        = $"{SettingManager.assetSetting.getRemotePath}{loadFile}";
             var targetPath = $"{Application.persistentDataPath}/{SettingManager.assetSetting.GetBuildPlatform}/{loadFile}".ToLower();
-            var uwr        = UnityWebRequest.Get(url);
             if (File.Exists(targetPath)) File.Delete(targetPath);
+            var uwr = UnityWebRequest.Get(url);
             Debug.LogFormat("downloading-->url{0},targetPath:{1}", url, targetPath);
             uwr.downloadHandler = new DownloadHandlerFile(targetPath);
             var operation = uwr.SendWebRequest();
@@ -60,41 +68,64 @@ namespace AAMT
 
         private void OnDownLoadComplete(AsyncOperation o)
         {
-            if (o is UnityWebRequestAsyncOperation operation)
-            {
-                if (handler == null) return;
-                handler.currentBytes += (uint)operation.webRequest.downloadedBytes;
-                handler.currentCount++;
-                if (handler.currentCount >= handler.totalCount)
-                {
-                    handler.currentCount = handler.totalCount;
-                    handler.OnProgress();
-                    OnAllDownloadComplete();
-                    return;
-                }
+            if (o is not UnityWebRequestAsyncOperation operation) return;
 
-                OnLoad();
-                handler.OnProgress();
+            if (operation.webRequest.result != UnityWebRequest.Result.Success)
+            {
+                if (ReDownload(operation.webRequest.url)) return;
+                Debug.LogError($"download file error:{operation.webRequest.url}");
             }
+
+            if (Handler == null) return;
+            Handler.currentBytes += (uint)operation.webRequest.downloadedBytes;
+            Handler.currentCount++;
+            if (Handler.currentCount >= Handler.totalCount)
+            {
+                Handler.currentCount = Handler.totalCount;
+                Handler.OnProgress();
+                OnAllDownloadComplete();
+                return;
+            }
+
+            OnLoad();
+            Handler.OnProgress();
+        }
+
+        private bool ReDownload(string webRequestURL)
+        {
+            var count = 0;
+
+            if (_errorLoadTimesList.ContainsKey(webRequestURL)) count = _errorLoadTimesList[webRequestURL];
+            if (++count >= _errorTimes) return false;
+            _errorLoadTimesList[webRequestURL] = count;
+            var loadFile = webRequestURL.Replace($"{SettingManager.assetSetting.getRemotePath}", "");
+
+            AAMTRuntime.Instance.CallOnNextFrame(o =>
+            {
+                if (o is not string s) return;
+                Debug.Log($"downloading error file-->{webRequestURL}");
+                StartRequestHttp(s);
+            }, 60, loadFile);
+            return true;
         }
 
         private void OnAllDownloadComplete()
         {
-            if (handler.totalCount > 0)
+            if (Handler.totalCount > 0)
             {
-                if (File.Exists(persistentVersionPath)) File.Delete(persistentVersionPath);
-                File.WriteAllText(persistentVersionPath, remoteVersionFile);
+                if (File.Exists(_persistentVersionPath)) File.Delete(_persistentVersionPath);
+                File.WriteAllText(_persistentVersionPath, _remoteVersionFile);
             }
 
-            handler.OnComplete();
-            handler = null;
+            Handler.OnComplete();
+            Handler = null;
         }
 
         private async Task GetDownloadFiles()
         {
             var localFiles = await GetLocalVersionFiles();
-            remoteVersionFile = await GetRemoteVersionFiles();
-            CompareVersionFiles(localFiles, remoteVersionFile);
+            _remoteVersionFile = await GetRemoteVersionFiles();
+            CompareVersionFiles(localFiles, _remoteVersionFile);
         }
 
         /// <summary>
@@ -127,7 +158,7 @@ namespace AAMT
         /// <returns></returns>
         private async Task<string> GetLocalVersionFiles()
         {
-            var path  = persistentVersionPath;
+            var path  = _persistentVersionPath;
             var path1 = $"{Application.streamingAssetsPath}/{AAMTDefine.AAMT_ASSET_VERSION}";
 
             if (File.Exists(path))
@@ -164,12 +195,12 @@ namespace AAMT
                 if (localData != null) localFile = localData.Get(remoteFile.fileName);
                 if (localFile == null || localFile.md5 != remoteFile.md5)
                 {
-                    handler.totalBytes += remoteFile.size;
-                    loadFiles.Enqueue(remoteFile.fileName);
+                    Handler.totalBytes += remoteFile.size;
+                    _loadFiles.Enqueue(remoteFile.fileName);
                 }
             }
 
-            handler.totalCount = loadFiles.Count;
+            Handler.totalCount = _loadFiles.Count;
         }
     }
 }
