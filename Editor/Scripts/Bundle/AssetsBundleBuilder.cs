@@ -15,7 +15,7 @@ namespace AAMT.Editor
             Debug.LogFormat("Start build assets bundles to path:{0}", path);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
-            var abs  = new List<AssetBundleBuild> { GetSettingManagerAbName() };
+            var abs = new List<AssetBundleBuild> { GetSettingManagerAbName() };
             GetAssetBundleBuilds(abs);
             BuildPipeline.BuildAssetBundles(path, abs.ToArray(), BuildAssetBundleOptions.ChunkBasedCompression, EditorCommon.AamtToEditorTarget());
 
@@ -30,41 +30,37 @@ namespace AAMT.Editor
         private static void GetAssetBundleBuilds(List<AssetBundleBuild> abs)
         {
             _assetBundlePackageData = new AssetBundlePackageData();
-            if (_assetBundlePackageData != null)
-                foreach (var pd in _assetBundlePackageData._guids)
+            if (_assetBundlePackageData == null) return;
+            foreach (var pd in _assetBundlePackageData.Guids)
+            {
+                if (pd.AbType == WindowDefine.ABType.PACKAGE)
                 {
-                    if (pd.AbType == WindowDefine.ABType.PACKAGE)
+                    var builds = GetDicFiles(pd.Path);
+                    if (builds == null || builds.Count == 0) continue;
+                    var abb = new AssetBundleBuild();
+                    abb.assetBundleName = pd.Path.ToLower().Replace("assets/", "") + ".ab";
+                    abb.assetNames      = builds.ToArray();
+                    abs.Add(abb);
+                }
+                else if (pd.AbType == WindowDefine.ABType.SINGLE)
+                {
+                    var builds = GetDicFiles(pd.Path);
+                    if (builds == null || builds.Count == 0) continue;
+                    foreach (var build in builds)
                     {
-                        var builds = GetDicFiles(pd.Path);
-                        if (builds != null && builds.Count != 0)
-                        {
-                            var abb = new AssetBundleBuild();
-                            abb.assetBundleName = pd.Path.ToLower().Replace("assets/", "") + ".ab";
-                            abb.assetNames      = builds.ToArray();
-                            abs.Add(abb);
-                        }
-                    }
-                    else if (pd.AbType == WindowDefine.ABType.SINGLE)
-                    {
-                        var builds = GetDicFiles(pd.Path);
-                        if (builds != null && builds.Count != 0)
-                        {
-                            foreach (var build in builds)
-                            {
-                                var abb = new AssetBundleBuild();
-                                abb.assetBundleName = build.Replace("assets/", "") + ".ab";
-                                abb.assetNames      = new[] { build };
-                                abs.Add(abb);
-                            }
-                        }
+                        var abb = new AssetBundleBuild();
+                        abb.assetBundleName = build.Replace("assets/", "") + ".ab";
+                        abb.assetNames      = new[] { build };
+                        abs.Add(abb);
                     }
                 }
+            }
         }
 
         private static List<string> GetDicFiles(string pdPath)
         {
             var extension = Path.GetExtension(pdPath);
-            if (!string.IsNullOrEmpty(extension)) return null;
+            if (!string.IsNullOrEmpty(extension) || !Directory.Exists(pdPath)) return null;
             var list        = new List<string>();
             var files       = Directory.GetFiles(pdPath, "*", SearchOption.TopDirectoryOnly);
             var directories = Directory.GetDirectories(pdPath, "*", SearchOption.TopDirectoryOnly);
@@ -78,7 +74,7 @@ namespace AAMT.Editor
             foreach (var d in directories)
             {
                 var directory = d.ToLower();
-                var guidData  = _assetBundlePackageData.GetData(directory);
+                var guidData  = _assetBundlePackageData.GetDataByPath(directory);
                 if (guidData == null || guidData.AbType != WindowDefine.ABType.PARENT) continue;
                 var fs = GetDicFiles(directory);
                 if (fs != null && fs.Count != 0) list.AddRange(fs);

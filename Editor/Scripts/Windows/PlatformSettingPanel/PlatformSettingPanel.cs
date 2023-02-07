@@ -21,11 +21,11 @@ namespace AAMT.Editor
             var uml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(PathManager.PlatformSettingPanelPath);
             uml.CloneTree(this);
 
-            initElements();
+            InitElements();
             AddEvents();
         }
 
-        protected virtual void initElements()
+        protected virtual void InitElements()
         {
             _deleteBtn     = this.Q<ToolbarButton>("DeleteBtn");
             _nameLabel     = this.Q<TextField>("NameLabel");
@@ -40,10 +40,10 @@ namespace AAMT.Editor
             _buildPath.userData = "buildPath";
             _remoteUrl.userData = "remotePath";
 
-            initElementData();
+            InitElementData();
         }
 
-        protected virtual void initElementData()
+        protected virtual void InitElementData()
         {
             _platform.choices = MiscUtils.EnumToStringList(typeof(AssetSetting.BuildTarget));
             _platform.index   = 0;
@@ -66,8 +66,7 @@ namespace AAMT.Editor
 
         protected virtual void OnLabelChanged(FocusOutEvent evt)
         {
-            if (!(evt.target is TextField)) return;
-            var label    = evt.target as TextField;
+            if (evt.target is not TextField label) return;
             var filePath = $"{WindowDefine.platformSettingPath}/{_data.fileName}.asset";
             var newName  = $"{label.value}.asset";
             AssetDatabase.RenameAsset(filePath, newName);
@@ -86,7 +85,7 @@ namespace AAMT.Editor
             if (i == -1) return;
             var p = (AssetSetting.LoadType)i;
             FileSaveUtils.SetDataProperty(_data, "loadType", p);
-            updateUI();
+            UpdateUI();
         }
 
         protected virtual void OnPlatformChanged(ChangeEvent<string> evt)
@@ -95,7 +94,7 @@ namespace AAMT.Editor
             if (i == -1) return;
             var p = (AssetSetting.BuildTarget)i;
             FileSaveUtils.SetDataProperty(_data, "buildPlatform", p);
-            updateUI();
+            UpdateUI();
         }
 
         protected virtual void OnDeleteClick()
@@ -112,10 +111,10 @@ namespace AAMT.Editor
             if (!(o is AssetSetting)) return;
             _data               = o as AssetSetting;
             _assetsFolders.Data = _data.GetMoveToStreamingAssetsPathList;
-            updateUI();
+            UpdateUI();
         }
 
-        protected virtual void updateUI()
+        protected virtual void UpdateUI()
         {
             _nameLabel.value = _data.fileName;
             _platform.value  = _data.GetBuildPlatform.ToString();

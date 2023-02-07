@@ -65,9 +65,9 @@ namespace AAMT
             else
                 getLoadPath = $"{Application.persistentDataPath}/{buildPlatform}";
 #endif
-            Debug.LogFormat("LoadType:{0}", getLoadType);
-            Debug.LogFormat("BuildTarget:{0}", buildPlatform);
-            Debug.LogFormat("Current load path:{0}", getLoadPath);
+            // Debug.LogFormat("LoadType:{0}", getLoadType);
+            // Debug.LogFormat("BuildTarget:{0}", buildPlatform);
+            // Debug.LogFormat("Current load path:{0}", getLoadPath);
         }
 
         public string      getBuildPath                     => $"{_realBuildPath}/{buildPlatform}";

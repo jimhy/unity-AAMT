@@ -4,7 +4,6 @@ using Editor.Scripts.Windows.SettingPanel;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using EventDispatcher = AAMT.Editor.EventDispatcher;
 
 namespace Editor.Windows
 {
@@ -22,9 +21,7 @@ namespace Editor.Windows
 
         public void CreateGUI()
         {
-            EditorCommon.EventBus = new EventDispatcher();
-
-            VisualElement root = rootVisualElement;
+            var root = rootVisualElement;
 
             var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(PathManager.MainPanelPath);
             visualTree.CloneTree(root);
@@ -38,7 +35,6 @@ namespace Editor.Windows
         private void OnDestroy()
         {
             EditorCommon.EventBus.destory();
-            EditorCommon.EventBus = null;
         }
     }
 }

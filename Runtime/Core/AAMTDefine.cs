@@ -10,7 +10,7 @@ namespace AAMT
         public const string AAMT_BUNDLE_NAME = "aamt.ab";
         public const string AAMT_ASSET_VERSION = "version.json";
         public const string AAMT_MOVE_FILES_TO_PERSISTENT_COMPLETE_KEY = "moveFilesToPersistentCompleteKey";
-        public static string AAMT_PERSISTENT_VERSION_PATH = $"{Application.persistentDataPath}/{SettingManager.assetSetting.GetBuildPlatform}/{AAMTDefine.AAMT_ASSET_VERSION}";
+        public static string AAMT_PERSISTENT_VERSION_PATH = $"{Application.persistentDataPath}/{SettingManager.assetSetting.GetBuildPlatform}/{AAMT_ASSET_VERSION}";
         public static string AAMT_BUNDLE_PACKAGE_DATA   = "Assets/AAMT/Data/BundlePackageData.json";
         public static bool IsMoveFilesToPersistentComplete()
         {

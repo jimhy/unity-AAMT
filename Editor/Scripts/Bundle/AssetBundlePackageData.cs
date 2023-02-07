@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using LitJsonAAMT;
 using UnityEditor;
 using File = System.IO.File;
@@ -7,7 +8,7 @@ namespace AAMT.Editor
 {
     public class AssetBundlePackageData
     {
-        public List<PackageData> _guids = new List<PackageData>();
+        public List<PackageData> Guids { get; private set; } = new();
 
         public AssetBundlePackageData()
         {
@@ -15,58 +16,55 @@ namespace AAMT.Editor
         }
 
         private void LoadData()
-        { 
+        {
             if (!File.Exists(AAMTDefine.AAMT_BUNDLE_PACKAGE_DATA)) return;
             var text = File.ReadAllText(AAMTDefine.AAMT_BUNDLE_PACKAGE_DATA);
             var data = JsonMapper.ToObject<List<PackageData>>(text);
             if (data != null)
             {
-                _guids = data;
+                Guids = data;
             }
         }
 
         public void Set(string path, WindowDefine.ABType abType)
         {
             var guid = AssetDatabase.AssetPathToGUID(path);
-            var data = getData(guid);
+            var data = GetDataByGuid(guid);
             if (data != null) data.AbType = abType;
-            else _guids.Add(new PackageData(guid, path, abType));
+            else Guids.Add(new PackageData(guid, path, abType));
             Save();
         }
 
-        public void Remove(string path)
+        public void RemoveByPath(string path)
         {
             var guid = AssetDatabase.AssetPathToGUID(path);
-            foreach (var packageData in _guids)
+            RemoveByGuid(guid);
+        }
+
+        public void RemoveByGuid(string guid)
+        {
+            foreach (var packageData in Guids.Where(packageData => packageData.Guid == guid))
             {
-                if (packageData.Guid == guid)
-                {
-                    _guids.Remove(packageData);
-                    Save();
-                    return;
-                }
+                Guids.Remove(packageData);
+                Save();
+                return;
             }
         }
 
-        public PackageData GetData(string path)
+        public PackageData GetDataByPath(string path)
         {
             var guid = AssetDatabase.AssetPathToGUID(path);
-            return getData(guid);
+            return GetDataByGuid(guid);
         }
 
-        public PackageData getData(string guid)
+        public PackageData GetDataByGuid(string guid)
         {
-            foreach (var packageData in _guids)
-            {
-                if (packageData.Guid == guid) return packageData;
-            }
-
-            return null;
+            return Guids.FirstOrDefault(packageData => packageData.Guid == guid);
         }
 
         private void Save()
         {
-            var json = JsonMapper.ToJson(_guids);
+            var json = JsonMapper.ToJson(Guids);
             File.WriteAllText(AAMTDefine.AAMT_BUNDLE_PACKAGE_DATA, json);
         }
     }

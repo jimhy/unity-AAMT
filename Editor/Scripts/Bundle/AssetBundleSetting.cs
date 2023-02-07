@@ -16,17 +16,12 @@ namespace AAMT.Editor
         private WindowDefine.ABType _abType;
         private WindowDefine.ABType _childAbType;
         private Object _selected;
-        private static AssetBundlePackageData _packageData;
+        private AssetBundlePackageData PackageData => EditorCommon.PackageData;
 
         protected override void OnHeaderGUI()
         {
-            if (_packageData == null)
-            {
-                _packageData = new AssetBundlePackageData();
-            }
-
             base.OnHeaderGUI();
-            string path = AssetDatabase.GetAssetPath(Selection.activeObject);
+            var path = AssetDatabase.GetAssetPath(Selection.activeObject);
             if (path.IndexOf("Assets/", StringComparison.Ordinal) == -1 || !Directory.Exists(path)) return;
 
             if (_selected != Selection.activeObject)
@@ -35,11 +30,11 @@ namespace AAMT.Editor
                 _needPackage = false;
                 _abType      = WindowDefine.ABType.PACKAGE;
 
-                var data = _packageData.GetData(path);
+                var data = PackageData.GetDataByPath(path);
                 if (data != null)
                 {
                     _needPackage = true;
-                    _abType      = (WindowDefine.ABType)data.AbType;
+                    _abType      = data.AbType;
                 }
 
                 _childAbType = WindowDefine.ABType.PARENT;
@@ -52,27 +47,21 @@ namespace AAMT.Editor
             if (_needPackage)
             {
                 _abType = (WindowDefine.ABType)EditorGUILayout.EnumPopup("打包类型", _abType);
-                var str = "";
-                switch (_abType)
+                var str = _abType switch
                 {
-                    case WindowDefine.ABType.SINGLE:
-                        str = _singleText;
-                        break;
-                    case WindowDefine.ABType.PACKAGE:
-                        str = _packageText;
-                        break;
-                    case WindowDefine.ABType.PARENT:
-                        str = _parentText;
-                        break;
-                }
+                    WindowDefine.ABType.SINGLE  => _singleText,
+                    WindowDefine.ABType.PACKAGE => _packageText,
+                    WindowDefine.ABType.PARENT  => _parentText,
+                    _                           => ""
+                };
 
                 EditorGUILayout.HelpBox(str, MessageType.Info);
             }
 
             if (np != _needPackage || tp != _abType)
             {
-                if (_needPackage) _packageData.Set(path, _abType);
-                else _packageData.Remove(path);
+                if (_needPackage) PackageData.Set(path, _abType);
+                else PackageData.RemoveByPath(path);
             }
 
             GUILayout.BeginHorizontal();
@@ -103,29 +92,28 @@ namespace AAMT.Editor
             {
                 foreach (var directory in directories)
                 {
-                    _packageData.Remove(directory);
+                    PackageData.RemoveByPath(directory);
                 }
             }
             else
             {
                 foreach (var directory in directories)
                 {
-                    _packageData.Set(directory, abType);
+                    PackageData.Set(directory, abType);
                 }
             }
         }
 
         [InitializeOnLoadMethod]
-        static void OnDrawFolderIcon()
+        private static void OnDrawFolderIcon()
         {
             EditorApplication.projectWindowItemOnGUI = delegate(string guid, Rect rect)
             {
                 if (!EditorCommon.ShowFolderIcon) return;
-                if (_packageData == null) _packageData = new AssetBundlePackageData();
 
                 var path = AssetDatabase.GUIDToAssetPath(guid);
                 if (!AssetDatabase.IsValidFolder(path)) return;
-                var packageData = _packageData.getData(guid);
+                var packageData = EditorCommon.PackageData.GetDataByGuid(guid);
                 if (packageData == null) return;
 
                 var isSmall = IsIconSmall(rect);
@@ -134,14 +122,30 @@ namespace AAMT.Editor
                 rect.height *= .6f;
                 rect.y      += rect.height * .8f;
                 rect.x      += rect.width;
-                Texture2D img = null;
-                if (packageData.AbType      == WindowDefine.ABType.PACKAGE) img = Icons.PACKAGE.Texture2D;
-                else if (packageData.AbType == WindowDefine.ABType.PARENT) img  = Icons.PARENT.Texture2D;
-                else if (packageData.AbType == WindowDefine.ABType.SINGLE) img  = Icons.SINGLE.Texture2D;
+                var img = packageData.AbType switch
+                {
+                    WindowDefine.ABType.PACKAGE => Icons.PACKAGE.Texture2D,
+                    WindowDefine.ABType.PARENT  => Icons.PARENT.Texture2D,
+                    WindowDefine.ABType.SINGLE  => Icons.SINGLE.Texture2D,
+                    _                           => null
+                };
 
                 GUI.DrawTexture(rect, img);
                 EditorApplication.RepaintProjectWindow();
             };
+        }
+
+        [InitializeOnLoadMethod]
+        private static void OnInitEvents()
+        {
+            EditorCommon.EventBus.addEventListener(EventType.DELETED_ASSETS, (@event =>
+            {
+                if (@event.data is not string[] paths) return;
+                foreach (var path in paths)
+                {
+                    EditorCommon.PackageData.RemoveByPath(path);
+                }
+            }));
         }
 
         private static Rect GetIconRect(Rect rect, bool isSmall)

@@ -9,20 +9,23 @@ using UnityEngine;
 
 namespace AAMT.Editor
 {
-    public class EditorCommon
+    public static class EditorCommon
     {
-        public static EventDispatcher EventBus;
-        public static int _showFolderIcon = 0;
+        private static EventDispatcher _eventBus;
+
+        public static EventDispatcher EventBus => _eventBus ??= new EventDispatcher();
+        private static AssetBundlePackageData _packageData;
+        public static AssetBundlePackageData PackageData => _packageData ??= new AssetBundlePackageData();
+ 
+ 
+        private static int _showFolderIcon = 0;
 
         public static bool ShowFolderIcon
         {
             get
             {
-                if (_showFolderIcon == 0)
-                {
-                    if (PlayerPrefs.HasKey("showFolderIcon")) _showFolderIcon = PlayerPrefs.GetInt("showFolderIcon");
-                    else _showFolderIcon                                      = 1;
-                }
+                if (_showFolderIcon != 0) return _showFolderIcon == 1;
+                _showFolderIcon = PlayerPrefs.HasKey("showFolderIcon") ? PlayerPrefs.GetInt("showFolderIcon") : 1;
 
                 return _showFolderIcon == 1;
             }
@@ -36,7 +39,7 @@ namespace AAMT.Editor
         internal static void UpdateProgress(string title, int progress, int progressMax, string desc)
         {
             title = title + "...[" + progress + " - " + progressMax + "]";
-            float value = (float)progress / (float)progressMax;
+            var value = (float)progress / progressMax;
             EditorUtility.DisplayProgressBar(title, desc, value);
         }
 
@@ -50,15 +53,13 @@ namespace AAMT.Editor
             var assembly = System.Reflection.Assembly.GetAssembly(typeof(SceneView));
             var type     = assembly.GetType("UnityEditor.LogEntries");
             var method   = type.GetMethod("Clear");
-            method.Invoke(new object(), null);
+            method?.Invoke(new object(), null);
         }
 
         internal static bool CheckPath(string path)
         {
-            if (!path.StartsWith("assets/") || path.LastIndexOf(".", StringComparison.Ordinal) == -1 || path.EndsWith(".meta") || path.EndsWith(".cs") || path.EndsWith(".xml") ||
-                path.EndsWith(".txt")       || path.EndsWith(".tpsheet"))
-                return false;
-            return true;
+            return path.StartsWith("assets/") && path.LastIndexOf(".", StringComparison.Ordinal) != -1 && !path.EndsWith(".meta") && !path.EndsWith(".cs") && !path.EndsWith(".xml") &&
+                   !path.EndsWith(".txt")     && !path.EndsWith(".tpsheet");
         }
 
         /// <summary>
@@ -68,15 +69,15 @@ namespace AAMT.Editor
         {
             try
             {
-                FileStream fs     = new FileStream(file, FileMode.Open);
-                var        md5    = new MD5CryptoServiceProvider();
-                byte[]     retVal = md5.ComputeHash(fs);
+                var fs     = new FileStream(file, FileMode.Open);
+                var md5    = new MD5CryptoServiceProvider();
+                var retVal = md5.ComputeHash(fs);
                 fs.Close();
 
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < retVal.Length; i++)
+                var sb = new StringBuilder();
+                foreach (var t in retVal)
                 {
-                    sb.Append(retVal[i].ToString("x2"));
+                    sb.Append(t.ToString("x2"));
                 }
 
                 return sb.ToString();
@@ -91,18 +92,18 @@ namespace AAMT.Editor
         {
             if (File.Exists(filePath)) File.Delete(filePath);
 
-            FileStream   fs = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write);
-            StreamWriter sw = new StreamWriter(fs);
+            var fs = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write);
+            var sw = new StreamWriter(fs);
 
             var files       = Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories);
-            int i           = 1;
+            var i           = 1;
             var versionData = new VersionData();
             foreach (var file in files)
             {
                 if (!CheckFile(file) || file.IndexOf(AAMTDefine.AAMT_ASSET_VERSION, StringComparison.Ordinal) != -1) continue;
-                EditorCommon.UpdateProgress("正在计算文件", i++, files.Length, file);
-                FileInfo fileInfo = new FileInfo(file);
-                var      newPath  = file.Replace(dirPath, "").Replace("\\", "/");
+                UpdateProgress("正在计算文件", i++, files.Length, file);
+                var fileInfo = new FileInfo(file);
+                var newPath  = file.Replace(dirPath, "").Replace("\\", "/");
                 newPath = newPath.Substring(1, newPath.Length - 1);
                 versionData.Add(newPath, Md5ByFile(file), (uint)fileInfo.Length);
             }
@@ -122,17 +123,13 @@ namespace AAMT.Editor
 
         internal static BuildTarget AamtToEditorTarget()
         {
-            switch (SettingManager.assetSetting.GetBuildPlatform)
+            return SettingManager.assetSetting.GetBuildPlatform switch
             {
-                case AssetSetting.BuildTarget.windows:
-                    return BuildTarget.StandaloneWindows;
-                case AssetSetting.BuildTarget.android:
-                    return BuildTarget.Android;
-                case AssetSetting.BuildTarget.ios:
-                    return BuildTarget.iOS;
-            }
-
-            return EditorUserBuildSettings.activeBuildTarget;
+                AssetSetting.BuildTarget.windows => BuildTarget.StandaloneWindows,
+                AssetSetting.BuildTarget.android => BuildTarget.Android,
+                AssetSetting.BuildTarget.ios     => BuildTarget.iOS,
+                _                                => EditorUserBuildSettings.activeBuildTarget
+            };
         }
 
         internal static AssetSetting.BuildTarget EditorToAamtTarget()

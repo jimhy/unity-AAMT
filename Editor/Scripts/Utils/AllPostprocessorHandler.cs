@@ -5,7 +5,7 @@ namespace AAMT.Editor
 {
     public class AllPostprocessorHandler : AssetPostprocessor
     {
-        static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths, bool didDomainReload)
+        private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
         {
             if (EditorCommon.EventBus == null) return;
 
@@ -13,7 +13,7 @@ namespace AAMT.Editor
 
             if (deletedAssets.Length > 0) EditorCommon.EventBus.dispatchEventWith(EventType.DELETED_ASSETS, deletedAssets);
 
-            if (movedAssets.Length > 0) EditorCommon.EventBus.dispatchEventWith(EventType.DELETED_ASSETS, new List<string[]>() {movedAssets, movedFromAssetPaths});
+            if (movedAssets.Length > 0) EditorCommon.EventBus.dispatchEventWith(EventType.MOVED_ASSETS, new List<string[]>() {movedAssets, movedFromAssetPaths});
         }
     }
 }

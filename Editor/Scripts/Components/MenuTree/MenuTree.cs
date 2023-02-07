@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine.UIElements;
 
@@ -7,10 +8,10 @@ namespace AAMT.Editor
 {
     public class MenuTree : VisualElement
     {
-        private VisualElement _leftContainer;
-        private VisualElement _rightContainer;
+        private readonly VisualElement _leftContainer;
+        private readonly VisualElement _rightContainer;
         private IMenuItem _currentNode;
-        private List<MenuTreeItem> _items = new List<MenuTreeItem>();
+        private readonly List<MenuTreeItem> _items = new();
         private int _selectIndex;
 
         public MenuTree()
@@ -18,8 +19,7 @@ namespace AAMT.Editor
             var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(PathManager.MenuTreeUssPath);
             styleSheets.Add(styleSheet);
 
-            var root = new VisualElement();
-            root.name            = "Root";
+            var root = new VisualElement { name = "Root" };
             _leftContainer       = new ScrollView();
             _leftContainer.name  = "LeftContainer";
             _rightContainer      = new ScrollView();
@@ -30,14 +30,14 @@ namespace AAMT.Editor
             root.Add(_rightContainer);
         }
 
-        public MenuTreeItem AddItem(string name, ContentNode node = null, Icon icon = null, bool defaultChildShow = false)
+        public MenuTreeItem AddItem(string itemName, ContentNode node = null, Icon icon = null, bool defaultChildShow = false)
         {
-            if (HasItemByName(name))
+            if (HasItemByName(itemName))
             {
-                throw new Exception($"Had same name:\"{name}\" item. Can not have the same name item.");
+                throw new Exception($"Had same name:\"{itemName}\" item. Can not have the same name item.");
             }
 
-            var item = new MenuTreeItem(name, node, icon, defaultChildShow);
+            var item = new MenuTreeItem(itemName, node, icon, defaultChildShow);
             _leftContainer.Add(item);
             item.OnSelected = OnSelected;
             _items.Add(item);
@@ -46,9 +46,8 @@ namespace AAMT.Editor
 
         private void OnSelected(VisualElement node)
         {
-            if (!(node is IMenuItem) || _currentNode == node) return;
-            var item = node as IMenuItem;
-            if (_currentNode != null) _currentNode.SetBackgroundColor(StyleKeyword.Null);
+            if (node is not IMenuItem item || _currentNode == node) return;
+            _currentNode?.SetBackgroundColor(StyleKeyword.Null);
             item.SetBackgroundColor(MiscUtils.HexToColor("#2F6A9B88"));
             _currentNode = item;
             _rightContainer.Clear();
@@ -59,34 +58,25 @@ namespace AAMT.Editor
         public void SelectByName(string name, string childItemName)
         {
             if (string.IsNullOrEmpty(name)) return;
-            for (var i = 0; i < _items.Count; i++)
+            foreach (var item in _items.Where(item => item.name == name))
             {
-                var item = _items[i];
-                if (item.name == name)
+                if (!string.IsNullOrEmpty(childItemName))
                 {
-                    if (!string.IsNullOrEmpty(childItemName))
-                    {
-                        var item1 = item.GetItemByName(childItemName);
-                        if (item1 != null) OnSelected(item1);
-                    }
-                    else
-                    {
-                        OnSelected(item);
-                    }
-
-                    return;
+                    var item1 = item.GetItemByName(childItemName);
+                    if (item1 != null) OnSelected(item1);
                 }
+                else
+                {
+                    OnSelected(item);
+                }
+
+                return;
             }
         }
 
-        private bool HasItemByName(string name)
+        private bool HasItemByName(string itemName)
         {
-            foreach (var item in _items)
-            {
-                if (item.name == name) return true;
-            }
-
-            return false;
+            return _items.Any(item => item.name == itemName);
         }
 
 
