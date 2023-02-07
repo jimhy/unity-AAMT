@@ -134,8 +134,8 @@ namespace AAMT
         /// <returns></returns>
         public static async Task<string> GetRemoteVersionFiles()
         {
-            var path = Path.Combine(SettingManager.assetSetting.getRemotePath, AAMTDefine.AAMT_ASSET_VERSION);
-            Debug.LogFormat("load path:{0}", path);
+            var path = $"{SettingManager.assetSetting.getRemotePath}/{AAMTDefine.AAMT_ASSET_VERSION}?{System.DateTime.Now.Ticks}";
+            Debug.LogFormat("get remote version files path:{0}", path);
             var uwr = UnityWebRequest.Get(path);
             uwr.SendWebRequest();
             while (!uwr.isDone)
@@ -145,7 +145,7 @@ namespace AAMT
 
             if (uwr.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogErrorFormat("文件下载失败,result:{0}", uwr.result);
+                Debug.LogErrorFormat("download remote version files error,result:{0},path:{1}", uwr.result, uwr.url);
                 return "";
             }
 
