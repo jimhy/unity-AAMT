@@ -45,15 +45,12 @@ namespace AAMT
         {
             if (GameObject.Find("AAMTRuntime") == null)
             {
-                var runtimeGameObject = new GameObject
-                {
-                    name = "AAMTRuntime"
-                };
+                var runtimeGameObject = new GameObject { name = "AAMTRuntime" };
                 runtimeGameObject.AddComponent<AAMTRuntime>();
                 Object.DontDestroyOnLoad(runtimeGameObject);
             }
         }
-        
+
         public static AsyncHandler MoveBundles()
         {
             AddRuntime();
@@ -89,7 +86,7 @@ namespace AAMT
 
         public static AsyncHandler LoadAssetsAsync(string assetsPath)
         {
-            return Instance._loaderManager.LoadAsync(new[] {assetsPath});
+            return Instance._loaderManager.LoadAsync(new[] { assetsPath });
         }
 
         public static void GetAssetsAsync<T>(string path, Action<T> callBack) where T : Object
@@ -101,13 +98,13 @@ namespace AAMT
             }
             else
             {
-                var handler = Instance._loaderManager.LoadAsync(new[] {path});
-                handler.customData = new List<object>() {path, callBack};
+                var handler = Instance._loaderManager.LoadAsync(new[] { path });
+                handler.customData = new List<object>() { path, callBack };
                 handler.onComplete = loaderHandler =>
                 {
                     if (loaderHandler.customData is not List<object> list) return;
                     var currentPath = list[0] as string;
-                    var cb = list[1] as Action<T>;
+                    var cb          = list[1] as Action<T>;
                     Instance.resourceManager.GetAssetsAsync(currentPath, cb);
                 };
             }
@@ -122,13 +119,13 @@ namespace AAMT
             }
             else
             {
-                var handler = Instance._loaderManager.LoadAsync(new[] {path});
-                handler.customData = new List<object>() {path, callBack};
+                var handler = Instance._loaderManager.LoadAsync(new[] { path });
+                handler.customData = new List<object>() { path, callBack };
                 handler.onComplete = loaderHandler =>
                 {
                     if (loaderHandler.customData is not List<object> list) return;
                     var currentPath = list[0] as string;
-                    var cb = list[1] as Action<Object[]>;
+                    var cb          = list[1] as Action<Object[]>;
                     Instance.resourceManager.GetAllAssetsAsync(currentPath, cb);
                 };
             }
@@ -142,17 +139,16 @@ namespace AAMT
             }
         }
 
-        public static void LoadScene(string path, [CanBeNull] Action callBack)
+        public static void LoadScene(string path, LoadSceneMode mode = LoadSceneMode.Single, Action callBack = null)
         {
-            LoadScene(path, LoadSceneMode.Additive, callBack);
+            var h = Instance._loaderManager.LoadAsync(new[] { path.ToLower() });
+            h.onComplete = _ => { ChangeScene(path, mode, callBack); };
         }
 
-        public static void LoadScene(string path, LoadSceneMode mode, [CanBeNull] Action callBack)
+        public static void ChangeScene(string path, LoadSceneMode mode = LoadSceneMode.Single, Action callBack = null)
         {
-            var h = Instance._loaderManager.LoadAsync(new[] {path.ToLower()});
-            h.onComplete = _ => { Instance.resourceManager.ChangeScene(path, callBack); };
+            Instance.resourceManager.ChangeScene(path, mode, callBack);
         }
-
 
         public static void Release(string path)
         {

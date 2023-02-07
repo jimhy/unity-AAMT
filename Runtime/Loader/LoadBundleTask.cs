@@ -160,7 +160,6 @@ namespace AAMT
 
             if (_loadingAbNames.Count == 0)
             {
-                _asyncHandler.currentCount = 1;
                 AAMTRuntime.Instance.StartCoroutine(CheckAlreadyLoadingAbs());
             }
 

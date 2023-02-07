@@ -16,7 +16,7 @@ namespace AAMT
 
         internal LocalAssetManager()
         {
-            assetsList = new Dictionary<string, Object>();
+            assetsList    = new Dictionary<string, Object>();
             _atlasManager = new SpriteAtlasManagerEditor();
         }
 
@@ -46,16 +46,18 @@ namespace AAMT
 
         private Object[] GetAllAssets(string path)
         {
-            var objs = new List<Object>();
-            var dirpath = path;
-            if (path.LastIndexOf(".") != -1)
+            var objs    = new List<Object>();
+            var dirPath = path;
+            if (path.LastIndexOf(".", StringComparison.Ordinal) != -1)
             {
-                dirpath = Path.GetDirectoryName(path);
+                dirPath = Path.GetDirectoryName(path);
             }
 
+            if (string.IsNullOrEmpty(dirPath)) return objs.ToArray();
+            
             foreach (var keyValuePair in assetsList)
             {
-                if (keyValuePair.Key.StartsWith(dirpath))
+                if (keyValuePair.Key.StartsWith(dirPath))
                 {
                     objs.Add(keyValuePair.Value);
                 }
@@ -64,15 +66,15 @@ namespace AAMT
             return objs.ToArray();
         }
 
-        public void ChangeScene(string path, Action callBack)
+        public void ChangeScene(string path, LoadSceneMode sceneMode, Action callBack)
         {
-            AAMTRuntime.Instance.StartCoroutine(LoadScene(path, callBack));
+            AAMTRuntime.Instance.StartCoroutine(LoadScene(path, sceneMode, callBack));
         }
 
-        private IEnumerator LoadScene(string path, Action callBack)
+        private IEnumerator LoadScene(string path, LoadSceneMode sceneMode, Action callBack)
         {
             var sceneName = Tools.FilterSceneName(path);
-            yield return SceneManager.LoadSceneAsync(sceneName);
+            yield return SceneManager.LoadSceneAsync(sceneName, sceneMode);
             callBack?.Invoke();
         }
 

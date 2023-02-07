@@ -146,7 +146,7 @@ namespace AAMT
             return objects;
         }
 
-        public void ChangeScene(string path, Action callBack)
+        public void ChangeScene(string path, LoadSceneMode sceneMode, Action callBack)
         {
             if (string.IsNullOrEmpty(path) || !HasAssetsByPath(path.ToLower()))
             {
@@ -155,13 +155,13 @@ namespace AAMT
                 return;
             }
 
-            AAMTRuntime.Instance.StartCoroutine(LoadScene(path, callBack));
+            AAMTRuntime.Instance.StartCoroutine(LoadScene(path, sceneMode, callBack));
         }
 
-        private IEnumerator LoadScene(string path, Action callBack)
+        private IEnumerator LoadScene(string path, LoadSceneMode sceneMode, Action callBack)
         {
             var sceneName = Tools.FilterSceneName(path);
-            yield return SceneManager.LoadSceneAsync(sceneName);
+            yield return SceneManager.LoadSceneAsync(sceneName, sceneMode);
             callBack?.Invoke();
         }
 

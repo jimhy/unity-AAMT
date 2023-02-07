@@ -13,7 +13,7 @@ namespace AAMT
         public Action<AsyncHandler> onComplete;
         public Action<AsyncHandler> onProgress;
 
-        public float progress => totalCount == 0 ? 0 : (float) currentCount / (float) totalCount;
+        public float progress => totalCount == 0 ? 0 :  currentCount / (float) totalCount;
 
         internal void OnProgress()
         {
