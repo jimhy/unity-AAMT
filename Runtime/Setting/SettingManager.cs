@@ -87,7 +87,7 @@ namespace AAMT
             LoadForRuntime(buildTarget);
 #endif
         }
-
+#if UNITY_EDITOR
         private static void LoadForEditor(AssetSetting.BuildTarget? buildTarget = null)
         {
             var sprite = AssetDatabase.LoadAssetAtPath<SettingManager>(AAMTDefine.AAMT_SETTING_MANAGER);
@@ -132,7 +132,8 @@ namespace AAMT
 
             _instance._currentAssetSetting.Init();
         }
-
+#endif
+#if !UNITY_EDITOR
         private static void LoadForRuntime(AssetSetting.BuildTarget? buildTarget1)
         {
             var path = $"{Tools.PlatformToBuildTarget()}/{AAMTDefine.AAMT_BUNDLE_NAME}".ToLower();
@@ -164,6 +165,7 @@ namespace AAMT
                 _instance._currentAssetSetting.Init();
             }
         }
+#endif
 
         private void Save()
         {
@@ -173,7 +175,7 @@ namespace AAMT
             instance.androidAssetSetting = androidAssetSetting;
             instance.windowsAssetSetting = windowsAssetSetting;
             instance.buildTarget         = buildTarget;
-            
+
             AssetDatabase.CreateAsset(instance, AAMTDefine.AAMT_SETTING_MANAGER);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
