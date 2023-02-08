@@ -31,10 +31,5 @@ namespace Editor.Windows
             menuTree.AddItem("平台", new CreateSettingPanel(), Icons.PHONE).AddAllAssetsAtPath(WindowDefine.platformSettingPath, new PlatformSettingPanel(), typeof(AssetSetting));
             menuTree.AddItem("设置", new SettingPanel(), Icons.SETTING);
         }
-
-        private void OnDestroy()
-        {
-            EditorCommon.EventBus.destory();
-        }
     }
 }

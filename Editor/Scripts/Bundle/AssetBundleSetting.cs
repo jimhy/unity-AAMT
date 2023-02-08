@@ -138,14 +138,17 @@ namespace AAMT.Editor
         [InitializeOnLoadMethod]
         private static void OnInitEvents()
         {
-            EditorCommon.EventBus.addEventListener(EventType.DELETED_ASSETS, (@event =>
+            EditorCommon.EventBus.removeEventListener(EventType.DELETED_ASSETS, OnDeleteAssets);
+            EditorCommon.EventBus.addEventListener(EventType.DELETED_ASSETS, OnDeleteAssets);
+        }
+
+        private static void OnDeleteAssets(Event e)
+        {
+            if (e.data is not string[] paths) return;
+            foreach (var path in paths)
             {
-                if (@event.data is not string[] paths) return;
-                foreach (var path in paths)
-                {
-                    EditorCommon.PackageData.RemoveByPath(path);
-                }
-            }));
+                EditorCommon.PackageData.RemoveByPath(path);
+            }
         }
 
         private static Rect GetIconRect(Rect rect, bool isSmall)

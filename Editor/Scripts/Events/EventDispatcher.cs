@@ -204,7 +204,7 @@ namespace AAMT.Editor
         private Event getEvent()
         {
             if (_events.Count == 0) return new Event();
-            else return _events.Pop();
+            return _events.Pop();
         }
 
         public void clear()
@@ -218,6 +218,7 @@ namespace AAMT.Editor
             clear();
             _eventCallBacks = null;
             _events         = null;
+            _lateEvents     = null;
         }
     }
 }

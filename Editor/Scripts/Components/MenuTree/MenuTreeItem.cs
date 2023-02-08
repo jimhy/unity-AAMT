@@ -26,7 +26,6 @@ namespace AAMT.Editor
         private readonly List<ChildNode> _children = new();
         private ChildNode _selected;
 
-
         public MenuTreeItem(string name, ContentNode contentNode, Icon icon, bool defaultChildShow = false)
         {
             AddToClassList(_menuTreeItemClassName);
@@ -35,8 +34,13 @@ namespace AAMT.Editor
             _icon        = icon;
             _showList    = defaultChildShow;
             CreateTopItem();
-            RegisterCallback<IMGUIEvent>(evt => { Debug.Log(evt.eventTypeId); });
             AddEvents();
+            RegisterCallback<DetachFromPanelEvent>(OnRemoveFromParent);
+        }
+
+        private void OnRemoveFromParent(DetachFromPanelEvent evt)
+        {
+            RemoveEvents();
         }
 
         private void AddEvents()
@@ -46,6 +50,13 @@ namespace AAMT.Editor
             EditorCommon.EventBus.addEventListener(EventType.IMPORTED_ASSETS, OnFileChanged);
         }
 
+        private void RemoveEvents()
+        {
+            EditorCommon.EventBus.removeEventListener(EventType.MOVED_ASSETS, OnFileChanged);
+            EditorCommon.EventBus.removeEventListener(EventType.DELETED_ASSETS, OnFileChanged);
+            EditorCommon.EventBus.removeEventListener(EventType.IMPORTED_ASSETS, OnFileChanged);
+        }
+        
         private void OnFileChanged(Event e)
         {
             if (_childContentNode == null) return;

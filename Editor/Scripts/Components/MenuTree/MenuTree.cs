@@ -78,7 +78,7 @@ namespace AAMT.Editor
         {
             return _items.Any(item => item.name == itemName);
         }
-
+        
 
         #region UxmlFactory
 
