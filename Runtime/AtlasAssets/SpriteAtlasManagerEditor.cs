@@ -37,7 +37,7 @@ namespace AAMT
 
             atl                 = new AAMTSpriteAtlas(atlasName);
             atlasMap[atlasName] = atl;
-            uri                 = $"{SettingManager.assetSetting.getLoadPath}/{uri}";
+            uri                 = $"{SettingManager.assetSetting.LoadPath}/{uri}";
             var sprites = AssetDatabase.LoadAllAssetsAtPath(uri);
             if (sprites == null)
             {

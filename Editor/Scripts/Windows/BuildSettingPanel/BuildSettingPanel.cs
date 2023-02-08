@@ -28,10 +28,10 @@ namespace AAMT.Editor
         private void InitData()
         {
             _settingManager            = SettingManager.Instance;
-            _buildTarget.index         = MiscUtils.StringToEnum<AssetSetting.BuildTarget>(_settingManager.buildTarget.ToString());
-            _androidAssetSetting.value = _settingManager.androidAssetSetting;
-            _iosAssetSetting.value     = _settingManager.iosAssetSetting;
-            _windowsAssetSetting.value = _settingManager.windowsAssetSetting;
+            _buildTarget.index         = MiscUtils.StringToEnum<AssetSetting.BuildTarget>(_settingManager.BuildTarget.ToString());
+            _androidAssetSetting.value = _settingManager.AndroidAssetSetting;
+            _iosAssetSetting.value     = _settingManager.IosAssetSetting;
+            _windowsAssetSetting.value = _settingManager.WindowsAssetSetting;
 
             UpdateBottomDisplay();
         }
@@ -97,22 +97,22 @@ namespace AAMT.Editor
         {
             AssetSetting result = evt.newValue as AssetSetting;
 
-            if (evt.target      == _windowsAssetSetting) _settingManager.windowsAssetSetting = result;
-            else if (evt.target == _androidAssetSetting) _settingManager.androidAssetSetting = result;
-            else if (evt.target == _iosAssetSetting) _settingManager.iosAssetSetting         = result;
+            if (evt.target      == _windowsAssetSetting) _settingManager.WindowsAssetSetting = result;
+            else if (evt.target == _androidAssetSetting) _settingManager.AndroidAssetSetting = result;
+            else if (evt.target == _iosAssetSetting) _settingManager.IosAssetSetting         = result;
         }
 
         private void OnBuildTargetChanged(ChangeEvent<string> evt)
         {
             _buildTarget.index          = MiscUtils.StringToEnum<AssetSetting.BuildTarget>(evt.newValue);
-            _settingManager.buildTarget = (AssetSetting.BuildTarget)_buildTarget.index;
+            _settingManager.BuildTarget = (AssetSetting.BuildTarget)_buildTarget.index;
             UpdateBottomDisplay();
             SettingManager.ReloadAssetSetting();
         }
 
         private void UpdateBottomDisplay()
         {
-            _bottom.visible = _settingManager.buildTarget != AssetSetting.BuildTarget.editor;
+            _bottom.visible = _settingManager.BuildTarget != AssetSetting.BuildTarget.editor;
         }
 
         private void BuildAssetBundle()

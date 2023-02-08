@@ -11,7 +11,7 @@ namespace AAMT.Editor
         public static void BuildAssetsBundles()
         {
             EditorCommon.ClearConsole();
-            var path = SettingManager.assetSetting.getBuildPath.ToLower();
+            var path = SettingManager.assetSetting.BuildPath.ToLower();
             Debug.LogFormat("Start build assets bundles to path:{0}", path);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
@@ -109,7 +109,7 @@ namespace AAMT.Editor
         /// </summary>
         public static void CreateVersionFile()
         {
-            var dirPath = SettingManager.assetSetting.getBuildPath;
+            var dirPath = SettingManager.assetSetting.BuildPath;
             var txtPath = $"{dirPath}/{AAMTDefine.AAMT_ASSET_VERSION}";
             EditorCommon.CreateVersionFile(txtPath, dirPath);
         }
@@ -119,15 +119,15 @@ namespace AAMT.Editor
         /// </summary>
         public static void CreateManifestMapFile()
         {
-            var files = Directory.GetFiles(SettingManager.assetSetting.getBuildPath, "*.manifest", SearchOption.AllDirectories);
+            var files = Directory.GetFiles(SettingManager.assetSetting.BuildPath, "*.manifest", SearchOption.AllDirectories);
 
-            var mapPath = Path.Combine(SettingManager.assetSetting.getBuildPath, AAMTDefine.AAMT_ASSETS_WITH_BUNDLE_NAME);
+            var mapPath = Path.Combine(SettingManager.assetSetting.BuildPath, AAMTDefine.AAMT_ASSETS_WITH_BUNDLE_NAME);
             if (File.Exists(mapPath)) File.Delete(mapPath);
 
             FileStream   fs        = new FileStream(mapPath, FileMode.CreateNew, FileAccess.Write);
             StreamWriter sw        = new StreamWriter(fs);
             var          regex     = new Regex(@"- Assets/([\w\/\.]+)");
-            var          buildPath = $"{SettingManager.assetSetting.getBuildPath}/";
+            var          buildPath = $"{SettingManager.assetSetting.BuildPath}/";
             var          i         = 1;
             foreach (var file in files)
             {
@@ -150,7 +150,7 @@ namespace AAMT.Editor
 
         public static void RemoveBundleCache()
         {
-            var path = SettingManager.assetSetting.getBuildPath;
+            var path = SettingManager.assetSetting.BuildPath;
             Debug.LogFormat("path={0}", path);
             if (Directory.Exists(path))
             {

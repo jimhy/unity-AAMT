@@ -56,8 +56,8 @@ namespace AAMT
 
         private void StartRequestHttp(string loadFile)
         {
-            var url        = $"{SettingManager.assetSetting.getRemotePath}{loadFile}";
-            var targetPath = $"{Application.persistentDataPath}/{SettingManager.assetSetting.GetBuildPlatform}/{loadFile}".ToLower();
+            var url        = $"{SettingManager.assetSetting.RemotePath}{loadFile}";
+            var targetPath = $"{Application.persistentDataPath}/{SettingManager.assetSetting.BuildPlatform}/{loadFile}".ToLower();
             if (File.Exists(targetPath)) File.Delete(targetPath);
             var uwr = UnityWebRequest.Get(url);
             Debug.LogFormat("downloading-->url{0},targetPath:{1}", url, targetPath);
@@ -98,7 +98,7 @@ namespace AAMT
             if (_errorLoadTimesList.ContainsKey(webRequestURL)) count = _errorLoadTimesList[webRequestURL];
             if (++count >= _errorTimes) return false;
             _errorLoadTimesList[webRequestURL] = count;
-            var loadFile = webRequestURL.Replace($"{SettingManager.assetSetting.getRemotePath}", "");
+            var loadFile = webRequestURL.Replace($"{SettingManager.assetSetting.RemotePath}", "");
 
             AAMTRuntime.Instance.CallOnNextFrame(o =>
             {
@@ -134,7 +134,7 @@ namespace AAMT
         /// <returns></returns>
         public static async Task<string> GetRemoteVersionFiles()
         {
-            var path = $"{SettingManager.assetSetting.getRemotePath}/{AAMTDefine.AAMT_ASSET_VERSION}?{System.DateTime.Now.Ticks}";
+            var path = $"{SettingManager.assetSetting.RemotePath}/{AAMTDefine.AAMT_ASSET_VERSION}?{System.DateTime.Now.Ticks}";
             Debug.LogFormat("get remote version files path:{0}", path);
             var uwr = UnityWebRequest.Get(path);
             uwr.SendWebRequest();

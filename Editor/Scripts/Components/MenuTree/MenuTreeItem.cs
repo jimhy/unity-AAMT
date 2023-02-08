@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -9,31 +10,32 @@ namespace AAMT.Editor
 {
     public class MenuTreeItem : VisualElement, IMenuItem
     {
-        private readonly string _menuTreeItemclassName = "menu-tree-item";
+        private const string _menuTreeItemClassName = "menu-tree-item";
         private Label _nameLabel;
         private Image _iconNode;
         private Image _arrow;
         private VisualElement _treeListContainer;
         private bool _showList;
         public Action<VisualElement> OnSelected;
-        private ContentNode _contentNode;
-        private Icon _icon;
+        private readonly ContentNode _contentNode;
+        private readonly Icon _icon;
         private VisualElement _root;
         private string _assetFolderPath;
         private ContentNode _childContentNode;
         private Type _childAssetsType;
-        private List<ChildNode> _children = new List<ChildNode>();
+        private readonly List<ChildNode> _children = new();
+        private ChildNode _selected;
 
 
         public MenuTreeItem(string name, ContentNode contentNode, Icon icon, bool defaultChildShow = false)
         {
-            AddToClassList(_menuTreeItemclassName);
+            AddToClassList(_menuTreeItemClassName);
             this.name    = name;
             _contentNode = contentNode;
             _icon        = icon;
             _showList    = defaultChildShow;
             CreateTopItem();
-            this.RegisterCallback<IMGUIEvent>(evt => { Debug.Log(evt.eventTypeId); });
+            RegisterCallback<IMGUIEvent>(evt => { Debug.Log(evt.eventTypeId); });
             AddEvents();
         }
 
@@ -48,20 +50,15 @@ namespace AAMT.Editor
         {
             if (_childContentNode == null) return;
             if (!CheckAssetsPath(e.data as string[])) return;
-            if (_treeListContainer != null) _treeListContainer.Clear();
+            _treeListContainer?.Clear();
             UpdateAllAssetsAtPath();
-            OnSelected.Invoke(this);
+            if (_selected != null) OnSelected.Invoke(_selected);
         }
 
-        private bool CheckAssetsPath(string[] eData)
+        private bool CheckAssetsPath(IReadOnlyCollection<string> eData)
         {
-            if (eData == null || eData.Length == 0) return false;
-            foreach (var s in eData)
-            {
-                if (s.IndexOf(_assetFolderPath, StringComparison.Ordinal) != -1) return true;
-            }
-
-            return false;
+            if (eData == null || eData.Count == 0) return false;
+            return eData.Any(s => s.IndexOf(_assetFolderPath, StringComparison.Ordinal) != -1);
         }
 
 
@@ -96,18 +93,18 @@ namespace AAMT.Editor
         private void OnTopClick(ClickEvent evt)
         {
             _showList = !_showList;
-
             childContainerDisplayUpdate();
             OnSelected.Invoke(this);
         }
 
-        public void AddItem(string name, ContentNode contentNode = null, object data = null)
+        public ChildNode AddItem(string name, ContentNode contentNode = null, object data = null)
         {
             createChildContainer();
             var listItem = new ChildNode(name, contentNode, data);
             _treeListContainer.Add(listItem);
             _children.Add(listItem);
             listItem.RegisterCallback<ClickEvent>(OnChildItemClick);
+            return listItem;
         }
 
         public void AddAllAssetsAtPath(string assetFolderPath, ContentNode contentNode, Type type)
@@ -145,7 +142,12 @@ namespace AAMT.Editor
                 var o = AssetDatabase.LoadAssetAtPath(p, _childAssetsType);
                 if (o != null)
                 {
-                    AddItem(o.name, _childContentNode, o);
+                    var child = AddItem(o.name, _childContentNode, o);
+                    child.Guid = AssetDatabase.AssetPathToGUID(p);
+                    if (_selected != null && child.Guid == _selected.Guid)
+                    {
+                        _selected = child;
+                    }
                 }
             }
         }
@@ -177,7 +179,8 @@ namespace AAMT.Editor
 
         private void OnChildItemClick(ClickEvent evt)
         {
-            OnSelected.Invoke(evt.currentTarget as VisualElement);
+            _selected = evt.currentTarget as ChildNode;
+            OnSelected.Invoke(_selected);
         }
 
         public VisualElement GetItemByName(string childItemName)
@@ -205,11 +208,12 @@ namespace AAMT.Editor
     public class ChildNode : VisualElement, IMenuItem
     {
         public ContentNode _contentNode { get; set; }
-        private object _data;
+        public object Data { get; set; }
+        public string Guid { get; set; }
 
         public ChildNode(string name, ContentNode contentNode, object data)
         {
-            this.name = "MenuTreeListItem";
+            this.name = name;
             AddToClassList("itemHover");
             AddToClassList("list-item");
             AddToClassList("item-border");
@@ -219,16 +223,15 @@ namespace AAMT.Editor
             Add(label);
 
             _contentNode = contentNode;
-            _data        = data;
+            Data         = data;
             if (_contentNode != null) _contentNode.style.flexGrow = 1;
         }
-
 
         public void ShowContentNode(VisualElement parent)
         {
             if (_contentNode == null) return;
             parent.Add(_contentNode);
-            _contentNode.SetData(_data);
+            _contentNode.SetData(Data);
         }
 
         public void SetBackgroundColor(StyleColor styleColor)

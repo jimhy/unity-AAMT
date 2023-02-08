@@ -56,35 +56,60 @@ namespace AAMT.Editor
         protected virtual void AddEvents()
         {
             _deleteBtn.clicked += OnDeleteClick;
-            _platform.RegisterValueChangedCallback(OnPlatformChanged);
-            _loadType.RegisterValueChangedCallback(OnLoadTypeChanged);
-            _nameLabel.RegisterCallback<FocusOutEvent>(OnLabelChanged);
-            _buildPath.RegisterCallback<FocusOutEvent>(OnLabelChanged);
-            _remoteUrl.RegisterCallback<FocusOutEvent>(OnLabelChanged);
+            _platform.RegisterCallback<ChangeEvent<string>>(OnPlatformChanged);
+            _loadType.RegisterCallback<ChangeEvent<string>>(OnLoadTypeChanged);
+            _nameLabel.RegisterCallback<FocusOutEvent>(OnNameChanged);
+            _buildPath.RegisterCallback<FocusOutEvent>(OnBuildPathChanged);
+            _remoteUrl.RegisterCallback<FocusOutEvent>(OnRemotePathChanged);
             _assetsFolders.OnValueChanged = OnFoldersChanged;
         }
 
-        protected virtual void OnLabelChanged(FocusOutEvent evt)
+        protected virtual void RemoveEvents()
         {
-            if (evt.target is not TextField label) return;
-            var filePath = $"{WindowDefine.platformSettingPath}/{_data.fileName}.asset";
-            var newName  = $"{label.value}.asset";
-            AssetDatabase.RenameAsset(filePath, newName);
+            _deleteBtn.clicked -= OnDeleteClick;
+            _platform.UnregisterValueChangedCallback(OnPlatformChanged);
+            _loadType.UnregisterValueChangedCallback(OnLoadTypeChanged);
+            _nameLabel.UnregisterCallback<FocusOutEvent>(OnNameChanged);
+            _buildPath.UnregisterCallback<FocusOutEvent>(OnBuildPathChanged);
+            _remoteUrl.UnregisterCallback<FocusOutEvent>(OnRemotePathChanged);
+            _assetsFolders.OnValueChanged = null;
+        }
 
-            FileSaveUtils.SetDataProperty(_data, label.userData.ToString(), label.value);
+        private void OnNameChanged(FocusOutEvent evt)
+        {
+            if (evt.target is not TextField label || _data.name == label.value) return;
+            var filePath  = $"{WindowDefine.platformSettingPath}/{_data.name}.asset";
+            var labelText = label.value;
+            var newName   = $"{labelText}.asset";
+            AssetDatabase.RenameAsset(filePath, newName);
+        }
+
+        private void OnBuildPathChanged(FocusOutEvent evt)
+        {
+            if (evt.target is not TextField label || _data.BuildPathSetting == label.value) return;
+            _data.BuildPathSetting = label.value;
+            _data.Save();
+        }
+
+        private void OnRemotePathChanged(FocusOutEvent evt)
+        {
+            if (evt.target is not TextField label || _data.RemotePath == label.value) return;
+            _data.RemotePath = label.value;
+            _data.Save();
         }
 
         private void OnFoldersChanged()
         {
-            FileSaveUtils.SetDataProperty(_data, "moveToStreamingAssetsPathList", _assetsFolders.Data);
+            _data.MoveToStreamingAssetsPathList = _assetsFolders.Data;
+            _data.Save();
         }
 
         protected virtual void OnLoadTypeChanged(ChangeEvent<string> evt)
         {
             var i = MiscUtils.StringToEnum<AssetSetting.LoadType>(evt.newValue);
             if (i == -1) return;
-            var p = (AssetSetting.LoadType)i;
-            FileSaveUtils.SetDataProperty(_data, "loadType", p);
+            _data.CurrentLoadType = (AssetSetting.LoadType)i;
+            _data.Save();
             UpdateUI();
         }
 
@@ -92,16 +117,17 @@ namespace AAMT.Editor
         {
             var i = MiscUtils.StringToEnum<AssetSetting.BuildTarget>(evt.newValue);
             if (i == -1) return;
-            var p = (AssetSetting.BuildTarget)i;
-            FileSaveUtils.SetDataProperty(_data, "buildPlatform", p);
+            _data.BuildPlatform = (AssetSetting.BuildTarget)i;
+            _data.Save();
             UpdateUI();
         }
 
         protected virtual void OnDeleteClick()
         {
-            if (EditorUtility.DisplayDialog("删除平台配置数据", $"是否确定删除平台配置数据  {_data.fileName} ？", "删除"))
+            if (EditorUtility.DisplayDialog("删除平台配置数据", $"是否确定删除平台配置数据  {_data.name} ？", "删除"))
             {
-                AssetDatabase.DeleteAsset($"{WindowDefine.platformSettingPath}/{_data.fileName}.asset");
+                var path = AssetDatabase.GUIDToAssetPath(_data.Guid);
+                AssetDatabase.DeleteAsset(path);
                 AssetDatabase.SaveAssets();
             }
         }
@@ -109,22 +135,24 @@ namespace AAMT.Editor
         public override void SetData(object o)
         {
             if (!(o is AssetSetting)) return;
+            RemoveEvents();
             _data               = o as AssetSetting;
-            _assetsFolders.Data = _data.GetMoveToStreamingAssetsPathList;
+            _assetsFolders.Data = _data.MoveToStreamingAssetsPathList;
             UpdateUI();
+            EditorCommon.DelayCallBack(.01f, _ => AddEvents());
         }
 
         protected virtual void UpdateUI()
         {
-            _nameLabel.value = _data.fileName;
-            _platform.value  = _data.GetBuildPlatform.ToString();
-            _loadType.value  = _data.getLoadType.ToString();
-
+            _nameLabel.value = _data.name;
+            _platform.value  = _data.BuildPlatform.ToString();
+            _loadType.value  = _data.CurrentLoadType.ToString();
+            _remoteUrl.value = _data.RemotePath;
             var displayType1 = DisplayStyle.Flex;
             var displayType2 = DisplayStyle.Flex;
 
-            if (_data.GetBuildPlatform == AssetSetting.BuildTarget.editor) displayType1                                                     = DisplayStyle.None;
-            if (_data.GetBuildPlatform == AssetSetting.BuildTarget.editor || _data.getLoadType == AssetSetting.LoadType.Local) displayType2 = DisplayStyle.None;
+            if (_data.BuildPlatform == AssetSetting.BuildTarget.editor) displayType1                                                         = DisplayStyle.None;
+            if (_data.BuildPlatform == AssetSetting.BuildTarget.editor || _data.CurrentLoadType == AssetSetting.LoadType.Local) displayType2 = DisplayStyle.None;
 
             _buildPath.style.display = displayType1;
             _loadType.style.display  = displayType1;

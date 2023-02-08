@@ -17,8 +17,8 @@ namespace AAMT.Editor
 
         private void InitPlatformData()
         {
-            _data          = ScriptableObject.CreateInstance<AssetSetting>();
-            _data.fileName = "New platform";
+            _data      = ScriptableObject.CreateInstance<AssetSetting>();
+            _data.name = "New platform";
         }
 
         protected override void InitElements()
@@ -26,9 +26,7 @@ namespace AAMT.Editor
             base.InitElements();
             _deleteBtn.visible = false;
 
-            _createBtn      = new Button();
-            _createBtn.name = "CreateButton";
-            _createBtn.text = "创建平台";
+            _createBtn = new Button { name = "CreateButton", text = "创建平台" };
             Add(_createBtn);
         }
 
@@ -44,6 +42,8 @@ namespace AAMT.Editor
             var path = GetFilePath();
             AssetDatabase.CreateAsset(_data, path);
             AssetDatabase.SaveAssets();
+            _data.Guid = AssetDatabase.AssetPathToGUID(path);
+            _data.Save();
             InitPlatformData();
             InitElementData();
             UpdateUI();
@@ -51,13 +51,13 @@ namespace AAMT.Editor
 
         private string GetFilePath()
         {
-            var path     = $"{WindowDefine.platformSettingPath}/{_data.fileName}.asset";
+            var fileName = _nameLabel.value;
+            var path     = $"{WindowDefine.platformSettingPath}/{fileName}.asset";
             var i        = 1;
-            var fileName = _data.fileName;
             while (File.Exists(path))
             {
-                _data.fileName = $"{fileName}({i++})";
-                path           = $"{WindowDefine.platformSettingPath}/{_data.fileName}.asset";
+                _data.name = $"{fileName}({i++})";
+                path           = $"{WindowDefine.platformSettingPath}/{fileName}.asset";
             }
 
             return path;

@@ -57,7 +57,7 @@ namespace AAMT
             {
                 if (!_bundleManager.pathToBundle.ContainsKey(resPath))
                 {
-                    Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}/{1}", SettingManager.assetSetting.getLoadPath, resPath);
+                    Debug.LogErrorFormat("加载资源时，找不到对应资源的ab包。path={0}/{1}", SettingManager.assetSetting.LoadPath, resPath);
                     OnLoadComplete();
                     return;
                 }
@@ -113,7 +113,7 @@ namespace AAMT
 
         private void Load(string abName)
         {
-            var abPath = $"{SettingManager.assetSetting.getLoadPath}/{abName}";
+            var abPath = $"{SettingManager.assetSetting.LoadPath}/{abName}";
             Debug.LogFormat("loading bundle:{0}", abPath);
             if (_bundleManager.HasBundleByBundleName(abName))
             {

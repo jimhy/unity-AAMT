@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using AAMT.Editor;
 using LitJsonAAMT;
 using UnityEditor;
@@ -16,8 +17,8 @@ namespace AAMT.Editor
         public static EventDispatcher EventBus => _eventBus ??= new EventDispatcher();
         private static AssetBundlePackageData _packageData;
         public static AssetBundlePackageData PackageData => _packageData ??= new AssetBundlePackageData();
- 
- 
+
+
         private static int _showFolderIcon = 0;
 
         public static bool ShowFolderIcon
@@ -123,7 +124,7 @@ namespace AAMT.Editor
 
         internal static BuildTarget AamtToEditorTarget()
         {
-            return SettingManager.assetSetting.GetBuildPlatform switch
+            return SettingManager.assetSetting.BuildPlatform switch
             {
                 AssetSetting.BuildTarget.windows => BuildTarget.StandaloneWindows,
                 AssetSetting.BuildTarget.android => BuildTarget.Android,
@@ -146,6 +147,24 @@ namespace AAMT.Editor
             }
 
             return AssetSetting.BuildTarget.editor;
+        }
+
+        internal static void DelayCallBack(double t, Action<object> cb, object data = null)
+        {
+            if (cb == null) return;
+            if (t == 0)
+            {
+                cb.Invoke(data);
+                return;
+            }
+
+            var delayCall = new Action(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(t));
+                cb.Invoke(data);
+            });
+
+            delayCall();
         }
     }
 }

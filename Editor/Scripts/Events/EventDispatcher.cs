@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 
 namespace AAMT.Editor
@@ -12,8 +13,8 @@ namespace AAMT.Editor
     {
         protected struct EventObj
         {
-            public string         type;
-            public object         data;
+            public string type;
+            public object data;
             public Action<object> callBack;
         }
 
@@ -40,8 +41,8 @@ namespace AAMT.Editor
         }
 
         protected Dictionary<string, List<EventCBStruct>> _eventCallBacks;
-        protected Stack<Event>                            _events;
-        protected Dictionary<uint, List<EventObj>>        _lateEvents;
+        protected Stack<Event> _events;
+        protected Dictionary<uint, List<EventObj>> _lateEvents;
 
         /// <summary>
         /// 当前延迟事件派发的索引标志，主要用于区分事件是当前帧添加的还是上一帧添加的，
@@ -143,7 +144,7 @@ namespace AAMT.Editor
             }
             catch (Exception ex)
             {
-                throw;
+                Debug.LogError(ex);
             }
 
             e.clear();

@@ -10,7 +10,7 @@ namespace AAMT
 
         internal LoaderManager()
         {
-            if (SettingManager.assetSetting.GetBuildPlatform == AssetSetting.BuildTarget.editor)
+            if (SettingManager.assetSetting.BuildPlatform == AssetSetting.BuildTarget.editor)
                 _loader = new LocalLoader();
             else
                 _loader = new BundleLoader();

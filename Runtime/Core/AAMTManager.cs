@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -12,16 +11,7 @@ namespace AAMT
     /// </summary>
     public class AAMTManager
     {
-        private static AAMTManager _instance;
-
-        internal static AAMTManager Instance
-        {
-            get
-            {
-                if (_instance == null) _instance = new AAMTManager();
-                return _instance;
-            }
-        }
+        internal static AAMTManager Instance { get; } = new();
 
         private LoaderManager _loaderManager;
         internal IResourceManager resourceManager { get; private set; }
@@ -34,7 +24,7 @@ namespace AAMT
         private void Init()
         {
             AddRuntime();
-            if (SettingManager.assetSetting.GetBuildPlatform == AssetSetting.BuildTarget.editor)
+            if (SettingManager.assetSetting.BuildPlatform == AssetSetting.BuildTarget.editor)
                 resourceManager = new LocalAssetManager();
             else
                 resourceManager = new BundleManager();
@@ -43,18 +33,16 @@ namespace AAMT
 
         private static void AddRuntime()
         {
-            if (GameObject.Find("AAMTRuntime") == null)
-            {
-                var runtimeGameObject = new GameObject { name = "AAMTRuntime" };
-                runtimeGameObject.AddComponent<AAMTRuntime>();
-                Object.DontDestroyOnLoad(runtimeGameObject);
-            }
+            if (GameObject.Find("AAMTRuntime") != null) return;
+            var runtimeGameObject = new GameObject { name = "AAMTRuntime" };
+            runtimeGameObject.AddComponent<AAMTRuntime>();
+            Object.DontDestroyOnLoad(runtimeGameObject);
         }
 
         public static AsyncHandler MoveBundles()
         {
             AddRuntime();
-            if (SettingManager.assetSetting.getLoadType == AssetSetting.LoadType.Local)
+            if (SettingManager.assetSetting.CurrentLoadType == AssetSetting.LoadType.Local)
             {
                 Debug.LogWarning("加载类型为Local,不能移动Bundles.");
                 return null;
@@ -68,7 +56,7 @@ namespace AAMT
         public static AsyncHandler UpdateAssets()
         {
             AddRuntime();
-            if (SettingManager.assetSetting.getLoadType == AssetSetting.LoadType.Local)
+            if (SettingManager.assetSetting.CurrentLoadType == AssetSetting.LoadType.Local)
             {
                 Debug.LogWarning("加载类型为Local,不能更新资源.");
                 return null;

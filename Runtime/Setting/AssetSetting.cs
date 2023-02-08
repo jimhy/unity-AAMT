@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace AAMT
@@ -18,64 +19,116 @@ namespace AAMT
         public enum LoadType
         {
             Local,
-
             Remote
         }
-
-        
-        public string fileName;
 
         [SerializeField]
         private BuildTarget buildPlatform;
 
         [SerializeField]
-        private string buildPath = "{UnityEngine.Application.dataPath}/../Build/";
+        private string buildPathSetting = "{UnityEngine.Application.dataPath}/../Build/";
 
         [SerializeField]
         private LoadType loadType = LoadType.Local;
 
         [SerializeField]
         private string remotePath = "http://localhost:80";
-        
+
         [SerializeField]
         private string[] moveToStreamingAssetsPathList;
 
         private string _realBuildPath;
-
-        private static AssetSetting assetSetting;
+        public string Guid { get; set; }
 
         internal void Init()
         {
 #if UNITY_EDITOR
-            _realBuildPath = AAMTRuntimeProperties.EvaluateString(buildPath);
-            getLoadPath    = "assets";
+            InitForEditor();
+#else
+            InitForRuntime();
+#endif
+        }
+
+        private void InitForEditor()
+        {
+            _realBuildPath = AAMTRuntimeProperties.EvaluateString(buildPathSetting);
+            LoadPath       = "assets";
             if (buildPlatform != BuildTarget.editor)
             {
                 if (loadType == LoadType.Local)
-                    getLoadPath = $"{_realBuildPath}/{GetBuildPlatform}";
+                    LoadPath = $"{_realBuildPath}/{BuildPlatform}";
                 else
-                    getLoadPath = $"{Application.persistentDataPath}/{GetBuildPlatform}";
+                    LoadPath = $"{Application.persistentDataPath}/{BuildPlatform}";
             }
 
-            getLoadPath = getLoadPath.ToLower();
-#else
-            InitBuildTarget();
-            if (loadType == LoadType.Local)
-                getLoadPath = $"{Application.streamingAssetsPath}/{buildPlatform}";
-            else
-                getLoadPath = $"{Application.persistentDataPath}/{buildPlatform}";
-#endif
+            LoadPath = LoadPath.ToLower();
+
             // Debug.LogFormat("LoadType:{0}", getLoadType);
             // Debug.LogFormat("BuildTarget:{0}", buildPlatform);
             // Debug.LogFormat("Current load path:{0}", getLoadPath);
         }
 
-        public string      getBuildPath                     => $"{_realBuildPath}/{buildPlatform}";
-        public string[]    GetMoveToStreamingAssetsPathList => moveToStreamingAssetsPathList;
-        public string      getRemotePath                    => remotePath;
-        public BuildTarget GetBuildPlatform                 => buildPlatform;
-        public string      getLoadPath                      { get; private set; }
-        public LoadType    getLoadType                      => loadType;
+        private void InitForRuntime()
+        {
+            InitBuildTarget();
+            if (loadType == LoadType.Local)
+                LoadPath = $"{Application.streamingAssetsPath}/{buildPlatform}";
+            else
+                LoadPath = $"{Application.persistentDataPath}/{buildPlatform}";
+        }
+
+        public string BuildPath => $"{_realBuildPath}/{buildPlatform}";
+
+        public string[] MoveToStreamingAssetsPathList
+        {
+            get => moveToStreamingAssetsPathList;
+            set => moveToStreamingAssetsPathList = value;
+        }
+
+        public string RemotePath
+        {
+            get => remotePath;
+            set => remotePath = value;
+        }
+
+        public BuildTarget BuildPlatform
+        {
+            get => buildPlatform;
+            set => buildPlatform = value;
+        }
+
+        public string LoadPath { get; private set; }
+
+        public LoadType CurrentLoadType
+        {
+            get => loadType;
+            set => loadType = value;
+        }
+
+        public string BuildPathSetting
+        {
+            get => buildPathSetting;
+            set => buildPathSetting = value;
+        }
+
+        public void Save()
+        {
+#if UNITY_EDITOR
+            if (string.IsNullOrEmpty(Guid)) return;
+            var path     = AssetDatabase.GUIDToAssetPath(Guid);
+            var instance = CreateInstance<AssetSetting>();
+            instance.name         = name;
+            instance.buildPlatform    = buildPlatform;
+            instance.buildPathSetting = buildPathSetting;
+            instance.loadType         = loadType;
+            instance.remotePath       = remotePath;
+            instance.Guid             = Guid;
+
+            AssetDatabase.CreateAsset(instance, path);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+#endif
+        }
 
         private void InitBuildTarget()
         {
@@ -87,8 +140,6 @@ namespace AAMT
         {
             buildPlatform = target;
         }
-
-        public string WindowGetSourceBuildPath => buildPath;
 #endif
     }
 }

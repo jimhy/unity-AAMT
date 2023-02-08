@@ -16,7 +16,7 @@ namespace AAMT
         {
             _manager = AAMTManager.Instance.resourceManager as LocalAssetManager;
             _resPaths = new List<string>();
-            var loadPath = $"{SettingManager.assetSetting.getLoadPath}/";
+            var loadPath = $"{SettingManager.assetSetting.LoadPath}/";
             foreach (var p in resPaths)
             {
                 if (p.LastIndexOf(".") == -1)
@@ -75,7 +75,7 @@ namespace AAMT
                 var assetName = _resPaths[0];
                 if (!_manager.HasAssetsByPath(assetName))
                 {
-                    var assetPath = $"{SettingManager.assetSetting.getLoadPath}/{assetName}";
+                    var assetPath = $"{SettingManager.assetSetting.LoadPath}/{assetName}";
                     var obj = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
                     if (obj == null)
                     {

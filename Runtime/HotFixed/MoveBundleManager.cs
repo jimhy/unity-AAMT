@@ -26,7 +26,7 @@ namespace AAMT
                 return;
             }
 
-            var buildTarget = SettingManager.assetSetting.GetBuildPlatform;
+            var buildTarget = SettingManager.assetSetting.BuildPlatform;
             var path        = $"{Application.streamingAssetsPath}/{buildTarget}/{AAMTDefine.AAMT_BUNDLE_FILES_DICTIONARY}";
             var value       = Tools.ReadTextFileData(path);
             if (string.IsNullOrEmpty(value))

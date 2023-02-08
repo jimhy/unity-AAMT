@@ -27,7 +27,7 @@ namespace AAMT
 
         private void InitManifest()
         {
-            var path       = $"{SettingManager.assetSetting.getLoadPath}/{SettingManager.assetSetting.GetBuildPlatform}";
+            var path       = $"{SettingManager.assetSetting.LoadPath}/{SettingManager.assetSetting.BuildPlatform}";
             var mainBundle = Tools.LoadBundle(path);
             if (mainBundle != null)
                 assetBundleManifest = mainBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
@@ -40,7 +40,7 @@ namespace AAMT
         private void InitBundleMap()
         {
             pathToBundle = new Dictionary<string, string>();
-            var path = $"{SettingManager.assetSetting.getLoadPath}/{AAMTDefine.AAMT_ASSETS_WITH_BUNDLE_NAME}";
+            var path = $"{SettingManager.assetSetting.LoadPath}/{AAMTDefine.AAMT_ASSETS_WITH_BUNDLE_NAME}";
             Debug.LogFormat("Load assets-with-bundle file.path={0}", path);
             var content = Tools.ReadTextFileData(path);
             if (string.IsNullOrEmpty(content))
