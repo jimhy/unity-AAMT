@@ -56,7 +56,7 @@ namespace AAMT
 
         private void StartRequestHttp(string loadFile)
         {
-            var url        = $"{SettingManager.assetSetting.RemotePath}{loadFile}";
+            var url        = $"{SettingManager.assetSetting.RemotePath}/{loadFile}";
             var targetPath = $"{Application.persistentDataPath}/{SettingManager.assetSetting.BuildPlatform}/{loadFile}".ToLower();
             if (File.Exists(targetPath)) File.Delete(targetPath);
             var uwr = UnityWebRequest.Get(url);
