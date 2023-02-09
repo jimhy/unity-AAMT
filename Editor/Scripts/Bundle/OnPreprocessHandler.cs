@@ -24,14 +24,15 @@ namespace AAMT.Editor
                 EditorUtility.DisplayDialog("温馨提示", "当前选择的BuildTarget为Editor,会自动设置为默认选择的平台。", "继续");
             }
 
+            MoveAAMTBundles();
             var ok = EditorUtility.DisplayDialog("温馨提示", "打包之前需要把指定的资源移动到StreamAssets文件夹下，是否需要移动。", "移动", "不需要");
             if (!ok) return;
             if (Directory.Exists(Application.streamingAssetsPath))
                 Directory.Delete(Application.streamingAssetsPath, true);
+            
             AssetDatabase.Refresh();
-
+            MoveAAMTBundles();
             settting.SetBuildTargetForBulidPlayer(EditorCommon.EditorToAamtTarget());
-
             if (settting.CurrentLoadType == AssetSetting.LoadType.Local)
             {
                 MoveAllBundleToStreamingAssets();
@@ -64,6 +65,25 @@ namespace AAMT.Editor
 
         public static void MoveBundleToStreamingAssets()
         {
+            var targetPahtPre = $"{Application.streamingAssetsPath}/{SettingManager.assetSetting.BuildPlatform}".ToLower();
+            var list          = GetMoveToStreamingAssetsPathList();
+            var i             = 0;
+            foreach (var s in list)
+            {
+                var sourcePath = $"{SettingManager.assetSetting.BuildPath}/{s}".ToLower();
+                var targetPath = $"{targetPahtPre}/{s}".ToLower();
+                EditorCommon.UpdateProgress("正在移动文件", ++i, list.Length, sourcePath);
+                var targetDic = Path.GetDirectoryName(targetPath);
+                if (!Directory.Exists(targetDic)) Directory.CreateDirectory(targetDic);
+                if (File.Exists(targetPath)) File.Delete(targetPath);
+                File.Copy(sourcePath, targetPath);
+            }
+
+            EditorCommon.ClearProgressBar();
+        }
+
+        private static void MoveAAMTBundles()
+        {
             var fileNames     = new[] { $"{AAMTDefine.AAMT_BUNDLE_NAME}", $"{AAMTDefine.AAMT_BUNDLE_NAME}.manifest" };
             var targetPahtPre = $"{Application.streamingAssetsPath}/{SettingManager.assetSetting.BuildPlatform}".ToLower();
             if (!Directory.Exists(targetPahtPre))
@@ -77,20 +97,7 @@ namespace AAMT.Editor
                 File.Copy(buildPath, targetPath);
             }
 
-            var list = GetMoveToStreamingAssetsPathList();
-            var i    = 0;
-            foreach (var s in list)
-            {
-                var sourcePath = $"{SettingManager.assetSetting.BuildPath}/{s}".ToLower();
-                var targetPath = $"{targetPahtPre}/{s}".ToLower();
-                EditorCommon.UpdateProgress("正在移动文件", ++i, list.Length, sourcePath);
-                var targetDic = Path.GetDirectoryName(targetPath);
-                if (!Directory.Exists(targetDic)) Directory.CreateDirectory(targetDic);
-                if (File.Exists(targetPath)) File.Delete(targetPath);
-                File.Copy(sourcePath, targetPath);
-            }
-
-            EditorCommon.ClearProgressBar();
+            AssetDatabase.Refresh();
         }
 
         public static string[] GetMoveToStreamingAssetsPathList()
