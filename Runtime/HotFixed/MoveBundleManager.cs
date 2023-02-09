@@ -29,6 +29,10 @@ namespace AAMT
             var value       = Tools.ReadTextFileData(path);
             if (string.IsNullOrEmpty(value))
             {
+                AAMTRuntime.Instance.CallOnNextFrame(o =>
+                {
+                    handler.OnComplete();
+                },1);
                 return;
             }
 
