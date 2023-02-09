@@ -81,6 +81,7 @@ namespace AAMT.Editor
             var filePath  = $"{WindowDefine.platformSettingPath}/{_data.name}.asset";
             var labelText = label.value;
             var newName   = $"{labelText}.asset";
+            _data.name = label.value;
             AssetDatabase.RenameAsset(filePath, newName);
         }
 

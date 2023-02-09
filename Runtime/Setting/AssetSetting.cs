@@ -6,6 +6,9 @@ namespace AAMT
 {
     public class AssetSetting : ScriptableObject
     {
+        [HideInInspector]
+        public string Guid;
+
         [Serializable]
         public enum BuildTarget
         {
@@ -38,7 +41,6 @@ namespace AAMT
         private string[] moveToStreamingAssetsPathList;
 
         private string _realBuildPath;
-        public string Guid { get; set; }
 
         internal void Init()
         {
@@ -118,7 +120,7 @@ namespace AAMT
             if (string.IsNullOrEmpty(Guid)) return;
             var path     = AssetDatabase.GUIDToAssetPath(Guid);
             var instance = CreateInstance<AssetSetting>();
-            instance.name         = name;
+            instance.name             = name;
             instance.buildPlatform    = buildPlatform;
             instance.buildPathSetting = buildPathSetting;
             instance.loadType         = loadType;

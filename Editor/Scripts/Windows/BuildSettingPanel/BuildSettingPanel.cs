@@ -133,6 +133,7 @@ namespace AAMT.Editor
         {
             SettingManager.ReloadAssetSetting(EditorCommon.EditorToAamtTarget());
             OnPreprocessHandler.MoveAllBundleToStreamingAssets();
+            OnPreprocessHandler.CreateBundleFilesDictionary();
             AssetDatabase.Refresh();
         }
     }
