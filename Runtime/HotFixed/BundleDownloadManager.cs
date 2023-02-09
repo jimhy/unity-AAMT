@@ -98,12 +98,12 @@ namespace AAMT
             if (_errorLoadTimesList.ContainsKey(webRequestURL)) count = _errorLoadTimesList[webRequestURL];
             if (++count >= _errorTimes) return false;
             _errorLoadTimesList[webRequestURL] = count;
-            var loadFile = webRequestURL.Replace($"{SettingManager.assetSetting.RemotePath}", "");
+            var loadFile = webRequestURL.Replace($"{SettingManager.assetSetting.RemotePath}/", "");
 
             AAMTRuntime.Instance.CallOnNextFrame(o =>
             {
                 if (o is not string s) return;
-                Debug.Log($"downloading error file-->{webRequestURL}");
+                Debug.LogWarning($"downloading error file-->{webRequestURL}");
                 StartRequestHttp(s);
             }, 60, loadFile);
             return true;

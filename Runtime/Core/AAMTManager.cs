@@ -11,7 +11,16 @@ namespace AAMT
     /// </summary>
     public class AAMTManager
     {
-        internal static AAMTManager Instance { get; } = new();
+        private static AAMTManager _instance;
+
+        internal static AAMTManager Instance
+        {
+            get
+            {
+                if (_instance == null) _instance = new AAMTManager();
+                return _instance;
+            }
+        }
 
         private LoaderManager _loaderManager;
         internal IResourceManager resourceManager { get; private set; }

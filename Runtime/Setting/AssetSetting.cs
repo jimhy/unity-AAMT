@@ -42,6 +42,7 @@ namespace AAMT
 
         internal void Init()
         {
+            if (remotePath[^1] == '/') remotePath = remotePath.Substring(0, remotePath.Length - 1);
 #if UNITY_EDITOR
             InitForEditor();
 #else
