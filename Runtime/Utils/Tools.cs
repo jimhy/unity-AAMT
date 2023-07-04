@@ -34,7 +34,8 @@ namespace AAMT
             ParsingLoadUri(input, out _, out abName, out itemName, out spriteName);
         }
 
-        internal static void ParsingLoadUri(string input, out string uri, out string abName, out string itemName, out string spriteName)
+        internal static void ParsingLoadUri(string input, out string uri, out string abName, out string itemName,
+            out string spriteName)
         {
             if (AAMTManager.Instance.resourceManager is LocalAssetManager)
                 ForEditor(input, out uri, out abName, out itemName, out spriteName);
@@ -42,14 +43,15 @@ namespace AAMT
                 ForBundle(input, out uri, out abName, out itemName, out spriteName);
         }
 
-        private static void ForBundle(string input, out string uri, out string abName, out string itemName, out string spriteName)
+        private static void ForBundle(string input, out string uri, out string abName, out string itemName,
+            out string spriteName)
         {
             var bundleManager = AAMTManager.Instance.resourceManager as BundleManager;
-            input      = input.ToLower();
-            uri        = input;
-            abName     = null;
+            input = input.ToLower();
+            uri = input;
+            abName = null;
             spriteName = null;
-            itemName   = null;
+            itemName = null;
             if (bundleManager == null) return;
             if (input.LastIndexOf(".ab", StringComparison.Ordinal) != -1)
             {
@@ -61,7 +63,7 @@ namespace AAMT
             if (n != -1)
             {
                 spriteName = input[(n + 1)..];
-                uri        = input[..n];
+                uri = input[..n];
             }
 
             if (!bundleManager.pathToBundle.ContainsKey(uri))
@@ -71,26 +73,27 @@ namespace AAMT
             }
 
             abName = bundleManager.pathToBundle[uri];
-            n      = uri.LastIndexOf("/", StringComparison.Ordinal);
+            n = uri.LastIndexOf("/", StringComparison.Ordinal);
             if (n != -1)
             {
                 itemName = uri[(n + 1)..];
             }
         }
 
-        private static void ForEditor(string input, out string uri, out string abName, out string itemName, out string spriteName)
+        private static void ForEditor(string input, out string uri, out string abName, out string itemName,
+            out string spriteName)
         {
-            input      = input.ToLower();
-            uri        = input;
-            abName     = null;
+            input = input.ToLower();
+            uri = input;
+            abName = null;
             spriteName = null;
-            itemName   = null;
+            itemName = null;
 
             var n = input.LastIndexOf("?", StringComparison.Ordinal);
             if (n != -1)
             {
                 spriteName = input[(n + 1)..];
-                uri        = input[..n];
+                uri = input[..n];
             }
 
             n = uri.LastIndexOf("/", StringComparison.Ordinal);
@@ -102,12 +105,7 @@ namespace AAMT
 
         public static string ReadTextFileData(string path)
         {
-            if (Application.platform == RuntimePlatform.Android && path.IndexOf("file:///", StringComparison.Ordinal) == -1)
-            {
-                path = $"file:///{path}";
-            }
-
-            var request = UnityWebRequest.Get(path);
+            var request = UnityWebRequest.Get(new Uri(path));
             request.SendWebRequest();
             while (!request.isDone)
             {
@@ -165,7 +163,7 @@ namespace AAMT
         private static IEnumerator LoadBundleByWebRequestAsync(string path, Action<AssetBundle> cb)
         {
             Debug.LogFormat("LoadBundleByWebRequestAsync:{0}", path);
-            var request   = UnityWebRequest.Get(path);
+            var request = UnityWebRequest.Get(path);
             var operation = request.SendWebRequest();
             yield return operation;
             if (request.result != UnityWebRequest.Result.Success)

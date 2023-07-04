@@ -101,7 +101,7 @@ namespace AAMT
                 {
                     if (loaderHandler.customData is not List<object> list) return;
                     var currentPath = list[0] as string;
-                    var cb          = list[1] as Action<T>;
+                    var cb = list[1] as Action<T>;
                     Instance.resourceManager.GetAssetsAsync(currentPath, cb);
                 };
             }
@@ -122,7 +122,7 @@ namespace AAMT
                 {
                     if (loaderHandler.customData is not List<object> list) return;
                     var currentPath = list[0] as string;
-                    var cb          = list[1] as Action<Object[]>;
+                    var cb = list[1] as Action<Object[]>;
                     Instance.resourceManager.GetAllAssetsAsync(currentPath, cb);
                 };
             }
@@ -136,10 +136,19 @@ namespace AAMT
             }
         }
 
+        public static void LoadScene(string path, Action callBack = null)
+        {
+            LoadScene(path, LoadSceneMode.Single, callBack);
+        }
+
         public static void LoadScene(string path, LoadSceneMode mode = LoadSceneMode.Single, Action callBack = null)
         {
+#if UNITY_EDITOR
+            ChangeScene(path, mode, callBack);
+#else
             var h = Instance._loaderManager.LoadAsync(new[] { path.ToLower() });
             h.onComplete = _ => { ChangeScene(path, mode, callBack); };
+#endif
         }
 
         public static void ChangeScene(string path, LoadSceneMode mode = LoadSceneMode.Single, Action callBack = null)

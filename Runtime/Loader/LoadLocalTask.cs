@@ -93,7 +93,6 @@ namespace AAMT
             }
 #else
             yield return 0;
-
 #endif
         }
 

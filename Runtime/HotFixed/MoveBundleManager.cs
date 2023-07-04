@@ -25,14 +25,11 @@ namespace AAMT
             }
 
             var buildTarget = SettingManager.assetSetting.BuildPlatform;
-            var path        = $"{Application.streamingAssetsPath}/{buildTarget}/{AAMTDefine.AAMT_BUNDLE_FILES_DICTIONARY}";
-            var value       = Tools.ReadTextFileData(path);
+            var path = $"{Application.streamingAssetsPath}/{buildTarget}/{AAMTDefine.AAMT_BUNDLE_FILES_DICTIONARY}";
+            var value = Tools.ReadTextFileData(path);
             if (string.IsNullOrEmpty(value))
             {
-                AAMTRuntime.Instance.CallOnNextFrame(o =>
-                {
-                    handler.OnComplete();
-                },1);
+                AAMTRuntime.Instance.CallOnNextFrame(o => { handler.OnComplete(); }, 1);
                 return;
             }
 
@@ -42,14 +39,14 @@ namespace AAMT
             foreach (var file in files)
             {
                 var sourcePath = $"{Application.streamingAssetsPath}/{buildTarget}/{file}".ToLower();
-                var newPath    = $"{Application.persistentDataPath}/{buildTarget}/{file}".ToLower();
+                var newPath = $"{Application.persistentDataPath}/{buildTarget}/{file}".ToLower();
                 AAMTRuntime.Instance.StartCoroutine(MoveFile(newPath, sourcePath));
             }
         }
 
         private IEnumerator MoveFile(string newPath, string sourcePath)
         {
-            var request = UnityWebRequest.Get(sourcePath);
+            var request = UnityWebRequest.Get(new Uri(sourcePath));
             yield return request.SendWebRequest();
             if (request.downloadHandler.data != null)
             {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -19,10 +20,10 @@ namespace AAMT
 
         public BundleDownloadManager()
         {
-            Handler                = new AsyncHandler();
-            _loadFiles             = new Queue<string>();
+            Handler = new AsyncHandler();
+            _loadFiles = new Queue<string>();
             _persistentVersionPath = AAMTDefine.AAMT_PERSISTENT_VERSION_PATH;
-            _errorLoadTimesList    = new Dictionary<string, int>();
+            _errorLoadTimesList = new Dictionary<string, int>();
         }
 
         public async void Start()
@@ -56,8 +57,9 @@ namespace AAMT
 
         private void StartRequestHttp(string loadFile)
         {
-            var url        = $"{SettingManager.assetSetting.RemotePath}/{loadFile}";
-            var targetPath = $"{Application.persistentDataPath}/{SettingManager.assetSetting.BuildPlatform}/{loadFile}".ToLower();
+            var url = $"{SettingManager.assetSetting.RemotePath}/{loadFile}";
+            var targetPath = $"{Application.persistentDataPath}/{SettingManager.assetSetting.BuildPlatform}/{loadFile}"
+                .ToLower();
             if (File.Exists(targetPath)) File.Delete(targetPath);
             var uwr = UnityWebRequest.Get(url);
             Debug.LogFormat("downloading-->url{0},targetPath:{1}", url, targetPath);
@@ -134,7 +136,8 @@ namespace AAMT
         /// <returns></returns>
         public static async Task<string> GetRemoteVersionFiles()
         {
-            var path = $"{SettingManager.assetSetting.RemotePath}/{AAMTDefine.AAMT_ASSET_VERSION}?{System.DateTime.Now.Ticks}";
+            var path =
+                $"{SettingManager.assetSetting.RemotePath}/{AAMTDefine.AAMT_ASSET_VERSION}?{System.DateTime.Now.Ticks}";
             Debug.LogFormat("get remote version files path:{0}", path);
             var uwr = UnityWebRequest.Get(path);
             uwr.SendWebRequest();
@@ -158,7 +161,7 @@ namespace AAMT
         /// <returns></returns>
         private async Task<string> GetLocalVersionFiles()
         {
-            var path  = _persistentVersionPath;
+            var path = _persistentVersionPath;
             var path1 = $"{Application.streamingAssetsPath}/{AAMTDefine.AAMT_ASSET_VERSION}";
 
             if (File.Exists(path))
@@ -170,7 +173,7 @@ namespace AAMT
             }
 
             Debug.LogFormat("load from streamingAssetsPath:{0}", path1);
-            var req = UnityWebRequest.Get(path1);
+            var req = UnityWebRequest.Get(new Uri(path1));
             req.SendWebRequest();
             while (!req.isDone)
             {
@@ -185,13 +188,13 @@ namespace AAMT
 
         private void CompareVersionFiles(string localText, string removeText)
         {
-            VersionData localData                           = null;
+            VersionData localData = null;
             if (!string.IsNullOrEmpty(localText)) localData = JsonMapper.ToObject<VersionData>(localText);
-            var remoteData                                  = JsonMapper.ToObject<VersionData>(removeText);
+            var remoteData = JsonMapper.ToObject<VersionData>(removeText);
             foreach (var k in remoteData.fileDatas)
             {
-                var             remoteFile       = k.Value;
-                VersionFileData localFile        = null;
+                var remoteFile = k.Value;
+                VersionFileData localFile = null;
                 if (localData != null) localFile = localData.Get(remoteFile.fileName);
                 if (localFile == null || localFile.md5 != remoteFile.md5)
                 {
