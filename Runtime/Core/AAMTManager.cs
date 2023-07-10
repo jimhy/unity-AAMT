@@ -143,12 +143,14 @@ namespace AAMT
 
         public static void LoadScene(string path, LoadSceneMode mode = LoadSceneMode.Single, Action callBack = null)
         {
-#if UNITY_EDITOR
-            ChangeScene(path, mode, callBack);
-#else
+            if (SettingManager.assetSetting.BuildPlatform == AssetSetting.BuildTarget.editor)
+            {
+                ChangeScene(path, mode, callBack);
+                return;
+            }
+
             var h = Instance._loaderManager.LoadAsync(new[] { path.ToLower() });
             h.onComplete = _ => { ChangeScene(path, mode, callBack); };
-#endif
         }
 
         public static void ChangeScene(string path, LoadSceneMode mode = LoadSceneMode.Single, Action callBack = null)
