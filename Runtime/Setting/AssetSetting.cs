@@ -42,7 +42,6 @@ namespace AAMT
         private string[] moveToStreamingAssetsPathList;
 
         private string _realBuildPath;
-        [FormerlySerializedAs("_macro")]
         
         [SerializeField]
         private string macro;

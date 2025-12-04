@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -152,35 +153,34 @@ namespace AAMT
 
         public void SetMacro()
         {
-            if (_instance._currentAssetSetting == null || string.IsNullOrEmpty(_instance._currentAssetSetting.Macro)) return;
             var macroList = new List<string>();
             string[] strList;
-            if (_instance.EditorAssetSetting != null  && !string.IsNullOrEmpty(_instance.EditorAssetSetting.Macro))
+            if (_instance.EditorAssetSetting != null && !string.IsNullOrEmpty(_instance.EditorAssetSetting.Macro))
             {
                 strList = _instance.EditorAssetSetting.Macro.Split(';');
                 macroList.AddRange(strList.Where(s => !string.IsNullOrEmpty(s)));
             }
 
-            if (_instance.WindowsAssetSetting != null  && !string.IsNullOrEmpty(_instance.WindowsAssetSetting.Macro))
+            if (_instance.WindowsAssetSetting != null && !string.IsNullOrEmpty(_instance.WindowsAssetSetting.Macro))
             {
                 strList = _instance.WindowsAssetSetting.Macro.Split(';');
                 macroList.AddRange(strList.Where(s => !string.IsNullOrEmpty(s)));
             }
 
-            if (_instance.IosAssetSetting != null  && !string.IsNullOrEmpty(_instance.IosAssetSetting.Macro))
+            if (_instance.IosAssetSetting != null && !string.IsNullOrEmpty(_instance.IosAssetSetting.Macro))
             {
                 strList = _instance.IosAssetSetting.Macro.Split(';');
                 macroList.AddRange(strList.Where(s => !string.IsNullOrEmpty(s)));
             }
 
-            if (_instance.AndroidAssetSetting != null  && !string.IsNullOrEmpty(_instance.AndroidAssetSetting.Macro))
+            if (_instance.AndroidAssetSetting != null && !string.IsNullOrEmpty(_instance.AndroidAssetSetting.Macro))
             {
                 strList = _instance.AndroidAssetSetting.Macro.Split(';');
                 macroList.AddRange(strList.Where(s => !string.IsNullOrEmpty(s)));
             }
 
             var currentMacroList = new List<string>();
-            strList = _instance._currentAssetSetting.Macro.Split(';');
+            strList = _instance._currentAssetSetting != null && !string.IsNullOrEmpty(_instance._currentAssetSetting.Macro) ? _instance._currentAssetSetting.Macro.Split(';') : Array.Empty<string>();
             currentMacroList.AddRange(strList.Where(s => !string.IsNullOrEmpty(s)));
             var list = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup).Split(';');
             var list1 = list.Except(macroList);
@@ -237,6 +237,12 @@ namespace AAMT
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 #endif
+        }
+
+        public void OnMacroChanged(AssetSetting data)
+        {
+             if (data == null || _currentAssetSetting.name != data.name) return;
+            SetMacro();
         }
     }
 }

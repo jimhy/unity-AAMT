@@ -109,6 +109,7 @@ namespace AAMT.Editor
             if (evt.target is not TextField label || _data.Macro == label.value) return;
             _data.Macro = label.value;
             _data.Save();
+            SettingManager.Instance.OnMacroChanged(_data);
         }
 
         private void OnFoldersChanged()
