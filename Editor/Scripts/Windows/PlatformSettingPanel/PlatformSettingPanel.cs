@@ -107,9 +107,10 @@ namespace AAMT.Editor
         private void OnMacroChanged(FocusOutEvent evt)
         {
             if (evt.target is not TextField label || _data.Macro == label.value) return;
+            var lastMacro = _data.Macro;
             _data.Macro = label.value;
             _data.Save();
-            SettingManager.Instance.OnMacroChanged(_data);
+            SettingManager.Instance.OnMacroChanged(_data,lastMacro);
         }
 
         private void OnFoldersChanged()

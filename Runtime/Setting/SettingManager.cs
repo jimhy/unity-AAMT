@@ -151,6 +151,20 @@ namespace AAMT
         }
 
 
+        public void OnMacroChanged(AssetSetting data,string lastMacro)
+        {
+            if (data == null || _currentAssetSetting.name != data.name) return;
+            if (!string.IsNullOrEmpty(lastMacro))
+            {
+                var macroList = lastMacro.Split(';');
+                var list = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup).Split(';');
+                var list1 = list.Except(macroList);
+                var enumerable = list1 as string[] ?? list1.ToArray();
+                PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, string.Join(";", enumerable));
+            }
+            SetMacro();
+        }
+        
         public void SetMacro()
         {
             var macroList = new List<string>();
@@ -239,10 +253,5 @@ namespace AAMT
 #endif
         }
 
-        public void OnMacroChanged(AssetSetting data)
-        {
-             if (data == null || _currentAssetSetting.name != data.name) return;
-            SetMacro();
-        }
     }
 }
