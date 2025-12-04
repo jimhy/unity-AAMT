@@ -1,14 +1,14 @@
-﻿using System.IO;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEditor.UIElements;
-using UnityEngine;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace AAMT.Editor
 {
     public class BuildSettingPanel : ContentNode
     {
         private SettingManager _settingManager;
+        private ObjectField _editorAssetSetting;
         private ObjectField _windowsAssetSetting;
         private ObjectField _androidAssetSetting;
         private ObjectField _iosAssetSetting;
@@ -27,27 +27,30 @@ namespace AAMT.Editor
 
         private void InitData()
         {
-            _settingManager            = SettingManager.Instance;
-            _buildTarget.index         = MiscUtils.StringToEnum<AssetSetting.BuildTarget>(_settingManager.BuildTarget.ToString());
+            _settingManager = SettingManager.Instance;
+            _buildTarget.index = MiscUtils.StringToEnum<AssetSetting.BuildTarget>(_settingManager.BuildTarget.ToString());
             _androidAssetSetting.value = _settingManager.AndroidAssetSetting;
-            _iosAssetSetting.value     = _settingManager.IosAssetSetting;
+            _iosAssetSetting.value = _settingManager.IosAssetSetting;
             _windowsAssetSetting.value = _settingManager.WindowsAssetSetting;
+            _editorAssetSetting.value = _settingManager.EditorAssetSetting;
 
             UpdateBottomDisplay();
         }
 
-        private void CreateElements() 
+        private void CreateElements()
         {
             _windowsAssetSetting = new ObjectField();
             _androidAssetSetting = new ObjectField();
-            _iosAssetSetting     = new ObjectField();
-            _buildTarget         = new DropdownField();
+            _iosAssetSetting = new ObjectField();
+            _buildTarget = new DropdownField();
+            _editorAssetSetting = new ObjectField();
 
-            _bottom                                  = new VisualElement();
-            _buildAssetsBtn                          = new Button();
+            _bottom = new VisualElement();
+            _buildAssetsBtn = new Button();
             _moveNeedAssetToStreamingAssetsFolderBtn = new Button();
-            _moveAllAssetToStreamingAssetsFolderBtn  = new Button();
+            _moveAllAssetToStreamingAssetsFolderBtn = new Button();
 
+            Add(_editorAssetSetting);
             Add(_windowsAssetSetting);
             Add(_androidAssetSetting);
             Add(_iosAssetSetting);
@@ -59,24 +62,26 @@ namespace AAMT.Editor
 
             _windowsAssetSetting.objectType = typeof(AssetSetting);
             _androidAssetSetting.objectType = typeof(AssetSetting);
-            _iosAssetSetting.objectType     = typeof(AssetSetting);
+            _iosAssetSetting.objectType = typeof(AssetSetting);
+            _editorAssetSetting.objectType = typeof(AssetSetting);
 
+            _editorAssetSetting.label = "Editor平台配置";
             _windowsAssetSetting.label = "Windows平台配置";
             _androidAssetSetting.label = "安卓平台配置";
-            _iosAssetSetting.label     = "IOS平台配置";
-            _buildTarget.label         = "当前平台类型";
+            _iosAssetSetting.label = "IOS平台配置";
+            _buildTarget.label = "当前平台类型";
 
-            _buildAssetsBtn.text                          = "打包资源";
+            _buildAssetsBtn.text = "打包资源";
             _moveNeedAssetToStreamingAssetsFolderBtn.text = "移动所需资源到Streaming Assets 文件夹";
-            _moveAllAssetToStreamingAssetsFolderBtn.text  = "移动所有资源到Streaming Assets 文件夹";
+            _moveAllAssetToStreamingAssetsFolderBtn.text = "移动所有资源到Streaming Assets 文件夹";
 
             _windowsAssetSetting.name = "windows";
             _androidAssetSetting.name = "android";
-            _iosAssetSetting.name     = "ios";
+            _iosAssetSetting.name = "ios";
 
 
             _buildTarget.choices = MiscUtils.EnumToStringList(typeof(AssetSetting.BuildTarget));
-            _buildTarget.index   = 0;
+            _buildTarget.index = 0;
 
             AddEvents();
         }
@@ -84,30 +89,33 @@ namespace AAMT.Editor
         private void AddEvents()
         {
             _buildTarget.RegisterValueChangedCallback(OnBuildTargetChanged);
+            _editorAssetSetting.RegisterValueChangedCallback(OnSettingDataChanged);
             _windowsAssetSetting.RegisterValueChangedCallback(OnSettingDataChanged);
             _androidAssetSetting.RegisterValueChangedCallback(OnSettingDataChanged);
             _iosAssetSetting.RegisterValueChangedCallback(OnSettingDataChanged);
 
-            _buildAssetsBtn.clicked                          += BuildAssetBundle;
+            _buildAssetsBtn.clicked += BuildAssetBundle;
             _moveNeedAssetToStreamingAssetsFolderBtn.clicked += MoveBundleToStreamingAssets;
-            _moveAllAssetToStreamingAssetsFolderBtn.clicked  += MoveAllBundleToStreamingAssets;
+            _moveAllAssetToStreamingAssetsFolderBtn.clicked += MoveAllBundleToStreamingAssets;
         }
 
         private void OnSettingDataChanged(ChangeEvent<Object> evt)
         {
             AssetSetting result = evt.newValue as AssetSetting;
 
-            if (evt.target      == _windowsAssetSetting) _settingManager.WindowsAssetSetting = result;
+            if (evt.target == _windowsAssetSetting) _settingManager.WindowsAssetSetting = result;
             else if (evt.target == _androidAssetSetting) _settingManager.AndroidAssetSetting = result;
-            else if (evt.target == _iosAssetSetting) _settingManager.IosAssetSetting         = result;
+            else if (evt.target == _iosAssetSetting) _settingManager.IosAssetSetting = result;
+            else if (evt.target == _editorAssetSetting) _settingManager.EditorAssetSetting = result;
         }
 
         private void OnBuildTargetChanged(ChangeEvent<string> evt)
         {
-            _buildTarget.index          = MiscUtils.StringToEnum<AssetSetting.BuildTarget>(evt.newValue);
+            _buildTarget.index = MiscUtils.StringToEnum<AssetSetting.BuildTarget>(evt.newValue);
             _settingManager.BuildTarget = (AssetSetting.BuildTarget)_buildTarget.index;
             UpdateBottomDisplay();
             SettingManager.ReloadAssetSetting();
+            _settingManager.SetMacro();
         }
 
         private void UpdateBottomDisplay()

@@ -13,4 +13,5 @@
             <AAMT.Editor.FolderFieldList text="资源目录" name="AssetsFolders" />
         </ui:VisualElement>
     </ui:VisualElement>
+    <ui:TextField picking-mode="Ignore" label="宏定义(多个用;隔开)" value="filler text" name="Macro" />
 </ui:UXML>

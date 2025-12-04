@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace AAMT
 {
@@ -41,6 +42,10 @@ namespace AAMT
         private string[] moveToStreamingAssetsPathList;
 
         private string _realBuildPath;
+        [FormerlySerializedAs("_macro")]
+        
+        [SerializeField]
+        private string macro;
 
         internal void Init()
         {
@@ -93,6 +98,11 @@ namespace AAMT
             get => remotePath;
             set => remotePath = value;
         }
+        public string Macro
+        {
+            get => macro;
+            set => macro = value;
+        }
 
         public BuildTarget BuildPlatform
         {
@@ -126,6 +136,7 @@ namespace AAMT
             instance.loadType         = loadType;
             instance.remotePath       = remotePath;
             instance.Guid             = Guid;
+            instance.macro            = macro;
 
             AssetDatabase.CreateAsset(instance, path);
             AssetDatabase.SaveAssets();

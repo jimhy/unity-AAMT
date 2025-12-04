@@ -15,6 +15,7 @@ namespace AAMT.Editor
         protected VisualElement _bottom;
         protected AssetSetting _data;
         protected FolderFieldList _assetsFolders;
+        protected TextField _macro;
 
         public PlatformSettingPanel()
         {
@@ -27,14 +28,15 @@ namespace AAMT.Editor
 
         protected virtual void InitElements()
         {
-            _deleteBtn     = this.Q<ToolbarButton>("DeleteBtn");
-            _nameLabel     = this.Q<TextField>("NameLabel");
-            _platform      = this.Q<DropdownField>("Platform");
-            _buildPath     = this.Q<TextField>("BuildPath");
-            _loadType      = this.Q<DropdownField>("LoadType");
-            _remoteUrl     = this.Q<TextField>("RemoteUrl");
-            _bottom        = this.Q<VisualElement>("Bottom");
+            _deleteBtn = this.Q<ToolbarButton>("DeleteBtn");
+            _nameLabel = this.Q<TextField>("NameLabel");
+            _platform = this.Q<DropdownField>("Platform");
+            _buildPath = this.Q<TextField>("BuildPath");
+            _loadType = this.Q<DropdownField>("LoadType");
+            _remoteUrl = this.Q<TextField>("RemoteUrl");
+            _bottom = this.Q<VisualElement>("Bottom");
             _assetsFolders = this.Q<FolderFieldList>("AssetsFolders");
+            _macro = this.Q<TextField>("Macro");
 
             _nameLabel.userData = "fileName";
             _buildPath.userData = "buildPath";
@@ -46,11 +48,12 @@ namespace AAMT.Editor
         protected virtual void InitElementData()
         {
             _platform.choices = MiscUtils.EnumToStringList(typeof(AssetSetting.BuildTarget));
-            _platform.index   = 0;
-            _buildPath.value  = "{UnityEngine.Application.dataPath}/../Build/";
-            _remoteUrl.value  = "http://localhost:80";
+            _platform.index = 0;
+            _buildPath.value = "{UnityEngine.Application.dataPath}/../Build/";
+            _remoteUrl.value = "http://localhost:80";
             _loadType.choices = MiscUtils.EnumToStringList(typeof(AssetSetting.LoadType));
-            _loadType.index   = 0;
+            _loadType.index = 0;
+            _macro.value = "";
         }
 
         protected virtual void AddEvents()
@@ -61,6 +64,7 @@ namespace AAMT.Editor
             _nameLabel.RegisterCallback<FocusOutEvent>(OnNameChanged);
             _buildPath.RegisterCallback<FocusOutEvent>(OnBuildPathChanged);
             _remoteUrl.RegisterCallback<FocusOutEvent>(OnRemotePathChanged);
+            _macro.RegisterCallback<FocusOutEvent>(OnMacroChanged);
             _assetsFolders.OnValueChanged = OnFoldersChanged;
         }
 
@@ -72,15 +76,16 @@ namespace AAMT.Editor
             _nameLabel.UnregisterCallback<FocusOutEvent>(OnNameChanged);
             _buildPath.UnregisterCallback<FocusOutEvent>(OnBuildPathChanged);
             _remoteUrl.UnregisterCallback<FocusOutEvent>(OnRemotePathChanged);
+            _macro.UnregisterCallback<FocusOutEvent>(OnMacroChanged);
             _assetsFolders.OnValueChanged = null;
         }
 
         private void OnNameChanged(FocusOutEvent evt)
         {
             if (evt.target is not TextField label || _data.name == label.value) return;
-            var filePath  = $"{WindowDefine.platformSettingPath}/{_data.name}.asset";
+            var filePath = $"{WindowDefine.platformSettingPath}/{_data.name}.asset";
             var labelText = label.value;
-            var newName   = $"{labelText}.asset";
+            var newName = $"{labelText}.asset";
             _data.name = label.value;
             AssetDatabase.RenameAsset(filePath, newName);
         }
@@ -96,6 +101,13 @@ namespace AAMT.Editor
         {
             if (evt.target is not TextField label || _data.RemotePath == label.value) return;
             _data.RemotePath = label.value;
+            _data.Save();
+        }
+
+        private void OnMacroChanged(FocusOutEvent evt)
+        {
+            if (evt.target is not TextField label || _data.Macro == label.value) return;
+            _data.Macro = label.value;
             _data.Save();
         }
 
@@ -137,7 +149,7 @@ namespace AAMT.Editor
         {
             if (!(o is AssetSetting)) return;
             RemoveEvents();
-            _data               = o as AssetSetting;
+            _data = o as AssetSetting;
             _assetsFolders.Data = _data.MoveToStreamingAssetsPathList;
             UpdateUI();
             EditorCommon.DelayCallBack(.01f, _ => AddEvents());
@@ -146,19 +158,20 @@ namespace AAMT.Editor
         protected virtual void UpdateUI()
         {
             _nameLabel.value = _data.name;
-            _platform.value  = _data.BuildPlatform.ToString();
-            _loadType.value  = _data.CurrentLoadType.ToString();
+            _platform.value = _data.BuildPlatform.ToString();
+            _loadType.value = _data.CurrentLoadType.ToString();
             _remoteUrl.value = _data.RemotePath;
+            _macro.value = _data.Macro;
             var displayType1 = DisplayStyle.Flex;
             var displayType2 = DisplayStyle.Flex;
 
-            if (_data.BuildPlatform == AssetSetting.BuildTarget.editor) displayType1                                                         = DisplayStyle.None;
+            if (_data.BuildPlatform == AssetSetting.BuildTarget.editor) displayType1 = DisplayStyle.None;
             if (_data.BuildPlatform == AssetSetting.BuildTarget.editor || _data.CurrentLoadType == AssetSetting.LoadType.Local) displayType2 = DisplayStyle.None;
 
             _buildPath.style.display = displayType1;
-            _loadType.style.display  = displayType1;
+            _loadType.style.display = displayType1;
             _remoteUrl.style.display = displayType1;
-            _bottom.style.display    = displayType2;
+            _bottom.style.display = displayType2;
         }
     }
 }

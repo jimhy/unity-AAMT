@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,6 +8,9 @@ namespace AAMT
 {
     public class SettingManager : ScriptableObject
     {
+        [SerializeField]
+        private AssetSetting editorAssetSetting;
+
         [SerializeField]
         private AssetSetting windowsAssetSetting;
 
@@ -17,6 +22,16 @@ namespace AAMT
 
         [SerializeField]
         private AssetSetting.BuildTarget buildTarget = AssetSetting.BuildTarget.editor;
+
+        public AssetSetting EditorAssetSetting
+        {
+            get => editorAssetSetting;
+            set
+            {
+                editorAssetSetting = value;
+                Save();
+            }
+        }
 
         public AssetSetting WindowsAssetSetting
         {
@@ -97,7 +112,7 @@ namespace AAMT
             }
             else
             {
-                var sm   = CreateInstance<SettingManager>();
+                var sm = CreateInstance<SettingManager>();
                 var path = Path.GetDirectoryName(AAMTDefine.AAMT_SETTING_MANAGER);
                 if (!Directory.Exists(path) && !string.IsNullOrEmpty(path)) Directory.CreateDirectory(path);
                 AssetDatabase.CreateAsset(sm, AAMTDefine.AAMT_SETTING_MANAGER);
@@ -111,7 +126,7 @@ namespace AAMT
             switch (_instance.BuildTarget)
             {
                 case AssetSetting.BuildTarget.editor:
-                    _instance._currentAssetSetting = CreateInstance<AssetSetting>();
+                    _instance._currentAssetSetting = _instance.EditorAssetSetting;
                     break;
                 case AssetSetting.BuildTarget.windows:
                     _instance._currentAssetSetting = _instance.WindowsAssetSetting;
@@ -130,7 +145,48 @@ namespace AAMT
                 Debug.LogError("当前平台没有设置配置文件，请在AAMT->Settings->打包设置->配置当前平台对应的平台资源配置，如果还没有创建平台设置，请在平台设置->创建新平台，进行创建相应的平台配置。");
             }
 
+
             _instance._currentAssetSetting.Init();
+        }
+
+
+        public void SetMacro()
+        {
+            if (_instance._currentAssetSetting == null || string.IsNullOrEmpty(_instance._currentAssetSetting.Macro)) return;
+            var macroList = new List<string>();
+            string[] strList;
+            if (_instance.EditorAssetSetting != null  && !string.IsNullOrEmpty(_instance.EditorAssetSetting.Macro))
+            {
+                strList = _instance.EditorAssetSetting.Macro.Split(';');
+                macroList.AddRange(strList.Where(s => !string.IsNullOrEmpty(s)));
+            }
+
+            if (_instance.WindowsAssetSetting != null  && !string.IsNullOrEmpty(_instance.WindowsAssetSetting.Macro))
+            {
+                strList = _instance.WindowsAssetSetting.Macro.Split(';');
+                macroList.AddRange(strList.Where(s => !string.IsNullOrEmpty(s)));
+            }
+
+            if (_instance.IosAssetSetting != null  && !string.IsNullOrEmpty(_instance.IosAssetSetting.Macro))
+            {
+                strList = _instance.IosAssetSetting.Macro.Split(';');
+                macroList.AddRange(strList.Where(s => !string.IsNullOrEmpty(s)));
+            }
+
+            if (_instance.AndroidAssetSetting != null  && !string.IsNullOrEmpty(_instance.AndroidAssetSetting.Macro))
+            {
+                strList = _instance.AndroidAssetSetting.Macro.Split(';');
+                macroList.AddRange(strList.Where(s => !string.IsNullOrEmpty(s)));
+            }
+
+            var currentMacroList = new List<string>();
+            strList = _instance._currentAssetSetting.Macro.Split(';');
+            currentMacroList.AddRange(strList.Where(s => !string.IsNullOrEmpty(s)));
+            var list = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup).Split(';');
+            var list1 = list.Except(macroList);
+            var enumerable = list1 as string[] ?? list1.ToArray();
+            currentMacroList.AddRange(enumerable);
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, string.Join(";", currentMacroList));
         }
 #endif
 #if !UNITY_EDITOR
@@ -171,10 +227,11 @@ namespace AAMT
         {
 #if UNITY_EDITOR
             var instance = CreateInstance<SettingManager>();
-            instance.iosAssetSetting     = iosAssetSetting;
+            instance.iosAssetSetting = iosAssetSetting;
             instance.androidAssetSetting = androidAssetSetting;
             instance.windowsAssetSetting = windowsAssetSetting;
-            instance.buildTarget         = buildTarget;
+            instance.editorAssetSetting = editorAssetSetting;
+            instance.buildTarget = buildTarget;
 
             AssetDatabase.CreateAsset(instance, AAMTDefine.AAMT_SETTING_MANAGER);
             AssetDatabase.SaveAssets();
